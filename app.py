@@ -5,9 +5,13 @@ import asyncio
 from playwright.async_api import async_playwright
 import tempfile
 import base64
+import os
 
 # ---------------- CONFIG ----------------
-client = genai.Client(api_key="AIzaSyDtoE2hl7CVgQ2I7jX7SJnaFnR0OJXJJfU")
+if not os.path.exists("/home/appuser/.cache/ms-playwright"):
+   os.sysyem("playwright install chromium")
+
+client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
