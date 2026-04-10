@@ -9,7 +9,7 @@ import os
 
 # ---------------- CONFIG ----------------
 if not os.path.exists("/home/appuser/.cache/ms-playwright"):
-   os.sysyem("playwright install chromium")
+   os.system("playwright install chromium")
 
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
@@ -68,6 +68,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- BUTTON ----------------
+def image_to_base64(path):
+    import base64
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
 if st.button("🚀 Generate AI Poster"):
 
     bg_color = themes.get(shop_type, "#FFF8E7")
@@ -108,7 +113,12 @@ if st.button("🚀 Generate AI Poster"):
              style="width:150px;height:150px;border-radius:80px;
              object-fit:cover;margin-bottom:20px;">
         """
-    tea_cup_url = "https://cdn-icons-png.flaticon.com/512/590/590836.png"
+    
+    tea_icon = image_to_base64("icons/tea.png")
+    fire_icon = image_to_base64("icons/fire.png")
+    phone_icon = image_to_base64("icons/phone.png")
+    location_icon = image_to_base64("icons/location.png")
+
     # Poster HTML
     poster_html = f"""
     <html>
@@ -138,7 +148,7 @@ if st.button("🚀 Generate AI Poster"):
          gap:20px;
          margin-bottom:25px;
     ">
-         <img src="{tea_cup_url}" style="width:70px;height:70px;">
+         <img src="data:image/png;base64,{tea_icon}" style="width:70px;height:70px;">
          <h1 style="
              font-size:68px;
              color:#4E342E;
@@ -160,7 +170,11 @@ if st.button("🚀 Generate AI Poster"):
         margin:20px 0;
         box-shadow:0 4px 10px rgba(255,0,0,0.3);
     ">
-    🔥 SPECIAL OFFER
+        <img src="data:image/png;base64,{fire_icon}"
+        style="width:40px;height:40px;">
+        <span
+        style="font-size:40px;font-weight:bold;>
+         SPECIAL OFFER</span>
     </div>
  
     
@@ -178,14 +192,14 @@ if st.button("🚀 Generate AI Poster"):
              margin:0;
              font-weight:bold;
          ">
-           ☕🍪 {offer}
+           <img src="data:image/png;base64,{tea_icon}> {offer}
          </h2>
     </div>
 
 
    
 
-    <h3 style="font-size:52px;color:#5D4037;">🎉 {festival}</h3>
+    <h3 style="font-size:52px;color:#5D4037;"> {festival}</h3>
 
     <p style="font-size:38px;line-height:1.6;color:#3E2723;font_weight:500px;">
     {result}
@@ -193,8 +207,8 @@ if st.button("🚀 Generate AI Poster"):
 
     <hr>
 
-    <p style="font-size:45px;">📞 {customer_phone}</p>
-    <p style="font-size:45px;">📍 {customer_address}</p>
+    <p style="font-size:45px;"><img src="data:image/png;base64,{phone_icon}">{customer_phone}</p>
+    <p style="font-size:45px;"><img src="data:image/png;base64,{location_icon}">{customer_address}</p>
 
     </div>
     </body>
