@@ -244,9 +244,10 @@ if st.button("Generate AI Poster"):
         f"{shop}\n{offer}\n{result}\nPhone: {customer_phone}"
     )
     whatsapp_url = f"https://api.whatsapp.com/send?text={share_text}"
-    APP_URL = "https://https://gontu1994reddy-sketch-tea-poster-website-app-9smv5j.streamlit.app"
+    APP_URL = "https://tea-poster-website.streamlit.app"
     st.markdown(f"""
-    <a href="{whatsapp_url}{APP_URL}" target="_blank">
+    <a href="phone number:{whatsapp_url}
+            link: {APP_URL}" target="_blank">
         <button style="
             background:#25D366;
             color:white;
