@@ -113,12 +113,19 @@ if st.button("🚀 Generate AI Poster"):
              style="width:150px;height:150px;border-radius:80px;
              object-fit:cover;margin-bottom:20px;">
         """
+<<<<<<< HEAD
     
     tea_icon = image_to_base64("icons/tea.png")
     fire_icon = image_to_base64("icons/fire.png")
     phone_icon = image_to_base64("icons/phone.png")
     location_icon = image_to_base64("icons/location.png")
 
+=======
+    tea_icon = "https://cdn-icons-png.flaticon.com/512/590/590836.png"
+    fire_icon = "https://cdn-icons-png.flaticon.com/512/1828/1828884.png"
+    phone_icon = "https://cdn-icons-png.flaticon.com/512/597/597177.png"
+    location_icon = "https://cdn-icons-png.flaticon.com/512/684/684908"
+>>>>>>> 72d60b8 (updated icon fix)
     # Poster HTML
     poster_html = f"""
     <html>
@@ -148,7 +155,11 @@ if st.button("🚀 Generate AI Poster"):
          gap:20px;
          margin-bottom:25px;
     ">
+<<<<<<< HEAD
          <img src="data:image/png;base64,{tea_icon}" style="width:70px;height:70px;">
+=======
+         <img src="{tea_icon}" style="width:70px;height:70px;">
+>>>>>>> 72d60b8 (updated icon fix)
          <h1 style="
              font-size:68px;
              color:#4E342E;
@@ -173,8 +184,13 @@ if st.button("🚀 Generate AI Poster"):
         <img src="data:image/png;base64,{fire_icon}"
         style="width:40px;height:40px;">
         <span
+<<<<<<< HEAD
         style="font-size:40px;font-weight:bold;>
          SPECIAL OFFER</span>
+=======
+        style="font-size:40px;font-weight:bold;">
+        SPECIAL OFFER</span>
+>>>>>>> 72d60b8 (updated icon fix)
     </div>
  
     
@@ -207,8 +223,13 @@ if st.button("🚀 Generate AI Poster"):
 
     <hr>
 
+<<<<<<< HEAD
     <p style="font-size:45px;"><img src="data:image/png;base64,{phone_icon}">{customer_phone}</p>
     <p style="font-size:45px;"><img src="data:image/png;base64,{location_icon}">{customer_address}</p>
+=======
+    <p style="font-size:45px;"><img src="{phone_icon}"> {customer_phone}</p>
+    <p style="font-size:45px;"><img src="{location_icon}"> {customer_address}</p>
+>>>>>>> 72d60b8 (updated icon fix)
 
     </div>
     </body>
@@ -221,7 +242,7 @@ if st.button("🚀 Generate AI Poster"):
             browser = await p.chromium.launch()
             page = await browser.new_page(viewport={"width": 900, "height": 1400})
             await page.set_content(html)
-
+            await page.wait_for_timeout(2000)
             file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
             await page.screenshot(path=file.name, full_page=True)
 
