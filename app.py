@@ -9,7 +9,7 @@ import os
 import subprocess
 
 
-if not os.path.exits("/home/adminuser/.cache/ms-playwright"):
+if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
 
 # ---------------- CONFIG ----------------
