@@ -5,6 +5,11 @@ import asyncio
 from playwright.async_api import async_playwright
 import tempfile
 import base64
+import os
+import subprocess
+
+if not os.system("/home/adminuser/.cache/ms-playwright"):
+    subprocess.run(["playwright","install","chromium"])
 
 # ---------------- CONFIG ----------------
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
