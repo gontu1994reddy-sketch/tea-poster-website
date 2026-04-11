@@ -132,24 +132,20 @@ if not file_path.exists():
     file_path.write_text("{}")
 
 
-with open(file_path,"r") as f:
-    premium_users = json.load(f)    
+with open(file_path, "r") as f:
+    premium_users = json.load(f)
 
-if customer_phone and customer_phone not in premium_users:
-    premium_users[customer_phone] = {
-        "premium": False,
-        "utr": "",
-        "poster_count" : 0
-    }
+if "poster_count" not in st.session_state:
+    st.session_state.poster_count = 0
 
-    with open(file_path, "w") as f:
-        json.dump(premium_users, f, indent=2)
+if "is_premium" not in st.session_state:
+    st.session_state.is_premium = False
 
 if customer_phone in premium_users:
     user_data = premium_users[customer_phone]
 
-    st.session_state.is_premium = user_data["premium"]
-    st.session_state.poster_count = user_data["poster_count"]
+    st.session_state.poster_count = user_data.get("poster_count", 0)
+    st.session_state.is_premium = user_data.get("premium", False)
 
 customer_address = st.text_input("📍 Customer Address")
 language = st.selectbox("Language", ["English", "Telugu"])
