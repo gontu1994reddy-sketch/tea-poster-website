@@ -347,6 +347,7 @@ if st.button("Generate AI Poster"):
         </button>
     </a>
     """, unsafe_allow_html=True)
+    st.success("Premium poster generated successfully!")
 
     st.session_state.poster_count += 1
 
@@ -357,5 +358,5 @@ if st.button("Generate AI Poster"):
 
     with open(file_path, "w") as f:
         json.dump(premium_users, f, indent=2)
-    st.success("Premium poster generated successfully!")
+    
 
