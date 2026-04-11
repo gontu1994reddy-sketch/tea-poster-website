@@ -354,7 +354,7 @@ if st.button("Generate AI Poster"):
     with open(file_path, "r") as f:
         premium_users = json.load(f)
 
-    premium_users[customer_phone]["poster_count"] = st.session_state.poster_count
+    premium_users.setdefault(customer_phone,{})["poster_count"] = st.session_state.poster_count
 
     with open(file_path, "w") as f:
         json.dump(premium_users, f, indent=2)
