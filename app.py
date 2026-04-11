@@ -77,7 +77,6 @@ if utr and customer_phone:
     premium_users[customer_phone]["premium"] = True
     premium_users[customer_phone]["utr"] = utr
 
-    premium_users[customer_phone]["expiry_date"] = expiry_date
 
     with open(file_path, "w") as f:
         json.dump(premium_users, f, indent=2)
