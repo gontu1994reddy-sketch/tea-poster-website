@@ -124,7 +124,7 @@ themes = {
 
 customer_phone = st.text_input("📞 Customer Phone")
 
-file_path = PATH("premium_users.json")
+file_path = Path("premium_users.json")
 
 if not file_path.exists():
     file_path.write_text("{}")
