@@ -7,6 +7,7 @@ import tempfile
 import base64
 import os
 import subprocess
+import json
 
 
 if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
@@ -66,11 +67,23 @@ st.markdown(f"""
 
 utr = st.text_input("💳 Enter UPI Transaction ID after payment")
 
-if "is_premium" not in st.session_state:
-    st.session_state.is_premium = False
-
-if utr:
+if utr and customer_phone:
     st.session_state.is_premium = True
+
+    try:
+        with open("premium_users.json", "r") as f:
+            premium_users = json.load(f)
+    except:
+        premium_users = {}
+
+    premium_users[customer_phone] = {
+        "premium": True,
+        "utr": utr
+    }
+
+    with open("premium_users.json", "w") as f:
+        json.dump(premium_users, f)
+
     st.success("🎉 Premium activated successfully!")
 
 # ---------------- INPUTS ----------------
@@ -115,6 +128,14 @@ themes = {
 }
 
 customer_phone = st.text_input("📞 Customer Phone")
+try:
+    with open("premium_users.json", "r") as f:
+        premium_users = json.load(f)
+
+    if customer_phone in premium_users:
+        st.session_state.is_premium = True
+except:
+    pass
 customer_address = st.text_input("📍 Customer Address")
 language = st.selectbox("Language", ["English", "Telugu"])
 festival = st.selectbox(
