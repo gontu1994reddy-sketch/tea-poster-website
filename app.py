@@ -18,11 +18,11 @@ client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
 # ---------------- PREMIUM PAYMENT ----------------
-UPI_IDS =[
-    "7989384774@ybl",
-    "gontu1994reddy@oksbi",
-    "7989384774@ptsbi"
-   ]   # your real UPI
+UPI_IDS ={
+    "PhonePe": "7989384774@ybl",
+    "Google Pay": "gontu1994reddy@oksbi",
+    "Paytm": "7989384774@ptsbi"
+   }   # your real UPI
 PLAN_PRICE = 299
 
 if "is_premium" not in st.session_state:
@@ -30,8 +30,9 @@ if "is_premium" not in st.session_state:
 
 st.subheader("💎 Premium Plan")
 
-selected_upi = st.selectbox("💳 choose Payment UPI",UPI_IDS)
+selected_app = st.selectbox("💳 choose Payment UPI",list(UPI_IDS.keys()))
 
+selected_upi = UPI_IDS[selected_app]
 PAY_URL = f"upi://pay?pa={selected_upi}&pn=AI Poster App&am={PLAN_PRICE}&cu=INR"
 
 
@@ -47,7 +48,7 @@ st.markdown(f"""
         font-size:18px;
         border-radius:10px;
         cursor:pointer;">
-        💎 Pay ₹{PLAN_PRICE} with UPI
+        💎 Pay ₹{PLAN_PRICE} with UPI {selected_app}
     </button>
 </a>
 """, unsafe_allow_html=True)
