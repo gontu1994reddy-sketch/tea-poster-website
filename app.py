@@ -129,8 +129,7 @@ st.markdown("""
 
 # ---------------- BUTTON ----------------
 if st.button("Generate AI Poster"):
-    if st.session_state.poster_count >= 
-FREE_LIMIT:
+    if st.session_state.poster_count >= FREE_LIMIT:
         st.warning("⚠️ Free daily limit reached. Upgrade to premium for unlimited posters.")
         st.stop()
 
