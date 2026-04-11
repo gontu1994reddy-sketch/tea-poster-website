@@ -126,29 +126,30 @@ customer_phone = st.text_input("📞 Customer Phone")
 
 file_path = Path("premium_users.json")
 
-st.write("saving json at:",Path("premium_users.json"))
+
 
 if not file_path.exists():
     file_path.write_text("{}")
 
-if file_path.exists():
-    with open(file_path,"r") as f:
-        data = json.load(f)    
 
-if customer_phone:
-    with open(file_path, "r") as f:
-        premium_users = json.load(f)
+with open(file_path,"r") as f:
+    premium_users = json.load(f)    
 
-    if customer_phone not in premium_users:
-        premium_users[customer_phone] = {
-            "premium": False,
-            "utr": ""
-        }
+if customer_phone and customer_phone not in premium_users:
+    premium_users[customer_phone] = {
+        "premium": False,
+        "utr": "",
+        "poster_count" : 0
+    }
 
-        with open(file_path, "w") as f:
-            json.dump(premium_users, f, indent=2)
+    with open(file_path, "w") as f:
+        json.dump(premium_users, f, indent=2)
 
-        st.success("✅ Customer saved in JSON")
+if customer_phone in premium_users:
+    user_data = premium_users[customer_phone]
+
+    st.session_state.is_premium = user_data["premium"]
+    st.session_state.poster_count = user_data["poster_count"]
 
 customer_address = st.text_input("📍 Customer Address")
 language = st.selectbox("Language", ["English", "Telugu"])
@@ -348,5 +349,13 @@ if st.button("Generate AI Poster"):
     """, unsafe_allow_html=True)
 
     st.session_state.poster_count += 1
+
+    with open(file_path, "r") as f:
+        premium_users = json.load(f)
+
+    premium_users[customer_phone]["poster_count"] = st.session_state.poster_count
+
+    with open(file_path, "w") as f:
+        json.dump(premium_users, f, indent=2)
     st.success("Premium poster generated successfully!")
 
