@@ -68,22 +68,16 @@ st.markdown(f"""
 utr = st.text_input("💳 Enter UPI Transaction ID after payment")
 
 if utr and customer_phone:
+    with open(file_path, "r") as f:
+        premium_users = json.load(f)
+
+    premium_users[customer_phone]["premium"] = True
+    premium_users[customer_phone]["utr"] = utr
+
+    with open(file_path, "w") as f:
+        json.dump(premium_users, f, indent=2)
+
     st.session_state.is_premium = True
-
-    try:
-        with open("premium_users.json", "r") as f:
-            premium_users = json.load(f)
-    except:
-        premium_users = {}
-
-    premium_users[customer_phone] = {
-        "premium": True,
-        "utr": utr
-    }
-
-    with open("premium_users.json", "w") as f:
-        json.dump(premium_users, f)
-
     st.success("🎉 Premium activated successfully!")
 
 # ---------------- INPUTS ----------------
@@ -101,7 +95,7 @@ shop_type = st.selectbox(
         "Tiffin center",
         "Tea shop & Snacks",
         "Clothing store",
-        "Mobile shop",
+        "Mobile shop"
         "Salon",
         "Medical store",
         "Bakery",
@@ -129,16 +123,15 @@ themes = {
 
 customer_phone = st.text_input("📞 Customer Phone")
 
+file_path = PATH("premium_users.json")
+
+if not file_path.exists():
+    file_path.write_text("{}")
+
 if customer_phone:
-    file_path = "premium_users.json"
+    with open(file_path, "r") as f:
+        premium_users = json.load(f)
 
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
-            premium_users = json.load(f)
-    else:
-        premium_users = {}
-
-    # create customer entry even before UTR
     if customer_phone not in premium_users:
         premium_users[customer_phone] = {
             "premium": False,
@@ -147,6 +140,8 @@ if customer_phone:
 
         with open(file_path, "w") as f:
             json.dump(premium_users, f, indent=2)
+
+        st.success("✅ Customer saved in JSON")
 
 customer_address = st.text_input("📍 Customer Address")
 language = st.selectbox("Language", ["English", "Telugu"])
