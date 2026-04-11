@@ -131,6 +131,10 @@ st.write("saving json at:",Path("premium_users.json"))
 if not file_path.exists():
     file_path.write_text("{}")
 
+if file_path.exists():
+    with open(file_path,"r") as f:
+        data = json.load(f)    
+
 if customer_phone:
     with open(file_path, "r") as f:
         premium_users = json.load(f)
