@@ -128,14 +128,26 @@ themes = {
 }
 
 customer_phone = st.text_input("📞 Customer Phone")
-try:
-    with open("premium_users.json", "r") as f:
-        premium_users = json.load(f)
 
-    if customer_phone in premium_users:
-        st.session_state.is_premium = True
-except:
-    pass
+if customer_phone:
+    file_path = "premium_users.json"
+
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            premium_users = json.load(f)
+    else:
+        premium_users = {}
+
+    # create customer entry even before UTR
+    if customer_phone not in premium_users:
+        premium_users[customer_phone] = {
+            "premium": False,
+            "utr": ""
+        }
+
+        with open(file_path, "w") as f:
+            json.dump(premium_users, f, indent=2)
+
 customer_address = st.text_input("📍 Customer Address")
 language = st.selectbox("Language", ["English", "Telugu"])
 festival = st.selectbox(
