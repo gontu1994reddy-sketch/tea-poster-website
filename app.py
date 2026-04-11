@@ -17,6 +17,7 @@ client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
+
 # ---------------- PREMIUM PAYMENT ----------------
 UPI_IDS ={
     "PhonePe": "7989384774@ybl",
@@ -35,7 +36,17 @@ selected_app = st.selectbox("💳 choose Payment UPI",list(UPI_IDS.keys()))
 selected_upi = UPI_IDS[selected_app]
 PAY_URL = f"upi://pay?pa={selected_upi}&pn=AI Poster App&am={PLAN_PRICE}&cu=INR"
 
+if "poster_count" not in st.session_state:
+    st.session_state.poster_count = 0
 
+FREE_LIMIT = 3
+
+remaining = FREE_LIMIT - st.session_state.poster_count
+
+if not st.session_state.is_premium:
+    st.info(f"🎁 Free posters left today: {remaining}")
+else:
+    st.success("💎 Premium active: Unlimited posters")
 
 st.markdown(f"""
 <a href="{PAY_URL}">
@@ -67,14 +78,8 @@ shop = st.text_input("🏪 Shop Name")
 offer = st.text_input("🔥 Offer")
 logo = st.file_uploader("📷 Upload Shop Logo", type=["png", "jpg", "jpeg"])
 
-if "poster_count" not in st.session_state:
-    st.session_state.poster_count = 0
 
-FREE_LIMIT = 3
 
-if st.session_state.poster_count >= FREE_LIMIT:
-    st.warning("⚠️ Free daily limit reached. Upgrade to premium for unlimited posters.")
-    st.stop()
 
 shop_type = st.selectbox(
     "Select Shop Type",
@@ -124,6 +129,10 @@ st.markdown("""
 
 # ---------------- BUTTON ----------------
 if st.button("Generate AI Poster"):
+    if st.session_state.poster_count >= 
+FREE_LIMIT:
+        st.warning("⚠️ Free daily limit reached. Upgrade to premium for unlimited posters.")
+        st.stop()
 
     bg_color = themes.get(shop_type, "#FFF8E7")
 
