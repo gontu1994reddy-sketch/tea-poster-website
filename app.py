@@ -347,16 +347,23 @@ if st.button("Generate AI Poster"):
         </button>
     </a>
     """, unsafe_allow_html=True)
-    st.success("Premium poster generated successfully!")
+    
 
     st.session_state.poster_count += 1
 
     with open(file_path, "r") as f:
         premium_users = json.load(f)
 
+    if customer_phone not in premium_users:
+        premium_users[customer_phone] = {
+            "premium": False,
+            "utr":"",
+            "poster_count":0
+        }    
+
     premium_users[customer_phone]["poster_count"] = st.session_state.poster_count
 
     with open(file_path, "w") as f:
         json.dump(premium_users, f, indent=2)
     
-
+    st.success("Premium poster generated successfully!")
