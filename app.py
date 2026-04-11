@@ -9,6 +9,7 @@ import os
 import subprocess
 import json
 from pathlib import Path
+from datetime import datetime, timedelta
 
 
 if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
@@ -72,14 +73,17 @@ if utr and customer_phone:
     with open(file_path, "r") as f:
         premium_users = json.load(f)
 
+    expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y - %m - %d")
     premium_users[customer_phone]["premium"] = True
     premium_users[customer_phone]["utr"] = utr
+
+    premium_users[customer_phone]["expiry_date"] = expiry_date
 
     with open(file_path, "w") as f:
         json.dump(premium_users, f, indent=2)
 
     st.session_state.is_premium = True
-    st.success("🎉 Premium activated successfully!")
+    st.success("🎉 Premium activated till {expiry_date}")
 
 # ---------------- INPUTS ----------------
 shop = st.text_input("🏪 Shop Name")
@@ -145,7 +149,27 @@ if customer_phone in premium_users:
     user_data = premium_users[customer_phone]
 
     st.session_state.poster_count = user_data.get("poster_count", 0)
-    st.session_state.is_premium = user_data.get("premium", False)
+
+    expiry_date = user_data.get("expiry_date")
+
+    if expiry_date:
+        expiry = datetime.strptime(expiry_date, "%Y-%m-%d")
+
+        if datetime.now() > expiry:
+            st.session_state.is_premium = False
+            premium_users[customer_phone]["premium"] = False
+
+            with open(file_path, "w") as f:
+                json.dump(premium_users, f, indent=2)
+
+            st.warning("⚠️ Premium expired. Please renew ₹299.")
+        else:
+            st.session_state.is_premium = user_data.get("premium", False)
+
+if st.session_state.is_premium and expiry_date:
+    expiry = datetime.strptime(expiry_date, "%Y-%m-%d")
+    days_left = (expiry - datetime.now()).days
+    st.info(f"💎 Premium active | {days_left} days left")
 
 customer_address = st.text_input("📍 Customer Address")
 language = st.selectbox("Language", ["English", "Telugu"])
