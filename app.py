@@ -150,6 +150,19 @@ if customer_phone in premium_users:
     st.session_state.poster_count = user_data.get("poster_count", 0)
     st.session_state.is_premium = user_data.get("premium", False)
 
+    expiry_date = user_data.get("expiry_date")
+
+    if expiry_date:
+        expiry = datetime.strptime(expiry_date, "%Y-%m-%d")
+
+        if datetime.now() > expiry:
+            st.session_state.is_premium = False
+            premium_users[customer_phone]["premium"] = False
+
+            with open(file_path, "w") as f:
+                json.dump(premium_users, f, indent=2)
+
+            st.warning("⚠️ Premium expired. Renew ₹299 to continue.")
 
 customer_address = st.text_input("📍 Customer Address")
 language = st.selectbox("Language", ["English", "Telugu"])
@@ -164,10 +177,18 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- BUTTON ----------------
-if st.button("Generate AI Poster"):
-    if st.session_state.poster_count >= FREE_LIMIT:
-        st.warning("⚠️ Free daily limit reached. Upgrade to premium for unlimited posters.")
-        st.stop()
+FREE_LIMIT = 3
+
+if st.button("🚀 Generate AI Poster"):
+
+    user_data = premium_users.get(customer_phone, {})
+    free_used = user_data.get("free_used", False)
+
+    # ✅ expired or old free users must renew
+    if not st.session_state.is_premium:
+        if free_used or st.session_state.poster_count >= FREE_LIMIT:
+            st.warning("💎 Your free trial is over or premium expired. Please renew ₹299.")
+            st.stop()
 
     bg_color = themes.get(shop_type, "#FFF8E7")
 
@@ -347,21 +368,21 @@ if st.button("Generate AI Poster"):
         </button>
     </a>
     """, unsafe_allow_html=True)
-    
-
-    st.session_state.poster_count += 1
-
     with open(file_path, "r") as f:
         premium_users = json.load(f)
 
-    if customer_phone not in premium_users:
-        premium_users[customer_phone] = {
-            "premium": False,
-            "utr":"",
-            "poster_count":0
-        }    
+    premium_users.setdefault(customer_phone,{
+        "premium": False,
+        "utr": "",
+        "poster_count": 0,
+        "free_used": False
+    })    
 
+    st.session_state.poster_count += 1
     premium_users[customer_phone]["poster_count"] = st.session_state.poster_count
+
+    if st.session_state.poster_count >= 3:
+        premium_users[customer_phone]["free_used"] = True
 
     with open(file_path, "w") as f:
         json.dump(premium_users, f, indent=2)
