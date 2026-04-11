@@ -17,6 +17,49 @@ client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
+# ---------------- PREMIUM PAYMENT ----------------
+UPI_IDS =[
+    "7989384774@ybl",
+    "gontu1994reddy@oksbi",
+    "7989384774@ptsbi"
+   ]   # your real UPI
+PLAN_PRICE = 299
+
+if "is_premium" not in st.session_state:
+    st.session_state.is_premium = False
+
+st.subheader("💎 Premium Plan")
+
+selected_upi = st.selectbox("💳 choose Payment UPI",UPI_IDS)
+
+PAY_URL = f"upi://pay?pa={selected_upi}&pn=AI Poster App&am={PLAN_PRICE}&cu=INR"
+
+
+
+st.markdown(f"""
+<a href="{PAY_URL}">
+    <button style="
+        background:#25D366;
+        color:white;
+        padding:14px 28px;
+        border:none;
+        border-radius:10px;
+        font-size:18px;
+        border-radius:10px;
+        cursor:pointer;">
+        💎 Pay ₹{PLAN_PRICE} with UPI
+    </button>
+</a>
+""", unsafe_allow_html=True)
+
+utr = st.text_input("💳 Enter UPI Transaction ID after payment")
+
+if "is_premium" not in st.session_state:
+    st.session_state.is_premium = False
+
+if utr:
+    st.session_state.is_premium = True
+    st.success("🎉 Premium activated successfully!")
 
 # ---------------- INPUTS ----------------
 shop = st.text_input("🏪 Shop Name")
@@ -260,4 +303,6 @@ if st.button("Generate AI Poster"):
     </a>
     """, unsafe_allow_html=True)
 
+    st.session_state.poster_count += 1
     st.success("Premium poster generated successfully!")
+
