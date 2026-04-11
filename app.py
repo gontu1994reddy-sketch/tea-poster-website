@@ -126,7 +126,7 @@ customer_phone = st.text_input("📞 Customer Phone")
 
 file_path = Path("premium_users.json")
 
-st.write("saving json at:",file_path = Path("premium_users.json"))
+st.write("saving json at:",Path("premium_users.json"))
 
 if not file_path.exists():
     file_path.write_text("{}")
