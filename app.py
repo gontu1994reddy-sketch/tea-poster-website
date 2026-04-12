@@ -84,9 +84,11 @@ admin_code = st.text_input("🔐 Admin Verify Code", type="password")
 if utr and customer_phone:
     st.warning("⏳ Payment submitted. Waiting for admin verification.")
     
-    if admin_code == "RAMA299":
+    if admin_code == st.secrets["ADMIN_CODE"]:
          with open(file_path, "r") as f:
             premium_users = json.load(f)
+
+premium_users.setdefault(customer_phone,{})            
 
     
     premium_users[customer_phone]["premium"] = True
