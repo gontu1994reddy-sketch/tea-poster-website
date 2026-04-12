@@ -12,6 +12,7 @@ from pathlib import Path
 
 
 
+
 if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
 
@@ -23,7 +24,7 @@ st.title("🎨 AI Poster Generator")
 
 # ---------------- PREMIUM PAYMENT ----------------
 UPI_IDS ={
-    "PhonePe": "9866730504@ybl",
+    "PhonePe": "9866730504",
     "Google Pay": "gontu1994reddy@oksbi",
     "Paytm": "7989384774@ptsbi"
    }   # your real UPI
