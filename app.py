@@ -306,29 +306,33 @@ if st.button("🚀 Generate AI Poster"):
     </p>
 
     <hr>
-
-    <style>
-    .contact-info {
-        text-align: center;
-        font-family: sans-serif;
-    }
-    .info-item {
-        margin: 2px 0;
-        line-height: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-    }
-
-    <div class="contact-info">
+    st.markdown(
+      """
+       <style>
+          .contact-info {
+             text-align: center;
+             font-family: sans-serif;
+           }
+           .info-item {
+              margin: 2px 0;
+              line-height: 1;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              gap: 8px;
+           }
+       </style>
+       <div class="contact-info">
 
        <div class="info-item"><img src="{phone_icon}" style="width:35px;height:35px;">
-        <p style="font-size:45px;">{customer_phone}</p></div>
+           <p style="font-size:45px;">{customer_phone}</p></div>
 
        <div class="info-item"><img src="{location_icon}" style="width:35px;height:35px;">
-        <p style="font-size:45px;">{customer_address}</p></div>
-    </div>
+           <p style="font-size:45px;">{customer_address}</p></div>
+       </div>
+       """,
+       unsafe_allow_html=True
+    ) 
 
     </div>
     </body>
