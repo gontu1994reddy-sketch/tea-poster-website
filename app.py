@@ -13,7 +13,7 @@ import qrcode
 from io import BytesIO
 
 file_path = Path("premium_users.json")
-if not os.file_path.exists(file_path):
+if not os.path.exists(file_path):
     with open(file_path, "w") as f:
         json.dump({}, f)
 
