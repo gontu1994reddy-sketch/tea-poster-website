@@ -310,7 +310,7 @@ if st.button("🚀 Generate AI Poster"):
        """
         <style>
             .contact-info {
-                text-align: center;
+                
                 font-family: sans-serif;
             }
            .info-item {
