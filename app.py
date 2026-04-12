@@ -25,7 +25,7 @@ st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
 
 # ---------------- PREMIUM PAYMENT ----------------
-UPI_ID = "7989384774@ybl"   # your real UPI
+UPI_ID = "9866730504@ybl"   # your real UPI
 PLAN_PRICE = 299
 
 if "is_premium" not in st.session_state:
