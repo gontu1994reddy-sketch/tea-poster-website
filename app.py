@@ -323,6 +323,9 @@ if st.button("🚀 Generate AI Poster"):
         <img src="{location_icon}" style="width:35px;height:35px;">
         <p style="font-size:45px;">{customer_address}</p>
     </div>
+    """,
+    unsafe_allow_html = True
+    )
      
      
 
