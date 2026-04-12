@@ -13,7 +13,7 @@ import qrcode
 from io import BytesIO
 
 file_path = Path("premium_users.json")
-if not os.path.exists(file_path):
+if not file_path.exists():
     with open(file_path, "w") as f:
         json.dump({}, f)
 
@@ -88,18 +88,18 @@ if utr and customer_phone:
          with open(file_path, "r") as f:
             premium_users = json.load(f)
 
-    premium_users.setdefault(customer_phone,{})            
+        #premium_users.setdefault(customer_phone,{})            
 
     
-    premium_users[customer_phone]["premium"] = True
-    premium_users[customer_phone]["utr"] = utr
+        premium_users[customer_phone]["premium"] = True
+        premium_users[customer_phone]["utr"] = utr
 
 
-    with open(file_path, "w") as f:
-        json.dump(premium_users, f, indent=2)
+        with open(file_path, "w") as f:
+           json.dump(premium_users, f, indent=2)
 
-    st.session_state.is_premium = True
-    st.success("🎉 Premium activated successful")
+        st.session_state.is_premium = True
+        st.success("🎉 Premium activated successful")
 
 # ---------------- INPUTS ----------------
 shop = st.text_input("🏪 Shop Name")
