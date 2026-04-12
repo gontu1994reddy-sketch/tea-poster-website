@@ -1,4 +1,5 @@
 import streamlit as st
+from pathlib import Path
 from google import genai
 import urllib.parse
 import asyncio
@@ -8,11 +9,13 @@ import base64
 import os
 import subprocess
 import json
-from pathlib import Path
 import qrcode
 from io import BytesIO
 
-
+file_path = Path("premium_users.json")
+if not file_path.exists():
+    with open(file_path, "w") as f:
+        json.dump({}, f)
 
 
 if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
@@ -133,7 +136,7 @@ themes = {
 }
 
 
-file_path = Path("premium_users.json")
+#file_path = Path("premium_users.json")
 
 
 
