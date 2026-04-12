@@ -9,7 +9,8 @@ import os
 import subprocess
 import json
 from pathlib import Path
-
+import qrcode
+from io import BytesIo
 
 
 
@@ -23,11 +24,7 @@ st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
 
 # ---------------- PREMIUM PAYMENT ----------------
-UPI_IDS ={
-    "PhonePe": "9866730504",
-    "Google Pay": "gontu1994reddy@oksbi",
-    "Paytm": "7989384774@ptsbi"
-   }   # your real UPI
+UPI_ID = "7989384774@ybl"   # your real UPI
 PLAN_PRICE = 299
 
 if "is_premium" not in st.session_state:
@@ -35,10 +32,16 @@ if "is_premium" not in st.session_state:
 
 st.subheader("💎 Premium Plan")
 
-selected_app = st.selectbox("💳 choose Payment UPI",list(UPI_IDS.keys()))
 
 selected_upi = UPI_IDS[selected_app]
-PAY_URL = f"upi://pay?pa={selected_upi}&pn=AI Poster App&am={PLAN_PRICE}&cu=INR"
+pay_url = f"upi://pay?pa={UPI_ID}&pn=AI Poster App&am={PLAN_PRICE}&cu=INR"
+
+qr = qrcode.make(pay_url)
+buffer = BytesIO()
+qr.save(buffer, format="PNG")
+buffer.seek(0)
+
+st.image(buffer, caption="📲 Scan QR to Pay ₹299", width=250)
 
 if "poster_count" not in st.session_state:
     st.session_state.poster_count = 0

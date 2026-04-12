@@ -1,3 +1,5 @@
 streamlit
 google-genai
 playwright
+qrcode
+Pillow
