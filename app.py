@@ -88,7 +88,7 @@ if utr and customer_phone:
          with open(file_path, "r") as f:
             premium_users = json.load(f)
 
-premium_users.setdefault(customer_phone,{})            
+    premium_users.setdefault(customer_phone,{})            
 
     
     premium_users[customer_phone]["premium"] = True
