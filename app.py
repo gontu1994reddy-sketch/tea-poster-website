@@ -67,7 +67,7 @@ st.markdown(f"""
         font-size:18px;
         border-radius:10px;
         cursor:pointer;">
-        💎 Pay ₹{PLAN_PRICE} with UPI {selected_app}
+        💎 Pay ₹{PLAN_PRICE}
     </button>
 </a>
 """, unsafe_allow_html=True)
