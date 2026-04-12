@@ -42,6 +42,8 @@ buffer = BytesIO()
 qr.save(buffer, format="PNG")
 buffer.seek(0)
 
+customer_phone = st.text_input("📞 Customer Phone")
+
 st.image(buffer, caption="📲 Scan QR to Pay ₹299", width=250)
 
 if "poster_count" not in st.session_state:
@@ -130,7 +132,6 @@ themes = {
     "Real estate": "#D4E6F1"
 }
 
-customer_phone = st.text_input("📞 Customer Phone")
 
 file_path = Path("premium_users.json")
 
