@@ -57,7 +57,7 @@ else:
     st.success("💎 Premium active: Unlimited posters")
 
 st.markdown(f"""
-<a href="{PAY_URL}">
+<a href="{pay_url}">
     <button style="
         background:#25D366;
         color:white;
