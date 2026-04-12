@@ -85,7 +85,7 @@ if utr and customer_phone:
     st.warning("⏳ Payment submitted. Waiting for admin verification.")
     
     if admin_code == st.secrets["ADMIN_CODE"]:
-         with open(file_path, "r") as f:
+        with open(file_path, "r") as f:
             premium_users = json.load(f)
 
         #premium_users.setdefault(customer_phone,{})            
