@@ -34,7 +34,7 @@ if "is_premium" not in st.session_state:
 st.subheader("💎 Premium Plan")
 
 
-selected_upi = UPI_IDS[selected_app]
+
 pay_url = f"upi://pay?pa={UPI_ID}&pn=AI Poster App&am={PLAN_PRICE}&cu=INR"
 
 qr = qrcode.make(pay_url)
