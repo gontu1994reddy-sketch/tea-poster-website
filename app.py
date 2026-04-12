@@ -79,9 +79,14 @@ st.markdown(f"""
 
 utr = st.text_input("💳 Enter UPI Transaction ID after payment")
 
+admin_code = st.text_input("🔐 Admin Verify Code", type="password")
+
 if utr and customer_phone:
-    with open(file_path, "r") as f:
-        premium_users = json.load(f)
+    st.warning("⏳ Payment submitted. Waiting for admin verification.")
+    
+    if admin_code = "RAMA299":
+         with open(file_path, "r") as f:
+            premium_users = json.load(f)
 
     
     premium_users[customer_phone]["premium"] = True
