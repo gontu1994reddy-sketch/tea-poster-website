@@ -37,7 +37,7 @@ selected_upi = UPI_IDS[selected_app]
 pay_url = f"upi://pay?pa={UPI_ID}&pn=AI Poster App&am={PLAN_PRICE}&cu=INR"
 
 qr = qrcode.make(pay_url)
-buffer = BytesIO()
+buffer = BytesIo()
 qr.save(buffer, format="PNG")
 buffer.seek(0)
 
