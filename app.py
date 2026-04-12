@@ -10,7 +10,8 @@ import subprocess
 import json
 from pathlib import Path
 import qrcode
-from io import BytesIo
+from io import BytesIO
+
 
 
 
@@ -37,7 +38,7 @@ selected_upi = UPI_IDS[selected_app]
 pay_url = f"upi://pay?pa={UPI_ID}&pn=AI Poster App&am={PLAN_PRICE}&cu=INR"
 
 qr = qrcode.make(pay_url)
-buffer = BytesIo()
+buffer = BytesIO()
 qr.save(buffer, format="PNG")
 buffer.seek(0)
 
