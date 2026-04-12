@@ -309,12 +309,12 @@ if st.button("🚀 Generate AI Poster"):
     
     
 
-    <div style="display:flex;justify-content:center;align-item:center">
+    <div style="display:flex;justify-content:center;align-items:center;gap:10px">
 
         <img src="{phone_icon}" style="width:35px;height:35px;">
         <p style="font-size:45px;">{customer_phone}</p>
     </div>    
-    <div style="display:flex;justify-content:center;align-item:center">
+    <div style="display:flex;justify-content:center;align-items:center;gap:10px">
         <img src="{location_icon}" style="width:35px;height:35px;">
         <p style="font-size:45px;">{customer_address}</p>
        
