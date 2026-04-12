@@ -307,25 +307,17 @@ if st.button("🚀 Generate AI Poster"):
 
     <hr>
     
-    st.markdown(
-    """
-    <style>
-    .contact-info {
-        text-align: center;
-        line-height: 0.8; /* This reduces the gap you wanted */
-    }
-    </style>
+    
 
-    <div class="contact-info">
+    <div style="display:flex;justify-content:center;line-height:0.8">
+
         <img src="{phone_icon}" style="width:35px;height:35px;">
         <p style="font-size:45px;">{customer_phone}</p>
 
         <img src="{location_icon}" style="width:35px;height:35px;">
         <p style="font-size:45px;">{customer_address}</p>
+       
     </div>
-    """,
-    unsafe_allow_html = True
-    )
      
      
 
