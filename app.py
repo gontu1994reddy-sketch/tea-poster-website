@@ -307,11 +307,27 @@ if st.button("🚀 Generate AI Poster"):
 
     <hr>
 
-    <div style="display:flex;justify-content:center;align-items:center;gap:10px;">
-        <img src="{phone_icon}" style="width:35px;height:35px;">
-        <p style="font-size:45px;">{customer_phone}</p>
-        <img src="{location_icon}" style="width:35px;height:35px;">
-        <p style="font-size:45px;">{customer_address}</p>
+    <style>
+    .contact-info {
+        text-align: center;
+        font-family: sans-serif;
+    }
+    .info-item {
+        margin: 2px 0;
+        line-height: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+    <div class="contact-info">
+
+       <div class="info-item"><img src="{phone_icon}" style="width:35px;height:35px;">
+        <p style="font-size:45px;">{customer_phone}</p></div>
+
+       <div class="info-item"><img src="{location_icon}" style="width:35px;height:35px;">
+        <p style="font-size:45px;">{customer_address}</p></div>
     </div>
 
     </div>
