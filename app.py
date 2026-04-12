@@ -23,7 +23,7 @@ st.title("🎨 AI Poster Generator")
 
 # ---------------- PREMIUM PAYMENT ----------------
 UPI_IDS ={
-    "PhonePe": "7989384774@ybl",
+    "PhonePe": "9866730504@ybl",
     "Google Pay": "gontu1994reddy@oksbi",
     "Paytm": "7989384774@ptsbi"
    }   # your real UPI
