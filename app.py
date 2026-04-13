@@ -13,7 +13,7 @@ import subprocess
 import json
 import qrcode
 from io import BytesIO
-from date import datetime, timedelta
+from datetime import datetime, timedelta
 
 file_path = Path("premium_users.json")
 if not file_path.exists():
