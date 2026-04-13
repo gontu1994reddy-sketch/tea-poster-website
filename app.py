@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+from streamlit_gsheets import GSheetsConnection
 from pathlib import Path
 from google import genai
 import urllib.parse
@@ -11,6 +13,7 @@ import subprocess
 import json
 import qrcode
 from io import BytesIO
+from date import datetime, timedelta
 
 file_path = Path("premium_users.json")
 if not file_path.exists():
@@ -28,7 +31,7 @@ st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
 
 # ---------------- PREMIUM PAYMENT ----------------
-UPI_ID = "9866730504@ybl"   # your real UPI
+PAYMENT_LINK = "https://rzp.io"   # your real UPI
 PLAN_PRICE = 299
 
 if "is_premium" not in st.session_state:
@@ -36,18 +39,97 @@ if "is_premium" not in st.session_state:
 
 st.subheader("💎 Premium Plan")
 
-
-
-pay_url = f"upi://pay?pa={UPI_ID}&pn=AI Poster App&am={PLAN_PRICE}&cu=INR"
-
-qr = qrcode.make(pay_url)
-buffer = BytesIO()
-qr.save(buffer, format="PNG")
-buffer.seek(0)
+conn = st.connection("gsheets", type=GSheetsConnection)
+sheet_data = conn.read()
 
 customer_phone = st.text_input("📞 Customer Phone")
 
-st.image(buffer, caption="📲 Scan QR to Pay ₹299", width=250)
+user_row = sheet_data[sheet_data["Phone"] == customer_phone]
+
+if not user_row.empty:
+    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
+    st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
+
+    expiry_date = user_row.iloc[0].get("ExpiryDate", "")
+
+    if st.session_state.is_premium and expiry_date:
+        expiry = datetime.strptime(str(expiry_date), "%Y-%m-%d")
+
+        if datetime.now() > expiry:
+            st.session_state.is_premium = False
+
+            row_index = user_row.index[0]
+            sheet_data.loc[row_index, "Premium"] = False
+            sheet_data.loc[row_index, "Status"] = "Expired"
+
+            conn.update(data=sheet_data)
+
+            st.warning("⚠️ Premium expired. Renew ₹299 to continue.")
+        else:
+            days_left = (expiry - datetime.now()).days
+            st.success(f"💎 Premium active | {days_left} days left")
+else:
+    st.session_state.poster_count = 0
+    st.session_state.is_premium = False
+
+
+if customer_phone:
+    st.markdown(f"""
+    <a href="{PAYMENT_LINK}" target="_blank">
+        <button style="
+            background:#25D366;
+            color:white;
+            padding:14px 28px;
+            border:none;
+            border-radius:10px;
+            font-size:18px;">
+            💎 Pay ₹{PLAN_PRICE} with GPay / PhonePe / Paytm
+        </button>
+    </a>
+    """, unsafe_allow_html=True)
+if st.button("✅ I Have Paid"):
+    premium_code = f"RAMA{customer_phone[-4:]}"
+    expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
+    
+    new_row = pd.DataFrame([{
+        "Phone": customer_phone,
+        "PremiumCode": premium_code,
+        "Status": "Active",
+        "PosterCount": 0,
+        "Premium": True,
+        "ExpiryDate": expiry_date
+    }])
+
+    updated = pd.concat([sheet_data, new_row], ignore_index=True)
+    conn.update(data=updated)
+
+    st.success(f"🎉 Premium activated till {expiry_date}")
+
+    if not user_row.empty:
+        row_index = user_row.index[0]
+        sheet_data.loc[row_index, "PosterCount"] = (
+        int(sheet_data.loc[row_index, "PosterCount"]) + 1
+        )
+
+        conn.update(data=sheet_data)
+
+        st.session_state.poster_count = int(sheet_data.loc[row_index, "PosterCount"])
+    else:
+        new_user = pd.DataFrame([{
+        "Phone": customer_phone,
+        "PremiumCode": "",
+        "Status": "Free User",
+        "PosterCount": 1,
+        "Premium": False
+        }])
+
+        updated = pd.concat([sheet_data, new_user], ignore_index=True)
+        conn.update(data=updated)
+
+        st.session_state.poster_count = 1
+
+    st.success("✅ Payment saved. Premium activates after payment confirmation.")
+
 
 if "poster_count" not in st.session_state:
     st.session_state.poster_count = 0
@@ -60,46 +142,6 @@ if not st.session_state.is_premium:
     st.info(f"🎁 Free posters left today: {remaining}")
 else:
     st.success("💎 Premium active: Unlimited posters")
-
-st.markdown(f"""
-<a href="{pay_url}">
-    <button style="
-        background:#25D366;
-        color:white;
-        padding:14px 28px;
-        border:none;
-        border-radius:10px;
-        font-size:18px;
-        border-radius:10px;
-        cursor:pointer;">
-        💎 Pay ₹{PLAN_PRICE}
-    </button>
-</a>
-""", unsafe_allow_html=True)
-
-utr = st.text_input("💳 Enter UPI Transaction ID after payment")
-
-admin_code = st.text_input("🔐 Admin Verify Code", type="password")
-
-if utr and customer_phone:
-    st.warning("⏳ Payment submitted. Waiting for admin verification.")
-    
-    if admin_code == st.secrets["ADMIN_CODE"]:
-        with open(file_path, "r") as f:
-            premium_users = json.load(f)
-
-        #premium_users.setdefault(customer_phone,{})            
-
-    
-        premium_users[customer_phone]["premium"] = True
-        premium_users[customer_phone]["utr"] = utr
-
-
-        with open(file_path, "w") as f:
-           json.dump(premium_users, f, indent=2)
-
-        st.session_state.is_premium = True
-        st.success("🎉 Premium activated successful")
 
 # ---------------- INPUTS ----------------
 shop = st.text_input("🏪 Shop Name")
