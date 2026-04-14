@@ -50,8 +50,16 @@ if "last_phone" not in st.session_state:
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
         def read_sheet_direct():
-            creds_dict = dict(st.secrets["connections"]["gsheets"])
-            creds_dict["type"] = "service_account"
+            creds_dict = {
+                "type" : "service_account",
+                "project_id" : st.secrets["connections"]["gsheets"]["project_id"],
+                "private_key_id" : st.secrets["connections"]["gsheets"]["private_key_id"],
+                "private_key" : st.secrets["connections"]["gsheets"]["private_key"],
+                "client_email" : st.secrets["connections"]["gsheets"]["client_email"],
+                "client_id" : st.secrets["connections"]["gsheets"]["client_id"],
+                "token_url" : "https://oauth2.googleapis.com/token",
+            }
+            
     
             scopes = [
                 "https://www.googleapis.com/auth/spreadsheets",
@@ -59,7 +67,7 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
                 ]
             creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
             gc = gspread.authorize(creds)
-            spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
+            spreadsheet_url = str(st.secrets["connections"]["gsheets"]["spreadsheet"])
             sh = gc.open_by_url(spreadsheet_url)
             worksheet = sh.sheet1
             records = worksheet.get_all_records()  # always returns list of dicts
