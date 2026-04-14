@@ -70,7 +70,7 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
                     sheet_data = pd.DataFrame([parsed])
                 else:
                     sheet_data = pd.DataFrame()
-            except Exception:
+            except Exception as e:
                 sheet_data = pd.DataFrame()                
         elif isinstance(fresh_data, list):
             rows = [r for r in fresh_data if isinstance(r,dict)]
