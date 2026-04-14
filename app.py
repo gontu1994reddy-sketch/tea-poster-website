@@ -15,12 +15,6 @@ import qrcode
 from io import BytesIO
 from datetime import datetime, timedelta
 
-file_path = Path("premium_users.json")
-if not file_path.exists():
-    with open(file_path, "w") as f:
-        json.dump({}, f)
-
-
 if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
 
@@ -41,7 +35,7 @@ st.subheader("💎 Premium Plan")
 
 conn = st.connection("gsheets", type=GSheetsConnection)
 try:
-    sheet_data = conn.read()
+    sheet_data = conn.read(ttl=0)
 except Exception as e:
     st.error(f"Google Sheet error: {e}")
     st.stop()    
@@ -162,7 +156,7 @@ shop_type = st.selectbox(
         "Tiffin center",
         "Tea shop & Snacks",
         "Clothing store",
-        "Mobile shop"
+        "Mobile shop",
         "Salon",
         "Medical store",
         "Bakery",
@@ -435,8 +429,7 @@ if st.button("🚀 Generate AI Poster"):
         </button>
     </a>
     """, unsafe_allow_html=True)
-    with open(file_path, "r") as f:
-        premium_users = json.load(f)
+   
 
     premium_users.setdefault(customer_phone,{
         "premium": False,
@@ -451,7 +444,6 @@ if st.button("🚀 Generate AI Poster"):
     if st.session_state.poster_count >= 3:
         premium_users[customer_phone]["free_used"] = True
 
-    with open(file_path, "w") as f:
-        json.dump(premium_users, f, indent=2)
+    
     
     st.success("Premium poster generated successfully!")
