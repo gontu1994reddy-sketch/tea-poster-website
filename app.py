@@ -198,12 +198,12 @@ themes = {
 
 
 
-if not file_path.exists():
-    file_path.write_text("{}")
+#if not file_path.exists():
+ #   file_path.write_text("{}")
 
 
-with open(file_path, "r") as f:
-    premium_users = json.load(f)
+#with open(file_path, "r") as f:
+ #   premium_users = json.load(f)
 
 if "poster_count" not in st.session_state:
     st.session_state.poster_count = 0
@@ -226,8 +226,8 @@ if customer_phone in premium_users:
             st.session_state.is_premium = False
             premium_users[customer_phone]["premium"] = False
 
-            with open(file_path, "w") as f:
-                json.dump(premium_users, f, indent=2)
+          #  with open(file_path, "w") as f:
+           #     json.dump(premium_users, f, indent=2)
 
             st.warning("⚠️ Premium expired. Renew ₹299 to continue.")
 
