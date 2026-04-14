@@ -34,10 +34,10 @@ st.title("🎨 AI Poster Generator")
 PAYMENT_LINK = "https://rzp.io"   # your real UPI
 PLAN_PRICE = 299
 
-if "is_premium" not in st.session_state:
-    st.session_state.is_premium = False
+today = datetime.now().strftime("%Y-%m-%d")
 
-st.subheader("💎 Premium Plan")
+if "poster_generated" not in st.session_state:
+    st.session_state.poster_generated = False
 
 customer_phone = st.text_input("📞 Customer Phone")
 
@@ -192,6 +192,12 @@ if st.button("✅ I Have Paid"):
 shop = st.text_input("🏪 Shop Name")
 offer = st.text_input("🔥 Offer")
 logo = st.file_uploader("📷 Upload Shop Logo", type=["png", "jpg", "jpeg"])
+# Reset flag if user changes shop or offer
+if "last_shop" not in st.session_state:
+    st.session_state.last_shop = ""
+if shop != st.session_state.last_shop:
+    st.session_state.poster_generated = False
+    st.session_state.last_shop = shop
 
 
 
@@ -247,7 +253,7 @@ st.markdown("""
 # ---------------- BUTTON ----------------
 
 
-if st.button("🚀 Generate AI Poster"):
+if st.button("🚀 Generate AI Poster") and not st.session_state.poster_generated:
 
 
 
@@ -467,6 +473,7 @@ if st.button("🚀 Generate AI Poster"):
     """, unsafe_allow_html=True)
 
     # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
+    st.session_state.poster_generated = True 
     st.session_state.poster_count += 1
 
     if st.session_state.is_premium:
