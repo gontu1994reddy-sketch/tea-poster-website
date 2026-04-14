@@ -261,16 +261,22 @@ if st.button("🚀 Generate AI Poster"):
         fresh_check = read_sheet_direct()
         fresh_check["Phone"] = fresh_check["Phone"].astype(str)
         fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
-        if not user_row.empty:
-            total_posts = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
-            last_post_date = str(user_row.iloc[0]["LastPostDate"]) if "LastPostDate" in user_row.columns else ""
+
+        if not fresh_user.empty:
+            total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
+            last_post_date = str(fresh_user.iloc[0]["LastPostDate"]) if "LastPostDate" in fresh_user.columns else ""
 
             if total_posts >= 30:
                 st.warning(" You have all 30 posts for this premium plan. please renew 299")
 
             if last_post_date == today:
                 st.warning(" You already generated a poster today. Come back tomorrow!")
-                st.stop()           
+                st.stop()  
+
+        else:
+            st.warning("⚠️ User not found in sheet. Please contact support.")
+            st.stop()
+                             
 
     if not shop or not offer:
         st.warning("Please enter shop name and offer") 
@@ -463,11 +469,17 @@ if st.button("🚀 Generate AI Poster"):
     # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
     st.session_state.poster_count += 1
 
-    # Save count to sheet only if user exists (paid users)
-    if not user_row.empty:
-        row_index = user_row.index[0]
-        sheet_data.loc[row_index, "PosterCount"] = st.session_state.poster_count
-        sheet_data.loc[row_index, "LastPostDate"]
-        conn.update(data=sheet_data)
+    if st.session_state.is_premium:
+        # Refresh sheet before saving
+        latest_sheet = read_sheet_direct()
+        latest_sheet["Phone"] = latest_sheet["Phone"].astype(str)
+        idx = latest_sheet[latest_sheet["Phone"] == str(customer_phone)].index
 
+        if len(idx) > 0:
+            latest_sheet.loc[idx[0], "PosterCount"] = total_posts + 1
+            latest_sheet.loc[idx[0], "LastPostDate"] = today
+            conn.update(data=latest_sheet)
+
+    # Save count to sheet only if user exists (paid users)
+    
     st.success("✅ Poster generated successfully!")
