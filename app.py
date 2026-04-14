@@ -46,7 +46,7 @@ if "last_phone" not in st.session_state:
     st.session_state.last_phone = ""
 
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
-    
+    try:
         fresh_data = conn.read(
             worksheet = "Sheet1",
             ttl = 0,
