@@ -5,8 +5,8 @@ from streamlit_gsheets import GSheetsConnection
 conn = st.connection("gsheets", type=GSheetsConnection)
 
 try:
-    data = conn.read(ttl=0)
-    st.write("✅ Connected")
+    data = conn.read(ttl=60)
+    st.success("✅ Connected")
     st.write(data)
     st.write(type(data))
 except Exception as e:
