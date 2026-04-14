@@ -41,42 +41,29 @@ user_row = pd.DataFrame()
 if "last_phone" not in st.session_state:
     st.session_state.last_phone = ""
 
-# only load when phone changes
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
         fresh_data = conn.read()
 
-        # always force DataFrame
-        if isinstance(fresh_data, pd.DataFrame):
-            st.session_state.sheet_data = fresh_data
-        elif isinstance(fresh_data, list):
-            st.session_state.sheet_data = pd.DataFrame(fresh_data)
-        else:
-            st.session_state.sheet_data = pd.DataFrame()
+        # ✅ safest conversion for all return types
+        sheet_data = pd.DataFrame(fresh_data)
 
+        st.session_state.sheet_data = sheet_data
         st.session_state.last_phone = customer_phone
 
     except Exception as e:
         st.error(f"Google sheet error: {e}")
         st.stop()
 
-# safely restore cached data
+# restore safely
 if "sheet_data" in st.session_state:
-    cached = st.session_state.sheet_data
+    sheet_data = pd.DataFrame(st.session_state.sheet_data)
 
-    if isinstance(cached, pd.DataFrame):
-        sheet_data = cached
-    elif isinstance(cached, list):
-        sheet_data = pd.DataFrame(cached)
-    else:
-        sheet_data = pd.DataFrame()
-
-# safe phone filter
+# phone filter
 if not sheet_data.empty and "Phone" in sheet_data.columns:
     user_row = sheet_data[
         sheet_data["Phone"].astype(str) == str(customer_phone)
     ]
-
 #st.write(sheet_data.columns)
 #st.write(sheet_data.head())   
 
