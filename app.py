@@ -57,13 +57,13 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
                 "https://www.googleapis.com/auth/spreadsheets",
                 "https://www.googleapis.com/auth/drive"
                 ]
-                creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-                gc = gspread.authorize(creds)
-                spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
-                sh = gc.open_by_url(spreadsheet_url)
-                worksheet = sh.sheet1
-                records = worksheet.get_all_records()  # always returns list of dicts
-                return pd.DataFrame(records)
+            creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+            gc = gspread.authorize(creds)
+            spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
+            sh = gc.open_by_url(spreadsheet_url)
+            worksheet = sh.sheet1
+            records = worksheet.get_all_records()  # always returns list of dicts
+            return pd.DataFrame(records)
         
         sheet_data = read_sheet_direct()
         st.session_state.sheet_data = sheet_data
