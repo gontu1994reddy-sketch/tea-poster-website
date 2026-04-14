@@ -34,8 +34,23 @@ if "is_premium" not in st.session_state:
 st.subheader("💎 Premium Plan")
 
 conn = st.connection("gsheets", type=GSheetsConnection)
+
 try:
     sheet_data = conn.read(ttl=0)
+
+    if sheet_data is None:
+        sheet_data = pd.DataFrame(columns=[
+            "Phone",
+            "PremiumCode",
+            "Status",
+            "PosterCount",
+            "Premium",
+            "ExpiryDate"
+        ])
+
+    if not isinstance(sheet_data, pd.DataFrame):
+        sheet_data = pd.DataFrame(sheet_data)
+
 except Exception as e:
     st.error(f"Google Sheet error: {e}")
     st.stop()    
