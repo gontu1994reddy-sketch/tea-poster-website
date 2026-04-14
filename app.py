@@ -36,7 +36,10 @@ customer_phone = st.text_input("📞 Customer Phone")
 conn = st.connection("gsheets", type=GSheetsConnection)
 sheet_data = pd.DataFrame()
 
-if customer_phone:
+if "last_phone" not in st.session_state:
+    st.session_state.last_phone = ""
+
+if customer_phone != st.session_state.last_phone:
     try:
         if "sheet_data" not in st.session_state:
             st.session_state.sheet_data = conn.read(ttl=600)
