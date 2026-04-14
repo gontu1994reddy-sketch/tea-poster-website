@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 
 
 def get_connection():
-    return st.connection("gsheets", type=GsheetsConnection)
+    return st.connection("gsheets", type=GSheetsConnection)
 
 conn = get_connection()    
 
