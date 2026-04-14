@@ -43,7 +43,7 @@ if "last_phone" not in st.session_state:
 
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
-        fresh_data = conn.read()
+        fresh_data = conn.read(usecols=(range(6)),dtype=str)
         st.write("DEBUG:",type(fresh_data),fresh_data)
 
         # ✅ normalize any weird sheet response
@@ -95,7 +95,7 @@ if not user_row.empty:
     st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
     st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
 
-    expiry_date = user_row.iloc[0].get("ExpiryDate", "")
+    expiry_date = user_row.iloc[0]["ExpiryDate", ""] if "ExpiryDate" in user_row.columns else ""
 
     if st.session_state.is_premium and expiry_date:
         expiry = datetime.strptime(str(expiry_date), "%Y-%m-%d")
@@ -256,7 +256,7 @@ if not user_row.empty:
     st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
     st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
 
-    expiry_date = user_row.iloc[0].get("ExpiryDate", "")
+    expiry_date = user_row.iloc[0]["ExpiryDate", ""] if "ExpiryDate" in user_row.columns else ""
 
     if st.session_state.is_premium and expiry_date:
         expiry = datetime.strptime(str(expiry_date), "%Y-%m-%d")
@@ -283,7 +283,7 @@ FREE_LIMIT = 3
 
 if st.button("🚀 Generate AI Poster"):
 
-    user_data = premium_users.get(customer_phone, {})
+    premium_users = {}
     free_used = user_data.get("free_used", False)
 
     # ✅ expired or old free users must renew
