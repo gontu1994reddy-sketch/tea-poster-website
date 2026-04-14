@@ -51,7 +51,7 @@ if customer_phone:
 #st.write(sheet_data.head())   
 
 
-user_row = sheet_data[sheet_data["Phone"] == customer_phone]
+#user_row = sheet_data[sheet_data["Phone"] == customer_phone]
 
 if not user_row.empty:
     st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
