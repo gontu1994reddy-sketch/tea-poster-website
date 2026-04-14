@@ -270,7 +270,7 @@ if st.button("🚀 Generate AI Poster") and not st.session_state.poster_generate
 
         if not fresh_user.empty:
             total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
-            last_post_date = str(fresh_user.iloc[0]["LastPostDate"]) if "LastPostDate" in fresh_user.columns else ""
+            last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
 
             if total_posts >= 30:
                 st.warning(" You have all 30 posts for this premium plan. please renew 299")
@@ -282,8 +282,7 @@ if st.button("🚀 Generate AI Poster") and not st.session_state.poster_generate
         else:
             st.warning("⚠️ User not found in sheet. Please contact support.")
             st.stop()
-                             
-
+                                
     if not shop or not offer:
         st.warning("Please enter shop name and offer") 
         st.stop()     
