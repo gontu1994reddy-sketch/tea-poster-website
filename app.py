@@ -73,7 +73,7 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
             gc = gspread.authorize(creds)
             spreadsheet_url = str(st.secrets["connections"]["gsheets"]["spreadsheet"])
             sh = gc.open_by_url(spreadsheet_url)
-            
+            worksheet = sh.sheet1
             records = worksheet.get_all_records()  # always returns list of dicts
             return pd.DataFrame(records)
         
