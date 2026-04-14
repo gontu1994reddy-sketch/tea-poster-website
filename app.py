@@ -168,6 +168,8 @@ if st.button("✅ I Have Paid"):
             sheet_data.loc[row_index, "Status"] = "Active"
             sheet_data.loc[row_index, "ExpiryDate"] = expiry_date
             sheet_data.loc[row_index, "PremiumCode"] = premium_code
+            sheet_data.loc[row_index, "PosterCount"] = 0
+            sheet_data.loc[row_index, "LastPostDate"] = ""
         else:
             # new user — add to sheet
             new_row = pd.DataFrame([{
@@ -176,7 +178,8 @@ if st.button("✅ I Have Paid"):
                 "Status": "Active",
                 "PosterCount": 0,
                 "Premium": True,
-                "ExpiryDate": expiry_date
+                "ExpiryDate": expiry_date,
+                "LastPostDate": ""
             }])
             sheet_data = pd.concat([sheet_data, new_row], ignore_index=True)
 
@@ -246,14 +249,25 @@ st.markdown("""
 
 if st.button("🚀 Generate AI Poster"):
 
-    user_data = {}
-    free_used = False
+    today = date.now().strftime("%Y-%m-%d")
 
     # ✅ expired or old free users must renew
     if not st.session_state.is_premium:
         if free_used or st.session_state.poster_count >= FREE_LIMIT:
             st.warning("💎 Your free trial is over or premium expired. Please renew ₹299.")
             st.stop()
+
+    else:
+        if not user_row.empty:
+            total_posts = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
+            last_post_date = str(user_row.iloc[0]["LastPostDate"]) if "LastPostDate" in user_row.columns else ""
+
+            if total_posts >= 30:
+                st.warning(" You have all 30 posts for this premium plan. please renew 299")
+
+            if last_post_date == today:
+                st.warning(" You already generated a poster today. Come back tomorrow!")
+                st.stop()           
 
     if not shop or not offer:
         st.warning("Please enter shop name and offer") 
@@ -450,6 +464,7 @@ if st.button("🚀 Generate AI Poster"):
     if not user_row.empty:
         row_index = user_row.index[0]
         sheet_data.loc[row_index, "PosterCount"] = st.session_state.poster_count
+        sheet_data.loc[row_index, "LastPostDate"]
         conn.update(data=sheet_data)
 
     st.success("✅ Poster generated successfully!")
