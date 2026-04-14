@@ -44,12 +44,25 @@ if "last_phone" not in st.session_state:
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
         fresh_data = conn.read()
+        st.write("DEBUG:",type(fresh_data),fresh_data)
 
-        # safest normalization
+        # ✅ normalize any weird sheet response
+        rows = []
+
         if isinstance(fresh_data, pd.DataFrame):
             sheet_data = fresh_data.copy()
+
+        elif isinstance(fresh_data, list):
+            for row in fresh_data:
+                if isinstance(row, dict):
+                    rows.append(row)
+            sheet_data = pd.DataFrame(rows)
+
+        elif isinstance(fresh_data, dict):
+            sheet_data = pd.DataFrame([fresh_data])
+
         else:
-            sheet_data = pd.DataFrame(list(fresh_data))
+            sheet_data = pd.DataFrame()
 
         st.session_state.sheet_data = sheet_data
         st.session_state.last_phone = customer_phone
@@ -58,21 +71,22 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
         st.error(f"Google sheet error: {e}")
         st.stop()
 
-# restore from cache
+# restore cache
 if "sheet_data" in st.session_state:
     cached = st.session_state.sheet_data
 
     if isinstance(cached, pd.DataFrame):
         sheet_data = cached.copy()
     else:
-        sheet_data = pd.DataFrame(list(cached))
+        sheet_data = pd.DataFrame()
 
-# safe phone filter
+# safe filter
 if not sheet_data.empty and "Phone" in sheet_data.columns:
+    sheet_data["Phone"] = sheet_data["Phone"].astype(str)
+
     user_row = sheet_data[
-        sheet_data["Phone"].astype(str) == str(customer_phone)
-    ]
-#st.write(sheet_data.head())   
+        sheet_data["Phone"] == str(customer_phone)
+    ] 
 
 
 
