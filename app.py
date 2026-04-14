@@ -70,7 +70,9 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
         st.session_state.last_phone = customer_phone
 
     except Exception as e:
+        import traceback
         st.error(f"Google sheet error: {e}")
+        st.code(traceback.format_exc())
         st.stop()
 
 # restore cache
