@@ -43,9 +43,9 @@ if customer_phone:
         if "sheet_data" not in st.session_state:
             st.session_state.sheet_data = conn.read(ttl=600)
             sheet_data = st.session_state.sheet_data
-except Exception as e:
-    st.error(f"Google Sheet error: {e}")
-    st.stop()
+    except Exception as e:
+        st.error(f"Google Sheet error: {e}")
+        st.stop()
 
 #st.write(sheet_data.columns)
 #st.write(sheet_data.head())   
