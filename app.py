@@ -253,7 +253,7 @@ if st.button("🚀 Generate AI Poster"):
 
     # ✅ expired or old free users must renew
     if not st.session_state.is_premium:
-        if free_used or st.session_state.poster_count >= FREE_LIMIT:
+        if st.session_state.poster_count >= FREE_LIMIT:
             st.warning("💎 Your free trial is over or premium expired. Please renew ₹299.")
             st.stop()
 
