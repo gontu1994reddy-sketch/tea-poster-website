@@ -54,7 +54,7 @@ if customer_phone:
 
 
 
-if not user_row.empty:
+if not sheet_data.empty:
     user_row = sheet_data[sheet_data["Phone"] == customer_phone]
     st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
     st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
