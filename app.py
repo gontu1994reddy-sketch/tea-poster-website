@@ -109,101 +109,82 @@ if not sheet_data.empty and "Phone" in sheet_data.columns:
 
 if not user_row.empty:
     st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
-    st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
+    st.session_state.is_premium = user_row.iloc[0]["Premium"] == "TRUE" or user_row.iloc[0]["Premium"] == True
 
-    expiry_date = user_row.iloc[0]["ExpiryDate", ""] if "ExpiryDate" in user_row.columns else ""
-
-    if st.session_state.is_premium and expiry_date:
-        expiry = datetime.strptime(str(expiry_date), "%Y-%m-%d")
-
-        if datetime.now() > expiry:
-            st.session_state.is_premium = False
-
-            row_index = user_row.index[0]
-            sheet_data.loc[row_index, "Premium"] = False
-            sheet_data.loc[row_index, "Status"] = "Expired"
-
-            conn.update(data=sheet_data)
-
-            st.warning("⚠️ Premium expired. Renew ₹299 to continue.")
-        else:
-            days_left = (expiry - datetime.now()).days
-            st.success(f"💎 Premium active | {days_left} days left")
+    expiry_col = user_row.iloc[0]["ExpiryDate"] if "ExpiryDate" in user_row.columns else ""
+    if st.session_state.is_premium and expiry_col:
+        try:
+            expiry = datetime.strptime(str(expiry_col), "%Y-%m-%d")
+            if datetime.now() > expiry:
+                st.session_state.is_premium = False
+                st.warning("⚠️ Premium expired. Please renew ₹299.")
+            else:
+                days_left = (expiry - datetime.now()).days
+                st.success(f"💎 Premium active | {days_left} days left")
+        except:
+            pass
 else:
     st.session_state.poster_count = 0
     st.session_state.is_premium = False
 
-
-if customer_phone:
-    st.markdown(f"""
-    <a href="{PAYMENT_LINK}" target="_blank">
-        <button style="
-            background:#25D366;
-            color:white;
-            padding:14px 28px;
-            border:none;
-            border-radius:10px;
-            font-size:18px;">
-            💎 Pay ₹{PLAN_PRICE} with GPay / PhonePe / Paytm
-        </button>
-    </a>
-    """, unsafe_allow_html=True)
-if st.button("✅ I Have Paid"):
-    premium_code = f"RAMA{customer_phone[-4:]}"
-    expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-    
-    new_row = pd.DataFrame([{
-        "Phone": customer_phone,
-        "PremiumCode": premium_code,
-        "Status": "Active",
-        "PosterCount": 0,
-        "Premium": True,
-        "ExpiryDate": expiry_date
-    }])
-
-    updated = pd.concat([sheet_data, new_row], ignore_index=True)
-    conn.update(data=updated)
-
-    st.success(f"🎉 Premium activated till {expiry_date}")
-
-    if not user_row.empty:
-        row_index = user_row.index[0]
-        sheet_data.loc[row_index, "PosterCount"] = (
-        int(sheet_data.loc[row_index, "PosterCount"]) + 1
-        )
-
-        conn.update(data=sheet_data)
-
-        st.session_state.poster_count = int(sheet_data.loc[row_index, "PosterCount"])
-    else:
-        new_user = pd.DataFrame([{
-        "Phone": customer_phone,
-        "PremiumCode": "",
-        "Status": "Free User",
-        "PosterCount": 1,
-        "Premium": False
-        }])
-
-        updated = pd.concat([sheet_data, new_user], ignore_index=True)
-        conn.update(data=updated)
-
-        st.session_state.poster_count = 1
-
-    st.success("✅ Payment saved. Premium activates after payment confirmation.")
-
-
+# ---------------- SHOW STATUS ----------------
+FREE_LIMIT = 3
 if "poster_count" not in st.session_state:
     st.session_state.poster_count = 0
-
-FREE_LIMIT = 3
+if "is_premium" not in st.session_state:
+    st.session_state.is_premium = False
 
 remaining = FREE_LIMIT - st.session_state.poster_count
 
-if not st.session_state.is_premium:
-    st.info(f"🎁 Free posters left today: {remaining}")
-else:
+if st.session_state.is_premium:
     st.success("💎 Premium active: Unlimited posters")
+elif remaining > 0:
+    st.info(f"🎁 Free posters left: {remaining}")
+else:
+    st.warning("🚫 Free posters used up. Please pay ₹299 for premium.")
 
+# ---------------- PAYMENT BUTTON ----------------
+if customer_phone:
+    st.markdown(f"""
+    <a href="{PAYMENT_LINK}" target="_blank">
+        <button style="background:#25D366;color:white;padding:14px 28px;
+        border:none;border-radius:10px;font-size:18px;">
+        💎 Pay ₹{PLAN_PRICE} with GPay / PhonePe / Paytm
+        </button>
+    </a>
+    """, unsafe_allow_html=True)
+
+if st.button("✅ I Have Paid"):
+    if not customer_phone.strip():
+        st.error("Please enter your phone number first.")
+    else:
+        expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
+        premium_code = f"RAMA{customer_phone[-4:]}"
+
+        if not user_row.empty:
+            # existing user — update their row
+            row_index = user_row.index[0]
+            sheet_data.loc[row_index, "Premium"] = True
+            sheet_data.loc[row_index, "Status"] = "Active"
+            sheet_data.loc[row_index, "ExpiryDate"] = expiry_date
+            sheet_data.loc[row_index, "PremiumCode"] = premium_code
+        else:
+            # new user — add to sheet
+            new_row = pd.DataFrame([{
+                "Phone": customer_phone,
+                "PremiumCode": premium_code,
+                "Status": "Active",
+                "PosterCount": 0,
+                "Premium": True,
+                "ExpiryDate": expiry_date
+            }])
+            sheet_data = pd.concat([sheet_data, new_row], ignore_index=True)
+
+        conn.update(data=sheet_data)
+        st.session_state.is_premium = True
+        st.session_state.poster_count = 0
+        st.success(f"🎉 Premium activated till {expiry_date}! You can now generate unlimited posters.")
+        st.rerun()
 # ---------------- INPUTS ----------------
 shop = st.text_input("🏪 Shop Name")
 offer = st.text_input("🔥 Offer")
@@ -492,9 +473,13 @@ if st.button("🚀 Generate AI Poster"):
     </a>
     """, unsafe_allow_html=True)
 
-    if st.session_state.poster_count >= 3:
-        premium_users[customer_phone]["free_used"] = True
+    # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
+    st.session_state.poster_count += 1
 
-    
-    
-    st.success("Premium poster generated successfully!")
+    # Save count to sheet only if user exists (paid users)
+    if not user_row.empty:
+        row_index = user_row.index[0]
+        sheet_data.loc[row_index, "PosterCount"] = st.session_state.poster_count
+        conn.update(data=sheet_data)
+
+    st.success("✅ Poster generated successfully!")
