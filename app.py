@@ -41,6 +41,7 @@ st.subheader("💎 Premium Plan")
 
 conn = st.connection("gsheets", type=GSheetsConnection)
 sheet_data = conn.read()
+st.write(sheet_data.head())
 
 customer_phone = st.text_input("📞 Customer Phone")
 
