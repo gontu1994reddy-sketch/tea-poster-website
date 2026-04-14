@@ -37,6 +37,7 @@ st.subheader("💎 Premium Plan")
 customer_phone = st.text_input("📞 Customer Phone")
 
 conn = st.connection("gsheets", type=GSheetsConnection)
+sheet_data = pd.DataFrame()
 
 if customer_phone:
     try:
@@ -51,9 +52,10 @@ if customer_phone:
 #st.write(sheet_data.head())   
 
 
-#user_row = sheet_data[sheet_data["Phone"] == customer_phone]
+
 
 if not user_row.empty:
+    user_row = sheet_data[sheet_data["Phone"] == customer_phone]
     st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
     st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
 
