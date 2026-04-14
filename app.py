@@ -40,8 +40,11 @@ if "is_premium" not in st.session_state:
 st.subheader("💎 Premium Plan")
 
 conn = st.connection("gsheets", type=GSheetsConnection)
-sheet_data = conn.read()
-st.write(sheet_data.head())
+try:
+    sheet_data = conn.read()
+except Exception as e:
+    st.error(f"Google Sheet error: {e}")
+    st.stop()    
 
 customer_phone = st.text_input("📞 Customer Phone")
 
