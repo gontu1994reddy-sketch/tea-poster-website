@@ -64,7 +64,7 @@ if "sheet_data" in st.session_state:
 
 
 
-if not sheet_data.empty:
+if not user_row.empty:
     st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
     st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
 
