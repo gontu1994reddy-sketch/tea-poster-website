@@ -272,7 +272,7 @@ if st.button("🚀 Generate AI Poster") and not st.session_state.poster_generate
             total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
             last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
 
-            st.write(f"DEBUG: last_post_date='{last_post_date}' | today='{today}' | match={last_post_date == today}"
+            st.write(f"DEBUG: last_post_date='{last_post_date}' | today='{today}' | match={last_post_date == today}")
             if total_posts >= 30:
                 st.warning(" You have all 30 posts for this premium plan. please renew 299")
 
