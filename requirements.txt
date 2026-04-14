@@ -5,3 +5,5 @@ google-genai
 playwright
 qrcode
 Pillow
+gspread
+google-auth

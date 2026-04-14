@@ -12,6 +12,8 @@ import subprocess
 import qrcode
 from io import BytesIO
 from datetime import datetime, timedelta
+import gspread
+from google.oauth2.service_account import Credentials
 
 
 def get_connection():
@@ -47,41 +49,23 @@ if "last_phone" not in st.session_state:
 
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
-        fresh_data = conn.read(
-            worksheet = "Sheet1",
-            ttl = 0,
-            usecols = ["Phone", "PremiumCode", "Status", "PosterCount", "Premium", "ExpiryDate"],
-            dtype=str
-        )
-        st.write("DEBUG:",type(fresh_data),fresh_data)
+        def read_sheet_direct():
+            creds_dict = dict(st.secrets["connections"]["gsheets"])
+            creds_dict["type"] = "service_account"
+    
+            scopes = [
+                "https://www.googleapis.com/auth/spreadsheets",
+                "https://www.googleapis.com/auth/drive"
+                ]
+                creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+                gc = gspread.authorize(creds)
+                spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
+                sh = gc.open_by_url(spreadsheet_url)
+                worksheet = sh.sheet1
+                records = worksheet.get_all_records()  # always returns list of dicts
+                return pd.DataFrame(records)
         
-        # ✅ normalize any weird sheet response
-
-        if isinstance(fresh_data, pd.DataFrame):
-            sheet_data = fresh_data.copy()
-
-        elif isinstance(fresh_data, str):
-            import json
-            try:
-                prased = json.loads(fresh_data)
-                if isinstance(parsed, list):
-                    sheet_data = pd.DataFrame(parsed)
-                elif isinstance(parsed, dict):
-                    sheet_data = pd.DataFrame([parsed])
-                else:
-                    sheet_data = pd.DataFrame()
-            except Exception as e:
-                sheet_data = pd.DataFrame()                
-        elif isinstance(fresh_data, list):
-            rows = [r for r in fresh_data if isinstance(r,dict)]
-            sheet_data = pd.DataFrame(rows)
-
-        elif isinstance(fresh_data, dict):
-            sheet_data = pd.DataFrame([fresh_data])
-
-        else:
-            sheet_data = pd.DataFrame()
-
+        sheet_data = read_sheet_direct()
         st.session_state.sheet_data = sheet_data
         st.session_state.last_phone = customer_phone
 
