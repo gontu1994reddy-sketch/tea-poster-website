@@ -491,12 +491,6 @@ if st.button("🚀 Generate AI Poster"):
         </button>
     </a>
     """, unsafe_allow_html=True)
-   
-
-       
-
-    st.session_state.poster_count += 1
-    premium_users[customer_phone]["poster_count"] = st.session_state.poster_count
 
     if st.session_state.poster_count >= 3:
         premium_users[customer_phone]["free_used"] = True
