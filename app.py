@@ -45,8 +45,11 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
         fresh_data = conn.read()
 
-        # ✅ safest conversion for all return types
-        sheet_data = pd.DataFrame(fresh_data)
+        # safest normalization
+        if isinstance(fresh_data, pd.DataFrame):
+            sheet_data = fresh_data.copy()
+        else:
+            sheet_data = pd.DataFrame(list(fresh_data))
 
         st.session_state.sheet_data = sheet_data
         st.session_state.last_phone = customer_phone
@@ -55,16 +58,20 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
         st.error(f"Google sheet error: {e}")
         st.stop()
 
-# restore safely
+# restore from cache
 if "sheet_data" in st.session_state:
-    sheet_data = pd.DataFrame(st.session_state.sheet_data)
+    cached = st.session_state.sheet_data
 
-# phone filter
+    if isinstance(cached, pd.DataFrame):
+        sheet_data = cached.copy()
+    else:
+        sheet_data = pd.DataFrame(list(cached))
+
+# safe phone filter
 if not sheet_data.empty and "Phone" in sheet_data.columns:
     user_row = sheet_data[
         sheet_data["Phone"].astype(str) == str(customer_phone)
     ]
-#st.write(sheet_data.columns)
 #st.write(sheet_data.head())   
 
 
