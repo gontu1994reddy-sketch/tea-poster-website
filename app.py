@@ -227,40 +227,6 @@ themes = {
 }
 
 
-#file_path = Path("premium_users.json")
-
-
-
-#if not file_path.exists():
- #   file_path.write_text("{}")
-
-
-#with open(file_path, "r") as f:
- #   premium_users = json.load(f)
-
-if "poster_count" not in st.session_state:
-    st.session_state.poster_count = 0
-
-if "is_premium" not in st.session_state:
-    st.session_state.is_premium = False
-
-user_row = pd.DataFrame()
-
-if not sheet_data.empty:
-    user_row = sheet_data[sheet_data["Phone"] == customer_phone]
-
-if not user_row.empty:
-    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
-    st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
-
-    expiry_date = user_row.iloc[0]["ExpiryDate", ""] if "ExpiryDate" in user_row.columns else ""
-
-    if st.session_state.is_premium and expiry_date:
-        expiry = datetime.strptime(str(expiry_date), "%Y-%m-%d")
-
-        if datetime.now() > expiry:
-            st.session_state.is_premium = False
-            st.warning("⚠️ Premium expired. Renew ₹299.")
 
 
 customer_address = st.text_input("📍 Customer Address")
@@ -276,7 +242,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- BUTTON ----------------
-FREE_LIMIT = 3
+
 
 if st.button("🚀 Generate AI Poster"):
 
@@ -288,6 +254,10 @@ if st.button("🚀 Generate AI Poster"):
         if free_used or st.session_state.poster_count >= FREE_LIMIT:
             st.warning("💎 Your free trial is over or premium expired. Please renew ₹299.")
             st.stop()
+
+    if not shop or not offer:
+        st.warning("Please enter shop name and offer") 
+        st.stop()     
 
     bg_color = themes.get(shop_type, "#FFF8E7")
 
