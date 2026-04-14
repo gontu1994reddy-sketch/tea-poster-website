@@ -299,8 +299,8 @@ FREE_LIMIT = 3
 
 if st.button("🚀 Generate AI Poster"):
 
-    premium_users = {}
-    free_used = user_data.get("free_used", False)
+    user_data = {}
+    free_used = False
 
     # ✅ expired or old free users must renew
     if not st.session_state.is_premium:
@@ -493,12 +493,7 @@ if st.button("🚀 Generate AI Poster"):
     """, unsafe_allow_html=True)
    
 
-    premium_users.setdefault(customer_phone,{
-        "premium": False,
-        "utr": "",
-        "poster_count": 0,
-        "free_used": False
-    })    
+       
 
     st.session_state.poster_count += 1
     premium_users[customer_phone]["poster_count"] = st.session_state.poster_count
