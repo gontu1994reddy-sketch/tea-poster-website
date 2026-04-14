@@ -249,7 +249,7 @@ st.markdown("""
 
 if st.button("🚀 Generate AI Poster"):
 
-    today = date.now().strftime("%Y-%m-%d")
+
 
     # ✅ expired or old free users must renew
     if not st.session_state.is_premium:
