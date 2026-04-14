@@ -35,18 +35,26 @@ customer_phone = st.text_input("📞 Customer Phone")
 
 conn = st.connection("gsheets", type=GSheetsConnection)
 sheet_data = pd.DataFrame()
+user_row = pd.DataFrame()
 
 if "last_phone" not in st.session_state:
     st.session_state.last_phone = ""
 
-if customer_phone != st.session_state.last_phone:
+if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
-        if "sheet_data" not in st.session_state:
-            st.session_state.sheet_data = conn.read(ttl=600)
-            sheet_data = st.session_state.sheet_data
+        st.session_state.sheet_data = conn.read(ttl=600)
+        st.session_state.last_phone = customer_phone
     except Exception as e:
-        st.error(f"Google Sheet error: {e}")
+        st.error(f"Google sheet error: {e}")
         st.stop()
+
+if "sheet_data" in st.session_state:
+    sheet_data = st.session_state.sheet_data
+
+    if not sheet_data.empty and "Phone" in sheet_data.columns:
+        user_row = sheet_data[
+            sheet_data["Phone"].astype(str) == str(customer_phone)
+        ]
 
 #st.write(sheet_data.columns)
 #st.write(sheet_data.head())   
@@ -55,7 +63,6 @@ if customer_phone != st.session_state.last_phone:
 
 
 if not sheet_data.empty:
-    user_row = sheet_data[sheet_data["Phone"] == customer_phone]
     st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
     st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
 
