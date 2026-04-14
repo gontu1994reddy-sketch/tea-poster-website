@@ -13,6 +13,12 @@ import qrcode
 from io import BytesIO
 from datetime import datetime, timedelta
 
+
+def get_connection():
+    return st.connection("gsheets", type=GsheetsConnection)
+
+conn = get_connection()    
+
 if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
 
@@ -31,8 +37,6 @@ if "is_premium" not in st.session_state:
 
 st.subheader("💎 Premium Plan")
 
-conn = st.connection("gsheets", type=GSheetsConnection)
-
 customer_phone = st.text_input("📞 Customer Phone")
 
 sheet_data = pd.DataFrame()
@@ -42,7 +46,7 @@ if "last_phone" not in st.session_state:
     st.session_state.last_phone = ""
 
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
-    try:
+    
         fresh_data = conn.read(
             worksheet = "Sheet1",
             ttl = 0,
@@ -50,17 +54,26 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
             dtype=str
         )
         st.write("DEBUG:",type(fresh_data),fresh_data)
-
+        
         # ✅ normalize any weird sheet response
-        rows = []
 
         if isinstance(fresh_data, pd.DataFrame):
             sheet_data = fresh_data.copy()
 
+        elif isinstance(fresh_data, str):
+            import json
+            try:
+                prased = json.loads(fresh_data)
+                if isinstance(parsed, list):
+                    sheet_data = pd.DataFrame(parsed)
+                elif isinstance(parsed, dict):
+                    sheet_data = pd.DataFrame([parsed])
+                else:
+                    sheet_data = pd.DataFrame()
+            except Exception:
+                sheet_data = pd.DataFrame()                
         elif isinstance(fresh_data, list):
-            for row in fresh_data:
-                if isinstance(row, dict):
-                    rows.append(row)
+            rows = [r for r in fresh_data if isinstance(r,dict)]
             sheet_data = pd.DataFrame(rows)
 
         elif isinstance(fresh_data, dict):
