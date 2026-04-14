@@ -44,7 +44,7 @@ if "last_phone" not in st.session_state:
 # only load when phone changes
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
-        fresh_data = conn.read(ttl=600)
+        fresh_data = conn.read()
 
         # always force DataFrame
         if isinstance(fresh_data, pd.DataFrame):
