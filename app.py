@@ -258,6 +258,9 @@ if st.button("🚀 Generate AI Poster"):
             st.stop()
 
     else:
+        fresh_check = read_sheet_direct()
+        fresh_check["Phone"] = fresh_check["Phone"].astype(str)
+        fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
         if not user_row.empty:
             total_posts = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
             last_post_date = str(user_row.iloc[0]["LastPostDate"]) if "LastPostDate" in user_row.columns else ""
