@@ -255,7 +255,7 @@ st.markdown("""
 
 if st.button("🚀 Generate AI Poster") and not st.session_state.poster_generated:
 
-    st.write(f"DEBUG: last_post_date='{last_post_date}' | today='{today}' | match={last_post_date == today}")
+    st.write(st.session_state)
 
     # ✅ expired or old free users must renew
     if not st.session_state.is_premium:
