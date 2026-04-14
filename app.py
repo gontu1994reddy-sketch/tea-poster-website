@@ -36,9 +36,20 @@ st.subheader("💎 Premium Plan")
 conn = st.connection("gsheets", type=GSheetsConnection)
 
 try:
-    sheet_data = conn.read(ttl=0)
+    raw_data = conn.read(ttl=0)
 
-    if sheet_data is None:
+    # debug
+    st.write("RAW DATA:", raw_data)
+    st.write("TYPE:", type(raw_data))
+
+    # convert safely
+    if isinstance(raw_data, pd.DataFrame):
+        sheet_data = raw_data
+    elif isinstance(raw_data, list):
+        sheet_data = pd.DataFrame(raw_data)
+    elif isinstance(raw_data, dict):
+        sheet_data = pd.DataFrame([raw_data])
+    else:
         sheet_data = pd.DataFrame(columns=[
             "Phone",
             "PremiumCode",
@@ -48,12 +59,12 @@ try:
             "ExpiryDate"
         ])
 
-    if not isinstance(sheet_data, pd.DataFrame):
-        sheet_data = pd.DataFrame(sheet_data)
-
 except Exception as e:
     st.error(f"Google Sheet error: {e}")
-    st.stop()    
+    st.stop()
+
+st.write(sheet_data.columns)
+st.write(sheet_data.head())   
 
 customer_phone = st.text_input("📞 Customer Phone")
 
