@@ -43,7 +43,12 @@ if "last_phone" not in st.session_state:
 
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
-        fresh_data = conn.read(usecols=(range(6)),dtype=str)
+        fresh_data = conn.read(
+            worksheet = "Sheet1",
+            ttl = 0,
+            usecols = ["Phone", "PremiumCode", "Status", "PosterCount", "Premium", "ExpiryDate"],
+            dtype=str
+        )
         st.write("DEBUG:",type(fresh_data),fresh_data)
 
         # ✅ normalize any weird sheet response
