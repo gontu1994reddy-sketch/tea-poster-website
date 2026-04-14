@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
-
-from pathlib import Path
 from google import genai
 import urllib.parse
 import asyncio
@@ -11,7 +9,6 @@ import tempfile
 import base64
 import os
 import subprocess
-import json
 import qrcode
 from io import BytesIO
 from datetime import datetime, timedelta
@@ -211,25 +208,24 @@ if "poster_count" not in st.session_state:
 if "is_premium" not in st.session_state:
     st.session_state.is_premium = False
 
-if customer_phone in premium_users:
-    user_data = premium_users[customer_phone]
+user_row = pd.DataFrame()
 
-    st.session_state.poster_count = user_data.get("poster_count", 0)
-    st.session_state.is_premium = user_data.get("premium", False)
+if not sheet_data.empty:
+    user_row = sheet_data[sheet_data["Phone"] == customer_phone]
 
-    expiry_date = user_data.get("expiry_date")
+if not user_row.empty:
+    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
+    st.session_state.is_premium = bool(user_row.iloc[0]["Premium"])
 
-    if expiry_date:
-        expiry = datetime.strptime(expiry_date, "%Y-%m-%d")
+    expiry_date = user_row.iloc[0].get("ExpiryDate", "")
+
+    if st.session_state.is_premium and expiry_date:
+        expiry = datetime.strptime(str(expiry_date), "%Y-%m-%d")
 
         if datetime.now() > expiry:
             st.session_state.is_premium = False
-            premium_users[customer_phone]["premium"] = False
+            st.warning("⚠️ Premium expired. Renew ₹299.")
 
-          #  with open(file_path, "w") as f:
-           #     json.dump(premium_users, f, indent=2)
-
-            st.warning("⚠️ Premium expired. Renew ₹299 to continue.")
 
 customer_address = st.text_input("📍 Customer Address")
 language = st.selectbox("Language", ["English", "Telugu"])
