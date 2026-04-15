@@ -44,7 +44,7 @@ def read_sheet_direct():
         try:
             
             sh = gc.open_by_url(str(g["spreadsheet"]))
-            records = sh.sheet.get_all_records()  # always returns list of dicts
+            records = sh.sheet1.get_all_records()  # always returns list of dicts
             return pd.DataFrame(records)
         except Exception as e:
             if attempt < 2:
