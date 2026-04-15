@@ -338,46 +338,38 @@ if not all_filled:
     st.button("🚀 Generate AI Poster", disabled=True)  # show disabled button
 
 else:
-    if st.button("🚀 Generate AI Poster"):  # active button only when all filled
-        if st.session_state.poster_generated:
-            st.warning("🚫 You already generated a poster today. Come back tomorrow!")
-            st.stop()
+        if st.button("🚀 Generate AI Poster"): 
+            fresh_check = read_sheet_direct()
+            if fresh_check.empty or "Phone" not in fresh_check.columns:
+                total_posts = 0
+                last_post_date = ""
+            else:
+                fresh_check["Phone"] = fresh_check["Phone"].astype(str)
+                fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
+                if not fresh_user.empty:
+                    total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
+                    last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
+                else:
+                    total_posts = 0
+                    last_post_date = ""
 
-# ---------------- BUTTON ----------------
-if st.button("🚀 Generate AI Poster"):
+        # ✅ Block if already posted today (works after refresh too)
+            if last_post_date == today:
+                st.warning("🚫 You already generated a poster today. Come back tomorrow!")
+                st.stop()
 
-    # ✅ Always fetch fresh data on button click
-    fresh_check = read_sheet_direct()
-    if fresh_check.empty or "Phone" not in fresh_check.columns:
-        total_posts = 0
-        last_post_date = ""
-    else:
-        fresh_check["Phone"] = fresh_check["Phone"].astype(str)
-        fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
-        if not fresh_user.empty:
-            total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
-            last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
-        else:
-            total_posts = 0
-            last_post_date = ""
-
-    # ✅ Block if already posted today (works after refresh too)
-    if last_post_date == today:
-        st.warning("🚫 You already generated a poster today. Come back tomorrow!")
-        st.stop()
-
-    if not st.session_state.is_premium:
-        if st.session_state.poster_count >= FREE_LIMIT:
-            st.warning("💎 Your 3 free posters are used. Please pay ₹299.")
-            st.stop()
-    else:
-        if total_posts >= 30:
-            st.warning("🚫 You have used all 30 posts. Please renew ₹299.")
-            st.stop()
-                                
-    if not shop or not offer:
-        st.warning("Please enter shop name and offer") 
-        st.stop()     
+            if not st.session_state.is_premium:
+                if st.session_state.poster_count >= FREE_LIMIT:
+                    st.warning("💎 Your 3 free posters are used. Please pay ₹299.")
+                    st.stop()
+            else:
+                if total_posts >= 30:
+                    st.warning("🚫 You have used all 30 posts. Please renew ₹299.")
+                    st.stop()
+                                    
+            if not shop or not offer:
+                st.warning("Please enter shop name and offer") 
+                st.stop()     
 
     bg_color = themes.get(shop_type, "#FFF8E7")
     shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
