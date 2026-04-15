@@ -15,6 +15,11 @@ from datetime import datetime, timedelta
 import gspread
 from google.oauth2.service_account import Credentials
 
+ get_connection():
+    return st.connection("gsheets", type=GSheetsConnection)
+
+conn = get_connection()
+
 def read_sheet_direct():
     gs = st.secrets["connections"]["gsheets"]
     creds_dict = {
@@ -44,10 +49,7 @@ def read_sheet_direct():
     return pd.DataFrame(records)
 
 
-def get_connection():
-    return st.connection("gsheets", type=GSheetsConnection)
-
-conn = get_connection()    
+   
 
 if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
