@@ -478,16 +478,30 @@ if st.button("🚀 Generate AI Poster"):
 
     # Save to sheet for ALL users after poster generated
     latest_sheet = read_sheet_direct()
-    latest_sheet["Phone"] = latest_sheet["Phone"].astype(str)
-    idx = latest_sheet[latest_sheet["Phone"] == str(customer_phone)].index
+    if not latest_sheet.empty and "Phone" in latest_sheet.columns:
+        latest_sheet["Phone"] = latest_sheet["Phone"].astype(str)
+        idx = latest_sheet[latest_sheet["Phone"] == str(customer_phone)].index
 
-    if len(idx) > 0:
-        latest_sheet.loc[idx[0], "PosterCount"] = total_posts + 1
-        latest_sheet.loc[idx[0], "LastPostDate"] = today
-        conn.update(data=latest_sheet)
+        if len(idx) > 0:
+            latest_sheet.loc[idx[0], "PosterCount"] = total_posts + 1
+            latest_sheet.loc[idx[0], "LastPostDate"] = today
+            conn.update(data=latest_sheet)
+        else:
+            # New user — add row
+            new_row = pd.DataFrame([{
+                "Phone": customer_phone,
+                "PremiumCode": "",
+                "Status": "Free",
+                "PosterCount": 1,
+                "Premium": False,
+                "ExpiryDate": "",
+                "LastPostDate": today
+            }])
+            latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
+            conn.update(data=latest_sheet)
     else:
-        # New free user — add to sheet with today's date
-        new_row = pd.DataFrame([{
+        # Sheet is empty — create first row
+        new_sheet = pd.DataFrame([{
             "Phone": customer_phone,
             "PremiumCode": "",
             "Status": "Free",
@@ -496,8 +510,7 @@ if st.button("🚀 Generate AI Poster"):
             "ExpiryDate": "",
             "LastPostDate": today
         }])
-        latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
-        conn.update(data=latest_sheet)
+        conn.update(data=new_sheet)
 
     # Save count to sheet only if user exists (paid users)
     
