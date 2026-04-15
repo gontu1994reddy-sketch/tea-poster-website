@@ -257,15 +257,18 @@ if st.button("🚀 Generate AI Poster"):
 
     # ✅ Always fetch fresh data on button click
     fresh_check = read_sheet_direct()
-    fresh_check["Phone"] = fresh_check["Phone"].astype(str)
-    fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
-
-    if not fresh_user.empty:
-        total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
-        last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
-    else:
+    if fresh_check.empty or "Phone" not in fresh_check.columns:
         total_posts = 0
         last_post_date = ""
+    else:
+        fresh_check["Phone"] = fresh_check["Phone"].astype(str)
+        fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
+        if not fresh_user.empty:
+            total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
+            last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
+        else:
+            total_posts = 0
+            last_post_date = ""
 
     # ✅ Block if already posted today (works after refresh too)
     if last_post_date == today:
