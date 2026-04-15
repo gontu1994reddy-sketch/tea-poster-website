@@ -318,6 +318,31 @@ st.markdown("""
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
 """, unsafe_allow_html=True)
 
+#-----------VALIDATION CHECK----------------
+
+all_filled = (
+    customer_phone.strip() != "" and
+    shop.strip() != "" and
+    offer.strip() != "" and
+    customer_address.strip() != ""
+)
+
+if not all_filled:
+    missing = []
+    if not customer_phone.strip(): missing.append("📞 Customer Phone")
+    if not shop.strip(): missing.append("🏪 Shop Name")
+    if not offer.strip(): missing.append("🔥 Offer")
+    if not customer_address.strip(): missing.append("📍 Customer Address")
+    
+    st.warning(f"Please fill: {', '.join(missing)}")
+    st.button("🚀 Generate AI Poster", disabled=True)  # show disabled button
+
+else:
+    if st.button("🚀 Generate AI Poster"):  # active button only when all filled
+        if st.session_state.poster_generated:
+            st.warning("🚫 You already generated a poster today. Come back tomorrow!")
+            st.stop()
+
 # ---------------- BUTTON ----------------
 if st.button("🚀 Generate AI Poster"):
 
