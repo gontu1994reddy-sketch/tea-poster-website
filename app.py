@@ -171,14 +171,24 @@ else:
 
 # ---------------- PAYMENT BUTTON ----------------
 if customer_phone:
-    st.markdown(f"""
-    <a href="{pay_link}" target="_blank">
-        <button style="background:#25D366;color:white;padding:14px 28px;
-        border:none;border-radius:10px;font-size:18px;">
-        💎 Pay ₹{plan_price} with GPay / PhonePe / Paytm
-        </button>
-    </a>
-    """, unsafe_allow_html=True)
+    if not st.session_state.is_premium:
+        remaining = FREE_LIMIT - st.session_state.poster_count
+        if remaining > 0:
+            # Free posters still available — show small link only
+            st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
+        else:
+            # Free limit reached — show big button
+            st.error("🚫 Free posters used up!")
+            st.markdown(f"""
+            <a href="{PAYMENT_LINK}" target="_blank">
+                <button style="background:#25D366;color:white;padding:14px 28px;
+                border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
+                💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
+                </button>
+            </a>
+            """, unsafe_allow_html=True)
+    else:
+        st.success("💎 Premium Active — Unlimited posters!")
 
 if st.button("✅ I Have Paid"):
     if not customer_phone.strip():
