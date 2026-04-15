@@ -15,6 +15,34 @@ from datetime import datetime, timedelta
 import gspread
 from google.oauth2.service_account import Credentials
 
+def read_sheet_direct():
+    gs = st.secrets["connections"]["gsheets"]
+    creds_dict = {
+        "type" : "service_account",
+        "project_id" : st.secrets["connections"]["gsheets"]["project_id"],
+        "private_key_id" : st.secrets["connections"]["gsheets"]["private_key_id"],
+        "private_key" : st.secrets["connections"]["gsheets"]["private_key"],
+        "client_email" : st.secrets["connections"]["gsheets"]["client_email"],
+        "client_id" : st.secrets["connections"]["gsheets"]["client_id"],
+        "auth_uri" : "https://accounts.google.com/o/oauth2/auth",
+        "token_uri" : "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/{gs['client_email']}",
+        }
+            
+    
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+        ]
+    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+    gc = gspread.authorize(creds)
+    spreadsheet_url = str(st.secrets["connections"]["gsheets"]["spreadsheet"])
+    sh = gc.open_by_url(spreadsheet_url)
+    worksheet = sh.sheet1
+    records = worksheet.get_all_records()  # always returns list of dicts
+    return pd.DataFrame(records)
+
 
 def get_connection():
     return st.connection("gsheets", type=GSheetsConnection)
@@ -49,33 +77,7 @@ if "last_phone" not in st.session_state:
 
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
-        def read_sheet_direct():
-            gs = st.secrets["connections"]["gsheets"]
-            creds_dict = {
-                "type" : "service_account",
-                "project_id" : st.secrets["connections"]["gsheets"]["project_id"],
-                "private_key_id" : st.secrets["connections"]["gsheets"]["private_key_id"],
-                "private_key" : st.secrets["connections"]["gsheets"]["private_key"],
-                "client_email" : st.secrets["connections"]["gsheets"]["client_email"],
-                "client_id" : st.secrets["connections"]["gsheets"]["client_id"],
-                "auth_uri" : "https://accounts.google.com/o/oauth2/auth",
-                "token_uri" : "https://oauth2.googleapis.com/token",
-                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-                "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/{gs['client_email']}",
-            }
-            
-    
-            scopes = [
-                "https://www.googleapis.com/auth/spreadsheets",
-                "https://www.googleapis.com/auth/drive"
-                ]
-            creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-            gc = gspread.authorize(creds)
-            spreadsheet_url = str(st.secrets["connections"]["gsheets"]["spreadsheet"])
-            sh = gc.open_by_url(spreadsheet_url)
-            worksheet = sh.sheet1
-            records = worksheet.get_all_records()  # always returns list of dicts
-            return pd.DataFrame(records)
+        
         
         sheet_data = read_sheet_direct()
         st.session_state.sheet_data = sheet_data
