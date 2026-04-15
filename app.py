@@ -50,7 +50,7 @@ if "last_phone" not in st.session_state:
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
         def read_sheet_direct():
-            g = st.secrets["connections"]["gsheets"]
+            gs = st.secrets["connections"]["gsheets"]
             creds_dict = {
                 "type" : "service_account",
                 "project_id" : st.secrets["connections"]["gsheets"]["project_id"],
@@ -61,7 +61,7 @@ if customer_phone.strip() and customer_phone != st.session_state.last_phone:
                 "auth_uri" : "https://accounts.google.com/o/oauth2/auth",
                 "token_uri" : "https://oauth2.googleapis.com/token",
                 "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-                "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/{g['client_email']}",
+                "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/{gs['client_email']}",
             }
             
     
