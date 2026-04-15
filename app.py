@@ -146,10 +146,10 @@ else:
 # ---------------- PAYMENT BUTTON ----------------
 if customer_phone:
     st.markdown(f"""
-    <a href="{PAYMENT_LINK}" target="_blank">
+    <a href="{pay_link}" target="_blank">
         <button style="background:#25D366;color:white;padding:14px 28px;
         border:none;border-radius:10px;font-size:18px;">
-        💎 Pay ₹{PLAN_PRICE} with GPay / PhonePe / Paytm
+        💎 Pay ₹{plan_price} with GPay / PhonePe / Paytm
         </button>
     </a>
     """, unsafe_allow_html=True)
