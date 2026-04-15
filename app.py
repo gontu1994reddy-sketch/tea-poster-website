@@ -251,37 +251,32 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- BUTTON ----------------
+if st.button("🚀 Generate AI Poster"):
 
+    # ✅ Always fetch fresh data on button click
+    fresh_check = read_sheet_direct()
+    fresh_check["Phone"] = fresh_check["Phone"].astype(str)
+    fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
 
-if st.button("🚀 Generate AI Poster") and not st.session_state.poster_generated:
+    if not fresh_user.empty:
+        total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
+        last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
+    else:
+        total_posts = 0
+        last_post_date = ""
 
-    st.write(st.session_state)
+    # ✅ Block if already posted today (works after refresh too)
+    if last_post_date == today:
+        st.warning("🚫 You already generated a poster today. Come back tomorrow!")
+        st.stop()
 
-    # ✅ expired or old free users must renew
     if not st.session_state.is_premium:
         if st.session_state.poster_count >= FREE_LIMIT:
-            st.warning("💎 Your free trial is over or premium expired. Please renew ₹299.")
+            st.warning("💎 Your 3 free posters are used. Please pay ₹299.")
             st.stop()
-
     else:
-        fresh_check = read_sheet_direct()
-        fresh_check["Phone"] = fresh_check["Phone"].astype(str)
-        fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
-
-        if not fresh_user.empty:
-            total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
-            last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
-
-            
-            if total_posts >= 30:
-                st.warning(" You have all 30 posts for this premium plan. please renew 299")
-
-            if last_post_date == today:
-                st.warning(" You already generated a poster today. Come back tomorrow!")
-                st.stop()  
-
-        else:
-            st.warning("⚠️ User not found in sheet. Please contact support.")
+        if total_posts >= 30:
+            st.warning("🚫 You have used all 30 posts. Please renew ₹299.")
             st.stop()
                                 
     if not shop or not offer:
@@ -473,19 +468,31 @@ if st.button("🚀 Generate AI Poster") and not st.session_state.poster_generate
     """, unsafe_allow_html=True)
 
     # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
-    st.session_state.poster_generated = True 
     st.session_state.poster_count += 1
+    st.session_state.poster_generated = True
 
-    if st.session_state.is_premium:
-        # Refresh sheet before saving
-        latest_sheet = read_sheet_direct()
-        latest_sheet["Phone"] = latest_sheet["Phone"].astype(str)
-        idx = latest_sheet[latest_sheet["Phone"] == str(customer_phone)].index
+    # Save to sheet for ALL users after poster generated
+    latest_sheet = read_sheet_direct()
+    latest_sheet["Phone"] = latest_sheet["Phone"].astype(str)
+    idx = latest_sheet[latest_sheet["Phone"] == str(customer_phone)].index
 
-        if len(idx) > 0:
-            latest_sheet.loc[idx[0], "PosterCount"] = total_posts + 1
-            latest_sheet.loc[idx[0], "LastPostDate"] = today
-            conn.update(data=latest_sheet)
+    if len(idx) > 0:
+        latest_sheet.loc[idx[0], "PosterCount"] = total_posts + 1
+        latest_sheet.loc[idx[0], "LastPostDate"] = today
+        conn.update(data=latest_sheet)
+    else:
+        # New free user — add to sheet with today's date
+        new_row = pd.DataFrame([{
+            "Phone": customer_phone,
+            "PremiumCode": "",
+            "Status": "Free",
+            "PosterCount": 1,
+            "Premium": False,
+            "ExpiryDate": "",
+            "LastPostDate": today
+        }])
+        latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
+        conn.update(data=latest_sheet)
 
     # Save count to sheet only if user exists (paid users)
     
