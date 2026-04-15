@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 import gspread
 from google.oauth2.service_account import Credentials
 import random
+import time
 
 def read_sheet_direct():
     g = st.secrets["connections"]["gsheets"]
@@ -38,12 +39,19 @@ def read_sheet_direct():
         ]
     creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
     gc = gspread.authorize(creds)
-    spreadsheet_url = str(st.secrets["connections"]["gsheets"]["spreadsheet"])
-    sh = gc.open_by_url(spreadsheet_url)
-    worksheet = sh.sheet1
-    records = worksheet.get_all_records()  # always returns list of dicts
-    return pd.DataFrame(records)
 
+    for attempt in range(3):
+        try:
+            
+            sh = gc.open_by_url(str(g["spreadsheet_url"]))
+            records = sh.sheet.get_all_records()  # always returns list of dicts
+            return pd.DataFrame(records)
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(2)
+                continue
+            else:
+                raise e    
 def write_sheet_direct(df):
     g = st.secrets["connections"]["gsheets"]
     creds_dict = {
@@ -64,12 +72,22 @@ def write_sheet_direct(df):
     ]
     creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
     gc = gspread.authorize(creds)
-    sh = gc.open_by_url(str(g["spreadsheet"]))
-    worksheet = sh.sheet1
-    worksheet.clear()
-    worksheet.update(
-        [df.columns.tolist()] + df.fillna("").astype(str).values.tolist()
-    )
+
+    for attempt in range(3):
+        try:
+            sh = gc.open_by_url(str(g["spreadsheet"]))
+            worksheet = sh.sheet1
+            worksheet.clear()
+            worksheet.update(
+            [df.columns.tolist()] + df.fillna("").astype(str).values.tolist()
+            )
+            return
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(2)
+                continue
+            else:
+                raise e        
 
    
 
