@@ -354,7 +354,7 @@ if st.button("🚀 Generate AI Poster"):
     try:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=prompt
+            contents=prompt,
             config={
                 "temperature": 1.0,
                 "max_output_tokens": 200,
