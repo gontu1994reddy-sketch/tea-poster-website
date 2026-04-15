@@ -260,6 +260,20 @@ themes = {
     "Real estate": "#D4E6F1"
 }
 
+shop_icons = {
+    "Grocery shop":     "https://cdn-icons-png.flaticon.com/512/3724/3724788.png",
+    "Tiffin center":    "https://cdn-icons-png.flaticon.com/512/857/857681.png",
+    "Tea shop & Snacks":"https://cdn-icons-png.flaticon.com/512/590/590836.png",
+    "Clothing store":   "https://cdn-icons-png.flaticon.com/512/892/892458.png",
+    "Mobile shop":      "https://cdn-icons-png.flaticon.com/512/545/545245.png",
+    "Salon":            "https://cdn-icons-png.flaticon.com/512/2553/2553627.png",
+    "Medical store":    "https://cdn-icons-png.flaticon.com/512/2382/2382461.png",
+    "Bakery":           "https://cdn-icons-png.flaticon.com/512/3082/3082053.png",
+    "Fruit shop":       "https://cdn-icons-png.flaticon.com/512/415/415733.png",
+    "Bike repair":      "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
+    "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
+    "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
+}
 
 
 
@@ -312,6 +326,7 @@ if st.button("🚀 Generate AI Poster"):
         st.stop()     
 
     bg_color = themes.get(shop_type, "#FFF8E7")
+    shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
 
     prompt = f"""
     Create a short catchy {language} ad caption for {shop}.
@@ -340,7 +355,7 @@ if st.button("🚀 Generate AI Poster"):
             result = f"{festival} special offer at {shop}! Get {offer} today. Visit now!"
 
     # ---------------- ICON URLS ----------------
-    tea_icon = "https://cdn-icons-png.flaticon.com/512/590/590836.png"
+    #tea_icon = "https://cdn-icons-png.flaticon.com/512/590/590836.png"
     fire_icon = "https://cdn-icons-png.flaticon.com/512/1828/1828884.png"
     phone_icon = "https://cdn-icons-png.flaticon.com/512/597/597177.png"
     location_icon = "https://cdn-icons-png.flaticon.com/512/684/684908.png"
@@ -380,7 +395,7 @@ if st.button("🚀 Generate AI Poster"):
     {logo_html}
 
     <div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-bottom:25px;">
-         <img src="{tea_icon}" style="width:70px;height:70px;">
+         <img src="{shop_icon}" style="width:70px;height:70px;">
          <h1 style="font-size:68px;color:#4E342E;margin:0;font-weight:800;">
            {shop}
          </h1>
@@ -412,7 +427,7 @@ if st.button("🚀 Generate AI Poster"):
          box-shadow:0 6px 20px rgba(0,0,0,0.15);
     ">
          <h2 style="font-size:58px;color:#D84315;margin:0;font-weight:bold;">
-         <img src="{tea_icon}" style="width:40px;height:40px;">
+         <img src="{shop_icon}" style="width:40px;height:40px;">
            {offer}
          </h2>
     </div>
