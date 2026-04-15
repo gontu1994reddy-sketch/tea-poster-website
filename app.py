@@ -15,20 +15,15 @@ from datetime import datetime, timedelta
 import gspread
 from google.oauth2.service_account import Credentials
 
-def get_connection():
-    return st.connection("gsheets", type=GSheetsConnection)
-
-conn = get_connection()
-
 def read_sheet_direct():
-    gs = st.secrets["connections"]["gsheets"]
+    g = st.secrets["connections"]["gsheets"]
     creds_dict = {
         "type" : "service_account",
-        "project_id" : st.secrets["connections"]["gsheets"]["project_id"],
-        "private_key_id" : st.secrets["connections"]["gsheets"]["private_key_id"],
-        "private_key" : st.secrets["connections"]["gsheets"]["private_key"],
-        "client_email" : st.secrets["connections"]["gsheets"]["client_email"],
-        "client_id" : st.secrets["connections"]["gsheets"]["client_id"],
+        "project_id" : g["project_id"],
+        "private_key_id" : g["private_key_id"],
+        "private_key" : g["private_key"].replace("\\n","\\n"),
+        "client_email" : g["client_email"],
+        "client_id" : g["client_id"],
         "auth_uri" : "https://accounts.google.com/o/oauth2/auth",
         "token_uri" : "https://oauth2.googleapis.com/token",
         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
@@ -48,6 +43,32 @@ def read_sheet_direct():
     records = worksheet.get_all_records()  # always returns list of dicts
     return pd.DataFrame(records)
 
+def write_sheet_direct(df):
+    g = st.secrets["connections"]["gsheets"]
+    creds_dict = {
+        "type": "service_account",
+        "project_id": g["project_id"],
+        "private_key_id": g["private_key_id"],
+        "private_key": g["private_key"].replace("\\n", "\n"),
+        "client_email": g["client_email"],
+        "client_id": g["client_id"],
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": f"https://www.googleapis.com/robot/v1/metadata/x509/{g['client_email']}"
+    }
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+    gc = gspread.authorize(creds)
+    sh = gc.open_by_url(str(g["spreadsheet"]))
+    worksheet = sh.sheet1
+    worksheet.clear()
+    worksheet.update(
+        [df.columns.tolist()] + df.fillna("").astype(str).values.tolist()
+    )
 
    
 
@@ -487,7 +508,7 @@ if st.button("🚀 Generate AI Poster"):
         if len(idx) > 0:
             latest_sheet.loc[idx[0], "PosterCount"] = total_posts + 1
             latest_sheet.loc[idx[0], "LastPostDate"] = today
-            conn.update(data=latest_sheet)
+            write_sheet_direct(latest_sheet)
         else:
             # New user — add row
             new_row = pd.DataFrame([{
@@ -500,7 +521,7 @@ if st.button("🚀 Generate AI Poster"):
                 "LastPostDate": today
             }])
             latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
-            conn.update(data=latest_sheet)
+            write_sheet_direct(latest_sheet)
     else:
         # Sheet is empty — create first row
         new_sheet = pd.DataFrame([{
@@ -512,7 +533,7 @@ if st.button("🚀 Generate AI Poster"):
             "ExpiryDate": "",
             "LastPostDate": today
         }])
-        conn.update(data=new_sheet)
+        write_sheet_direct(new_sheet)
 
     # Save count to sheet only if user exists (paid users)
     
