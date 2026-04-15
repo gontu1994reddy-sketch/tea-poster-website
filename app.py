@@ -329,24 +329,41 @@ if st.button("🚀 Generate AI Poster"):
     shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
 
     prompt = f"""
-    Create a short catchy {language} ad caption for {shop}.
-    Shop name: {shop}
+    You are a creative marketing expert for small businesses in India.
+    Create a UNIQUE and catchy advertisement caption in {language} for this specific shop.
+
+    Shop Name: {shop}
+    Shop Type: {shop_type}
     Offer: {offer}
-    Festival: {festival}
+    Festival/Occasion: {festival}
+    Location: {customer_address}
 
     Rules:
-    - one paragraph only
-    - minimum 20 words
-    - attractive marketing style
-    - use mix English and Telugu if Telugu selected
+    - MUST be different and creative every time
+    - Include the shop name {shop} naturally
+    - Include the exact offer: {offer}
+    - Mention {festival} if not "Special Offer"
+    - Minimum 25 words, maximum 40 words
+    - One paragraph only, no bullet points
+    - If Telugu: mix Telugu and English naturally
+    - Make it emotional and exciting for local customers
+    - Use random seed: {random.randint(1, 99999)}
+    Return ONLY the caption text, nothing else.
     """
 
     try:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt
+            config={
+                "temperature": 1.0,
+                "max_output_tokens": 200,
+            }
         )
         result = response.text.strip().split("\n")[0]
+
+        if not result or len(result) < 20:
+            raise ValueError("Too short")
 
     except Exception:
         if language == "Telugu":
@@ -373,96 +390,280 @@ if st.button("🚀 Generate AI Poster"):
         """
 
     # ---------------- POSTER HTML ----------------
-    poster_html = f"""
+        poster_html = f"""
     <html>
     <head>
     <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600;700&family=Noto+Sans+Telugu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+    * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+    body {{ background: #f0f0f0; display: flex; justify-content: center; padding: 30px; }}
+
+    .poster {{
+        width: 900px;
+        min-height: 1100px;
+        background: linear-gradient(160deg, {bg_color} 0%, #ffffff 60%, {bg_color}99 100%);
+        border-radius: 32px;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+        position: relative;
+        font-family: 'Poppins', 'Noto Sans Telugu', sans-serif;
+    }}
+
+    /* decorative top bar */
+    .top-bar {{
+        height: 12px;
+        background: linear-gradient(90deg, #FF6B35, #FFD93D, #6BCB77, #4D96FF);
+    }}
+
+    /* decorative circles */
+    .circle1 {{
+        position: absolute;
+        width: 300px; height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, {bg_color}, transparent);
+        top: -80px; right: -80px;
+        opacity: 0.6;
+    }}
+    .circle2 {{
+        position: absolute;
+        width: 200px; height: 200px;
+        border-radius: 50%;
+        background: radial-gradient(circle, {bg_color}, transparent);
+        bottom: 100px; left: -60px;
+        opacity: 0.5;
+    }}
+
+    .content {{
+        padding: 50px 60px;
+        position: relative;
+        z-index: 2;
+    }}
+
+    /* logo + shop name */
+    .header {{
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        margin-bottom: 36px;
+    }}
+    .logo-wrap {{
+        width: 120px; height: 120px;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 4px solid white;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        flex-shrink: 0;
+        background: white;
+        display: flex; align-items: center; justify-content: center;
+    }}
+    .logo-wrap img {{ width: 100%; height: 100%; object-fit: cover; }}
+    .shop-info {{ flex: 1; }}
+    .shop-name {{
+        font-family: 'Playfair Display', serif;
+        font-size: 58px;
+        font-weight: 900;
+        color: #1a1a2e;
+        line-height: 1.1;
+        text-shadow: 2px 2px 0px rgba(0,0,0,0.08);
+    }}
+    .shop-type-tag {{
+        display: inline-block;
+        background: #1a1a2e;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 6px 18px;
+        border-radius: 50px;
+        margin-top: 10px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }}
+
+    /* offer badge */
+    .offer-section {{
+        background: linear-gradient(135deg, #FF6B35, #FF3D71);
+        border-radius: 24px;
+        padding: 30px 40px;
+        margin: 30px 0;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        box-shadow: 0 12px 35px rgba(255,107,53,0.35);
+    }}
+    .offer-icon {{ font-size: 60px; flex-shrink: 0; }}
+    .offer-text {{
+        flex: 1;
+    }}
+    .offer-label {{
+        font-size: 16px;
+        font-weight: 700;
+        color: rgba(255,255,255,0.8);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }}
+    .offer-value {{
+        font-family: 'Playfair Display', serif;
+        font-size: 52px;
+        font-weight: 900;
+        color: white;
+        line-height: 1.1;
+        text-shadow: 2px 4px 12px rgba(0,0,0,0.2);
+    }}
+
+    /* festival badge */
+    .festival-badge {{
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: white;
+        border: 3px solid #FFD93D;
+        border-radius: 50px;
+        padding: 12px 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 4px 16px rgba(255,217,61,0.3);
+    }}
+    .festival-badge span {{
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a1a2e;
+    }}
+
+    /* AI caption */
+    .caption-box {{
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(10px);
+        border-left: 6px solid #4D96FF;
+        border-radius: 0 16px 16px 0;
+        padding: 24px 30px;
+        margin: 24px 0;
+    }}
+    .caption-text {{
+        font-size: 28px;
+        line-height: 1.7;
+        color: #2d2d2d;
+        font-family: 'Noto Sans Telugu', 'Poppins', sans-serif;
+        font-weight: 500;
+    }}
+
+    /* divider */
+    .divider {{
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #ddd, transparent);
+        margin: 30px 0;
+    }}
+
+    /* contact section */
+    .contact-section {{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 20px;
+    }}
+    .contact-info {{ flex: 1; }}
+    .contact-item {{
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 16px;
+    }}
+    .contact-icon {{
+        width: 44px; height: 44px;
+        background: #1a1a2e;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+    }}
+    .contact-icon img {{ width: 24px; height: 24px; filter: invert(1); }}
+    .contact-text {{
+        font-size: 26px;
+        font-weight: 600;
+        color: #1a1a2e;
+    }}
+
+    /* shop icon bottom right */
+    .shop-icon-big {{
+        width: 130px; height: 130px;
+        opacity: 0.15;
+        position: absolute;
+        bottom: 40px; right: 50px;
+    }}
+
+    /* bottom bar */
+    .bottom-bar {{
+        height: 10px;
+        background: linear-gradient(90deg, #4D96FF, #6BCB77, #FFD93D, #FF6B35);
+        margin-top: 40px;
+    }}
+    </style>
     </head>
     <body>
-    <div style="
-        width:80%;
-        min-height:900px;
-        margin:auto;
-        background:linear-gradient(135deg, #FFF8E7, {bg_color});
-        border-radius:25px;
-        padding:50px;
-        text-align:center;
-        font-family:'Noto Sans Telugu', sans-serif;
-        box-shadow:0 10px 25px rgba(0,0,0,0.2);
-    ">
+    <div class="poster">
+    <div class="top-bar"></div>
+    <div class="circle1"></div>
+    <div class="circle2"></div>
 
-    {logo_html}
+    <div class="content">
 
-    <div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-bottom:25px;">
-         <img src="{shop_icon}" style="width:70px;height:70px;">
-         <h1 style="font-size:68px;color:#4E342E;margin:0;font-weight:800;">
-           {shop}
-         </h1>
+        <!-- HEADER -->
+        <div class="header">
+        <div class="logo-wrap">
+            {"<img src='data:image/png;base64," + logo_base64 + "'>" if logo else f"<img src='{shop_icon}'>"}
+        </div>
+        <div class="shop-info">
+            <div class="shop-name">{shop}</div>
+            <div class="shop-type-tag">{shop_type}</div>
+        </div>
+        </div>
+
+        <!-- FESTIVAL -->
+        <div class="festival-badge">
+        <img src="{festival_icon}" style="width:32px;height:32px;">
+        <span>🎉 {festival} Special</span>
+        </div>
+
+        <!-- OFFER -->
+        <div class="offer-section">
+        <div class="offer-icon">🔥</div>
+        <div class="offer-text">
+            <div class="offer-label">Exclusive Offer</div>
+            <div class="offer-value">{offer}</div>
+        </div>
+        <img src="{shop_icon}" style="width:80px;height:80px;opacity:0.3;filter:brightness(10);">
+        </div>
+
+        <!-- AI CAPTION -->
+        <div class="caption-box">
+        <div class="caption-text">{result}</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- CONTACT -->
+        <div class="contact-section">
+        <div class="contact-info">
+            <div class="contact-item">
+            <div class="contact-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/597/597177.png">
+            </div>
+            <div class="contact-text">{customer_phone}</div>
+            </div>
+            <div class="contact-item">
+            <div class="contact-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png">
+            </div>
+            <div class="contact-text">{customer_address}</div>
+            </div>
+        </div>
+        </div>
+
     </div>
 
-    <div style="
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        gap:15px;
-        background:red;
-        color:white;
-        padding:15px 35px;
-        border-radius:50px;
-        width:fit-content;
-        margin:20px auto;
-        box-shadow:0 4px 10px rgba(255,0,0,0.3);
-    ">
-        <img src="{fire_icon}" style="width:40px;height:40px;">
-        <span style="font-size:40px;font-weight:bold;">SPECIAL OFFER</span>
-    </div>
-
-    <div style="
-         background:white;
-         border-radius:20px;
-         padding:25px;
-         margin:25px auto;
-         width:85%;
-         box-shadow:0 6px 20px rgba(0,0,0,0.15);
-    ">
-         <h2 style="font-size:58px;color:#D84315;margin:0;font-weight:bold;">
-         <img src="{shop_icon}" style="width:40px;height:40px;">
-           {offer}
-         </h2>
-    </div>
-
-    <div style="display:flex;justify-content:center;align-items:center;gap:10px;">
-        <img src="{festival_icon}" style="width:45px;height:45px;">
-        <h3 style="font-size:52px;color:#5D4037;">{festival}</h3>
-    </div>
-
-    <p style="font-size:38px;line-height:1.6;color:#3E2723;font-weight:500;">
-    {result}
-    </p>
-
-    <hr>
-    
-    
-
-    <div style="display:flex;justify-content:center;align-items:center;gap:10px">
-
-        <img src="{phone_icon}" style="width:35px;height:35px;">
-        <p style="font-size:45px;">{customer_phone}</p>
-    </div>    
-    <div style="display:flex;justify-content:center;align-items:center">
-        <img src="{location_icon}" style="width:35px;height:35px;">
-        <p style="font-size:45px;">{customer_address}</p>
-       
-    </div>
-     
-     
-
+    <img class="shop-icon-big" src="{shop_icon}">
+    <div class="bottom-bar"></div>
     </div>
     </body>
     </html>
     """
-
     # ---------------- HTML TO PNG ----------------
     async def render_html_to_png(html):
         async with async_playwright() as p:
