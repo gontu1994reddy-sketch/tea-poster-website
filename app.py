@@ -14,6 +14,7 @@ from io import BytesIO
 from datetime import datetime, timedelta
 import gspread
 from google.oauth2.service_account import Credentials
+import random
 
 def read_sheet_direct():
     g = st.secrets["connections"]["gsheets"]
