@@ -391,280 +391,234 @@ if st.button("🚀 Generate AI Poster"):
         """
 
     # ---------------- POSTER HTML ----------------
-        poster_html = f"""
+    poster_html = f"""
     <html>
     <head>
     <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600;700&family=Noto+Sans+Telugu:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600;700;800&family=Noto+Sans+Telugu:wght@400;700&display=swap" rel="stylesheet">
     <style>
-    * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-    body {{ background: #f0f0f0; display: flex; justify-content: center; padding: 30px; }}
-
+    * {{ margin:0; padding:0; box-sizing:border-box; }}
+    body {{ background:#e8e8e8; display:flex; justify-content:center; padding:40px; }}
     .poster {{
         width: 900px;
-        min-height: 1100px;
-        background: linear-gradient(160deg, {bg_color} 0%, #ffffff 60%, {bg_color}99 100%);
-        border-radius: 32px;
+        background: linear-gradient(150deg, #fffdf7 0%, {bg_color} 50%, #ffffff 100%);
+        border-radius: 36px;
         overflow: hidden;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+        box-shadow: 0 40px 100px rgba(0,0,0,0.3);
         position: relative;
-        font-family: 'Poppins', 'Noto Sans Telugu', sans-serif;
     }}
-
-    /* decorative top bar */
     .top-bar {{
-        height: 12px;
-        background: linear-gradient(90deg, #FF6B35, #FFD93D, #6BCB77, #4D96FF);
+        height: 16px;
+        background: linear-gradient(90deg, #FF6B35 0%, #FFD93D 30%, #6BCB77 60%, #4D96FF 100%);
     }}
+    .bg-circle1 {{
+        position:absolute; width:400px; height:400px; border-radius:50%;
+        background: radial-gradient(circle, {bg_color}88, transparent);
+        top:-100px; right:-100px; z-index:0;
+    }}
+    .bg-circle2 {{
+        position:absolute; width:250px; height:250px; border-radius:50%;
+        background: radial-gradient(circle, {bg_color}66, transparent);
+        bottom:150px; left:-80px; z-index:0;
+    }}
+    .content {{ padding: 55px 65px; position:relative; z-index:2; }}
 
-    /* decorative circles */
-    .circle1 {{
-        position: absolute;
-        width: 300px; height: 300px;
-        border-radius: 50%;
-        background: radial-gradient(circle, {bg_color}, transparent);
-        top: -80px; right: -80px;
-        opacity: 0.6;
-    }}
-    .circle2 {{
-        position: absolute;
-        width: 200px; height: 200px;
-        border-radius: 50%;
-        background: radial-gradient(circle, {bg_color}, transparent);
-        bottom: 100px; left: -60px;
-        opacity: 0.5;
-    }}
-
-    .content {{
-        padding: 50px 60px;
-        position: relative;
-        z-index: 2;
-    }}
-
-    /* logo + shop name */
     .header {{
-        display: flex;
-        align-items: center;
-        gap: 28px;
-        margin-bottom: 36px;
+        display:flex; align-items:center; gap:30px; margin-bottom:40px;
+        border-bottom: 2px solid {bg_color}; padding-bottom: 30px;
     }}
     .logo-wrap {{
-        width: 120px; height: 120px;
-        border-radius: 24px;
-        overflow: hidden;
-        border: 4px solid white;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-        flex-shrink: 0;
-        background: white;
-        display: flex; align-items: center; justify-content: center;
+        width:130px; height:130px; border-radius:22px;
+        overflow:hidden; border:5px solid white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        flex-shrink:0; background:white;
+        display:flex; align-items:center; justify-content:center;
     }}
-    .logo-wrap img {{ width: 100%; height: 100%; object-fit: cover; }}
-    .shop-info {{ flex: 1; }}
+    .logo-wrap img {{ width:100%; height:100%; object-fit:cover; }}
     .shop-name {{
-        font-family: 'Playfair Display', serif;
-        font-size: 58px;
-        font-weight: 900;
-        color: #1a1a2e;
-        line-height: 1.1;
-        text-shadow: 2px 2px 0px rgba(0,0,0,0.08);
+        font-family:'Playfair Display', serif;
+        font-size:72px; font-weight:900;
+        color:#1a1a2e; line-height:1.0;
+        letter-spacing:-1px;
     }}
-    .shop-type-tag {{
-        display: inline-block;
-        background: #1a1a2e;
-        color: white;
-        font-size: 16px;
-        font-weight: 600;
-        padding: 6px 18px;
-        border-radius: 50px;
-        margin-top: 10px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+    .shop-tag {{
+        display:inline-block;
+        background:#1a1a2e; color:white;
+        font-size:17px; font-weight:700;
+        padding:7px 20px; border-radius:50px;
+        margin-top:12px; letter-spacing:2px;
+        text-transform:uppercase;
     }}
 
-    /* offer badge */
-    .offer-section {{
-        background: linear-gradient(135deg, #FF6B35, #FF3D71);
-        border-radius: 24px;
-        padding: 30px 40px;
-        margin: 30px 0;
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        box-shadow: 0 12px 35px rgba(255,107,53,0.35);
+    .festival-row {{
+        display:flex; align-items:center; gap:14px;
+        margin-bottom:28px;
     }}
-    .offer-icon {{ font-size: 60px; flex-shrink: 0; }}
-    .offer-text {{
-        flex: 1;
+    .festival-pill {{
+        display:inline-flex; align-items:center; gap:10px;
+        background:white; border:3px solid #FFD93D;
+        border-radius:50px; padding:12px 30px;
+        box-shadow: 0 4px 20px rgba(255,217,61,0.25);
     }}
+    .festival-pill img {{ width:34px; height:34px; }}
+    .festival-pill span {{
+        font-size:24px; font-weight:800; color:#1a1a2e;
+    }}
+
+    .offer-box {{
+        background: linear-gradient(135deg, #FF6B35 0%, #e8203e 100%);
+        border-radius:28px; padding:35px 45px;
+        margin:28px 0;
+        box-shadow: 0 16px 45px rgba(255,60,60,0.4);
+        display:flex; align-items:center; gap:28px;
+        position:relative; overflow:hidden;
+    }}
+    .offer-box::before {{
+        content:'';
+        position:absolute; top:-30px; right:-30px;
+        width:180px; height:180px; border-radius:50%;
+        background:rgba(255,255,255,0.1);
+    }}
+    .offer-box::after {{
+        content:'';
+        position:absolute; bottom:-40px; right:80px;
+        width:120px; height:120px; border-radius:50%;
+        background:rgba(255,255,255,0.08);
+    }}
+    .offer-left {{ flex:1; }}
     .offer-label {{
-        font-size: 16px;
-        font-weight: 700;
-        color: rgba(255,255,255,0.8);
-        text-transform: uppercase;
-        letter-spacing: 2px;
+        font-size:15px; font-weight:800;
+        color:rgba(255,255,255,0.75);
+        letter-spacing:3px; text-transform:uppercase;
+        margin-bottom:8px;
     }}
     .offer-value {{
-        font-family: 'Playfair Display', serif;
-        font-size: 52px;
-        font-weight: 900;
-        color: white;
-        line-height: 1.1;
-        text-shadow: 2px 4px 12px rgba(0,0,0,0.2);
+        font-family:'Playfair Display', serif;
+        font-size:64px; font-weight:900;
+        color:white; line-height:1.0;
+        text-shadow: 3px 5px 15px rgba(0,0,0,0.25);
+    }}
+    .offer-shop-icon {{
+        width:90px; height:90px;
+        opacity:0.25; filter:brightness(10);
+        position:relative; z-index:1;
     }}
 
-    /* festival badge */
-    .festival-badge {{
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        background: white;
-        border: 3px solid #FFD93D;
-        border-radius: 50px;
-        padding: 12px 28px;
-        margin-bottom: 28px;
-        box-shadow: 0 4px 16px rgba(255,217,61,0.3);
-    }}
-    .festival-badge span {{
-        font-size: 22px;
-        font-weight: 700;
-        color: #1a1a2e;
-    }}
-
-    /* AI caption */
     .caption-box {{
-        background: rgba(255,255,255,0.7);
-        backdrop-filter: blur(10px);
-        border-left: 6px solid #4D96FF;
-        border-radius: 0 16px 16px 0;
-        padding: 24px 30px;
-        margin: 24px 0;
+        background:rgba(255,255,255,0.8);
+        backdrop-filter:blur(8px);
+        border-left:7px solid #4D96FF;
+        border-radius:0 20px 20px 0;
+        padding:28px 35px;
+        margin:28px 0;
+        box-shadow: 0 4px 20px rgba(77,150,255,0.1);
     }}
     .caption-text {{
-        font-size: 28px;
-        line-height: 1.7;
-        color: #2d2d2d;
-        font-family: 'Noto Sans Telugu', 'Poppins', sans-serif;
-        font-weight: 500;
+        font-size:30px; line-height:1.75;
+        color:#2d2d2d; font-weight:500;
+        font-family:'Noto Sans Telugu','Poppins',sans-serif;
     }}
 
-    /* divider */
     .divider {{
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #ddd, transparent);
-        margin: 30px 0;
+        height:2px;
+        background:linear-gradient(90deg, transparent, #ddd 30%, #ddd 70%, transparent);
+        margin:32px 0;
     }}
 
-    /* contact section */
-    .contact-section {{
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        gap: 20px;
+    .contact-row {{
+        display:flex; flex-direction:column; gap:16px;
     }}
-    .contact-info {{ flex: 1; }}
     .contact-item {{
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 16px;
+        display:flex; align-items:center; gap:18px;
     }}
-    .contact-icon {{
-        width: 44px; height: 44px;
-        background: #1a1a2e;
-        border-radius: 12px;
-        display: flex; align-items: center; justify-content: center;
+    .contact-icon-box {{
+        width:50px; height:50px; border-radius:14px;
+        background:#1a1a2e; display:flex;
+        align-items:center; justify-content:center;
+        flex-shrink:0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }}
-    .contact-icon img {{ width: 24px; height: 24px; filter: invert(1); }}
+    .contact-icon-box img {{ width:26px; height:26px; filter:invert(1); }}
     .contact-text {{
-        font-size: 26px;
-        font-weight: 600;
-        color: #1a1a2e;
+        font-size:28px; font-weight:700;
+        color:#1a1a2e; font-family:'Poppins',sans-serif;
     }}
 
-    /* shop icon bottom right */
-    .shop-icon-big {{
-        width: 130px; height: 130px;
-        opacity: 0.15;
-        position: absolute;
-        bottom: 40px; right: 50px;
+    .watermark {{
+        position:absolute; bottom:50px; right:55px;
+        width:140px; height:140px;
+        opacity:0.08; z-index:1;
     }}
-
-    /* bottom bar */
     .bottom-bar {{
-        height: 10px;
-        background: linear-gradient(90deg, #4D96FF, #6BCB77, #FFD93D, #FF6B35);
-        margin-top: 40px;
+        height:14px;
+        background:linear-gradient(90deg, #4D96FF 0%, #6BCB77 30%, #FFD93D 60%, #FF6B35 100%);
+        margin-top:45px;
     }}
     </style>
     </head>
     <body>
     <div class="poster">
     <div class="top-bar"></div>
-    <div class="circle1"></div>
-    <div class="circle2"></div>
+    <div class="bg-circle1"></div>
+    <div class="bg-circle2"></div>
 
     <div class="content">
 
-        <!-- HEADER -->
         <div class="header">
         <div class="logo-wrap">
-            {"<img src='data:image/png;base64," + logo_base64 + "'>" if logo else f"<img src='{shop_icon}'>"}
+            {"<img src='data:image/png;base64," + logo_base64 + "'>" if logo else f'<img src="{shop_icon}" style="width:80px;height:80px;object-fit:contain;">'}
         </div>
-        <div class="shop-info">
+        <div>
             <div class="shop-name">{shop}</div>
-            <div class="shop-type-tag">{shop_type}</div>
+            <div class="shop-tag">{shop_type}</div>
         </div>
         </div>
 
-        <!-- FESTIVAL -->
-        <div class="festival-badge">
-        <img src="{festival_icon}" style="width:32px;height:32px;">
-        <span>🎉 {festival} Special</span>
+        <div class="festival-row">
+        <div class="festival-pill">
+            <img src="{festival_icon}">
+            <span>{festival} Special</span>
+        </div>
         </div>
 
-        <!-- OFFER -->
-        <div class="offer-section">
-        <div class="offer-icon">🔥</div>
-        <div class="offer-text">
+        <div class="offer-box">
+        <div class="offer-left">
             <div class="offer-label">Exclusive Offer</div>
             <div class="offer-value">{offer}</div>
         </div>
-        <img src="{shop_icon}" style="width:80px;height:80px;opacity:0.3;filter:brightness(10);">
+        <img class="offer-shop-icon" src="{shop_icon}">
         </div>
 
-        <!-- AI CAPTION -->
         <div class="caption-box">
         <div class="caption-text">{result}</div>
         </div>
 
         <div class="divider"></div>
 
-        <!-- CONTACT -->
-        <div class="contact-section">
-        <div class="contact-info">
-            <div class="contact-item">
-            <div class="contact-icon">
-                <img src="https://cdn-icons-png.flaticon.com/512/597/597177.png">
+        <div class="contact-row">
+        <div class="contact-item">
+            <div class="contact-icon-box">
+            <img src="https://cdn-icons-png.flaticon.com/512/597/597177.png">
             </div>
             <div class="contact-text">{customer_phone}</div>
-            </div>
-            <div class="contact-item">
-            <div class="contact-icon">
-                <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png">
+        </div>
+        <div class="contact-item">
+            <div class="contact-icon-box">
+            <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png">
             </div>
             <div class="contact-text">{customer_address}</div>
-            </div>
         </div>
         </div>
 
     </div>
 
-    <img class="shop-icon-big" src="{shop_icon}">
+    <img class="watermark" src="{shop_icon}">
     <div class="bottom-bar"></div>
     </div>
     </body>
     </html>
     """
+
     # ---------------- HTML TO PNG ----------------
     async def render_html_to_png(html):
         async with async_playwright() as p:
