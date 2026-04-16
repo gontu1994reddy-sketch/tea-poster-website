@@ -275,6 +275,7 @@ if submitted:
                     if datetime.now() > datetime.strptime(expiry_col, "%Y-%m-%d"):
                         st.session_state.is_premium = False
                 except:
+                    pass
         else:
             total_posts = 0
             last_post_date = ""
