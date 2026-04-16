@@ -297,400 +297,387 @@ if submitted:
             st.warning("🚫 You have used all 30 posts. Please renew ₹299.")
             st.stop()
 
-        bg_color = themes.get(shop_type, "#FFF8E7")
-        shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
+    bg_color = themes.get(shop_type, "#FFF8E7")
+    shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
 
-        prompt = f"""
-        You are a creative marketing expert for small businesses in India.
-        Create a UNIQUE and catchy advertisement caption in {language} for this specific shop.
+    prompt = f"""
+    You are a creative marketing expert for small businesses in India.
+    Create a UNIQUE and catchy advertisement caption in {language} for this specific shop.
 
-        Shop Name: {shop}
-        Shop Type: {shop_type}
-        Offer: {offer}
-        Festival/Occasion: {festival}
-        Location: {customer_address}
+    Shop Name: {shop}
+    Shop Type: {shop_type}
+    Offer: {offer}
+    Festival/Occasion: {festival}
+    Location: {customer_address}
 
-        Rules:
-        - MUST be different and creative every time
-        - Include the shop name {shop} naturally
-        - Include the exact offer: {offer}
-        - Mention {festival} if not "Special Offer"
-        - Minimum 25 words, maximum 40 words
-        - One paragraph only, no bullet points
-        - If Telugu: mix Telugu and English naturally
-        - Make it emotional and exciting for local customers
-        - Use random seed: {random.randint(1, 99999)}
-        Return ONLY the caption text, nothing else.
-        """
+    Rules:
+    - MUST be different and creative every time
+    - Include the shop name {shop} naturally
+    - Include the exact offer: {offer}
+    - Mention {festival} if not "Special Offer"
+    - Minimum 25 words, maximum 40 words
+    - One paragraph only, no bullet points
+    - If Telugu: mix Telugu and English naturally
+    - Make it emotional and exciting for local customers
+    - Use random seed: {random.randint(1, 99999)}
+    Return ONLY the caption text, nothing else.
+    """
 
-        try:
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt,
-                config={
-                    "temperature": 1.0,
-                    "max_output_tokens": 200,
-                }
-            )
-            result = response.text.strip().split("\n")[0]
-
-            if not result or len(result) < 20:
-                raise ValueError("Too short")
-
-        except Exception:
-            if language == "Telugu":
-                result = f"{festival} స్పెషల్ ఆఫర్! {shop} వద్ద {offer} మాత్రమే. వెంటనే వచ్చి ఆఫర్ పొందండి!"
-            else:
-                result = f"{festival} special offer at {shop}! Get {offer} today. Visit now!"
-
-        # ---------------- ICON URLS ----------------
-        themes = {
-        "Grocery shop": "#DFF6DD",
-        "Tiffin center": "#FFF3CD",
-        "Tea shop & Snacks": "#FFF4E0",
-        "Clothing store": "#E8DAEF",
-        "Mobile shop": "#D6EAF8",
-        "Salon": "#FADBD8",
-        "Medical store": "#D5F5E3",
-        "Bakery": "#FCF3CF",
-        "Fruit shop": "#F9E79F",
-        "Bike repair": "#D6DBDF",
-        "Tuition center": "#EBDEF0",
-        "Real estate": "#D4E6F1"
-    }
-
-    shop_icons = {
-        "Grocery shop":     "https://cdn-icons-png.flaticon.com/512/3724/3724788.png",
-        "Tiffin center":    "https://cdn-icons-png.flaticon.com/512/857/857681.png",
-        "Tea shop & Snacks":"https://cdn-icons-png.flaticon.com/512/590/590836.png",
-        "Clothing store":   "https://cdn-icons-png.flaticon.com/512/892/892458.png",
-        "Mobile shop":      "https://cdn-icons-png.flaticon.com/512/545/545245.png",
-        "Salon":            "https://cdn-icons-png.flaticon.com/512/2553/2553627.png",
-        "Medical store":    "https://cdn-icons-png.flaticon.com/512/2382/2382461.png",
-        "Bakery":           "https://cdn-icons-png.flaticon.com/512/3082/3082053.png",
-        "Fruit shop":       "https://cdn-icons-png.flaticon.com/512/415/415733.png",
-        "Bike repair":      "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
-        "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
-        "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
-    }
-
-        # ---------------- LOGO ----------------
-        logo_html = ""
-        if logo:
-            logo_bytes = logo.read()
-            logo_base64 = base64.b64encode(logo_bytes).decode()
-            logo_html = f"""
-            <img src="data:image/png;base64,{logo_base64}"
-                style="width:150px;height:150px;border-radius:80px;
-                object-fit:cover;margin-bottom:20px;">
-            """
-
-        # ---------------- POSTER HTML ----------------
-        poster_html = f"""
-        <html>
-        <head>
-        <meta charset="UTF-8">
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600;700;800&family=Noto+Sans+Telugu:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-        * {{ margin:0; padding:0; box-sizing:border-box; }}
-        body {{ background:#e8e8e8; display:flex; justify-content:center; padding:40px; }}
-        .poster {{
-            width: 900px;
-            background: linear-gradient(150deg, #fffdf7 0%, {bg_color} 50%, #ffffff 100%);
-            border-radius: 36px;
-            overflow: hidden;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.3);
-            position: relative;
-        }}
-        .top-bar {{
-            height: 16px;
-            background: linear-gradient(90deg, #FF6B35 0%, #FFD93D 30%, #6BCB77 60%, #4D96FF 100%);
-        }}
-        .bg-circle1 {{
-            position:absolute; width:400px; height:400px; border-radius:50%;
-            background: radial-gradient(circle, {bg_color}88, transparent);
-            top:-100px; right:-100px; z-index:0;
-        }}
-        .bg-circle2 {{
-            position:absolute; width:250px; height:250px; border-radius:50%;
-            background: radial-gradient(circle, {bg_color}66, transparent);
-            bottom:150px; left:-80px; z-index:0;
-        }}
-        .content {{ padding: 55px 65px; position:relative; z-index:2; }}
-
-        .header {{
-            display:flex; align-items:center; gap:30px; margin-bottom:40px;
-            border-bottom: 2px solid {bg_color}; padding-bottom: 30px;
-        }}
-        .logo-wrap {{
-            width:130px; height:130px; border-radius:22px;
-            overflow:hidden; border:5px solid white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            flex-shrink:0; background:white;
-            display:flex; align-items:center; justify-content:center;
-        }}
-        .logo-wrap img {{ width:100%; height:100%; object-fit:cover; }}
-        .shop-name {{
-            font-family:'Playfair Display', serif;
-            font-size:72px; font-weight:900;
-            color:#1a1a2e; line-height:1.0;
-            letter-spacing:-1px;
-        }}
-        .shop-tag {{
-            display:inline-block;
-            background:#1a1a2e; color:white;
-            font-size:17px; font-weight:700;
-            padding:7px 20px; border-radius:50px;
-            margin-top:12px; letter-spacing:2px;
-            text-transform:uppercase;
-        }}
-
-        .festival-row {{
-            display:flex; align-items:center; gap:14px;
-            margin-bottom:28px;
-        }}
-        .festival-pill {{
-            display:inline-flex; align-items:center; gap:10px;
-            background:white; border:3px solid #FFD93D;
-            border-radius:50px; padding:12px 30px;
-            box-shadow: 0 4px 20px rgba(255,217,61,0.25);
-        }}
-        .festival-pill img {{ width:34px; height:34px; }}
-        .festival-pill span {{
-            font-size:24px; font-weight:800; color:#1a1a2e;
-        }}
-
-        .offer-box {{
-            background: linear-gradient(135deg, #FF6B35 0%, #e8203e 100%);
-            border-radius:28px; padding:35px 45px;
-            margin:28px 0;
-            box-shadow: 0 16px 45px rgba(255,60,60,0.4);
-            display:flex; align-items:center; gap:28px;
-            position:relative; overflow:hidden;
-        }}
-        .offer-box::before {{
-            content:'';
-            position:absolute; top:-30px; right:-30px;
-            width:180px; height:180px; border-radius:50%;
-            background:rgba(255,255,255,0.1);
-        }}
-        .offer-box::after {{
-            content:'';
-            position:absolute; bottom:-40px; right:80px;
-            width:120px; height:120px; border-radius:50%;
-            background:rgba(255,255,255,0.08);
-        }}
-        .offer-left {{ flex:1; }}
-        .offer-label {{
-            font-size:15px; font-weight:800;
-            color:rgba(255,255,255,0.75);
-            letter-spacing:3px; text-transform:uppercase;
-            margin-bottom:8px;
-        }}
-        .offer-value {{
-            font-family:'Playfair Display', serif;
-            font-size:64px; font-weight:900;
-            color:white; line-height:1.0;
-            text-shadow: 3px 5px 15px rgba(0,0,0,0.25);
-        }}
-        .offer-shop-icon {{
-            width:90px; height:90px;
-            opacity:0.25; filter:brightness(10);
-            position:relative; z-index:1;
-        }}
-
-        .caption-box {{
-            background:rgba(255,255,255,0.8);
-            backdrop-filter:blur(8px);
-            border-left:7px solid #4D96FF;
-            border-radius:0 20px 20px 0;
-            padding:28px 35px;
-            margin:28px 0;
-            box-shadow: 0 4px 20px rgba(77,150,255,0.1);
-        }}
-        .caption-text {{
-            font-size:30px; line-height:1.75;
-            color:#2d2d2d; font-weight:500;
-            font-family:'Noto Sans Telugu','Poppins',sans-serif;
-        }}
-
-        .divider {{
-            height:2px;
-            background:linear-gradient(90deg, transparent, #ddd 30%, #ddd 70%, transparent);
-            margin:32px 0;
-        }}
-
-        .contact-row {{
-            display:flex; flex-direction:column; gap:16px;
-        }}
-        .contact-item {{
-            display:flex; align-items:center; gap:18px;
-        }}
-        .contact-icon-box {{
-            width:50px; height:50px; border-radius:14px;
-            background:#1a1a2e; display:flex;
-            align-items:center; justify-content:center;
-            flex-shrink:0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }}
-        .contact-icon-box img {{ width:26px; height:26px; filter:invert(1); }}
-        .contact-text {{
-            font-size:28px; font-weight:700;
-            color:#1a1a2e; font-family:'Poppins',sans-serif;
-        }}
-
-        .watermark {{
-            position:absolute; bottom:50px; right:55px;
-            width:140px; height:140px;
-            opacity:0.08; z-index:1;
-        }}
-        .bottom-bar {{
-            height:14px;
-            background:linear-gradient(90deg, #4D96FF 0%, #6BCB77 30%, #FFD93D 60%, #FF6B35 100%);
-            margin-top:45px;
-        }}
-        </style>
-        </head>
-        <body>
-        <div class="poster">
-        <div class="top-bar"></div>
-        <div class="bg-circle1"></div>
-        <div class="bg-circle2"></div>
-
-        <div class="content">
-
-            <div class="header">
-            <div class="logo-wrap">
-                {"<img src='data:image/png;base64," + logo_base64 + "'>" if logo else f'<img src="{shop_icon}" style="width:80px;height:80px;object-fit:contain;">'}
-            </div>
-            <div>
-                <div class="shop-name">{shop}</div>
-                <div class="shop-tag">{shop_type}</div>
-            </div>
-            </div>
-
-            <div class="festival-row">
-            <div class="festival-pill">
-                <img src="{festival_icon}">
-                <span>{festival} Special</span>
-            </div>
-            </div>
-
-            <div class="offer-box">
-            <div class="offer-left">
-                <div class="offer-label">Exclusive Offer</div>
-                <div class="offer-value">{offer}</div>
-            </div>
-            <img class="offer-shop-icon" src="{shop_icon}">
-            </div>
-
-            <div class="caption-box">
-            <div class="caption-text">{result}</div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="contact-row">
-            <div class="contact-item">
-                <div class="contact-icon-box">
-                <img src="https://cdn-icons-png.flaticon.com/512/597/597177.png">
-                </div>
-                <div class="contact-text">{customer_phone}</div>
-            </div>
-            <div class="contact-item">
-                <div class="contact-icon-box">
-                <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png">
-                </div>
-                <div class="contact-text">{customer_address}</div>
-            </div>
-            </div>
-
-        </div>
-
-        <img class="watermark" src="{shop_icon}">
-        <div class="bottom-bar"></div>
-        </div>
-        </body>
-        </html>
-        """
-
-        # ---------------- HTML TO PNG ----------------
-        async def render_html_to_png(html):
-            async with async_playwright() as p:
-                browser = await p.chromium.launch()
-                page = await browser.new_page(viewport={"width": 900, "height": 1400})
-                await page.set_content(html)
-                await page.wait_for_timeout(2000)
-
-                file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-                await page.screenshot(path=file.name, full_page=True)
-
-                await browser.close()
-                return file.name
-
-        png_file = asyncio.run(render_html_to_png(poster_html))
-
-        st.image(png_file, use_container_width=True)
-
-        with open(png_file, "rb") as f:
-            st.download_button(
-                "Download Poster",
-                f.read(),
-                file_name="poster.png",
-                mime="image/png"
-            )
-
-        # ---------------- WHATSAPP SHARE ----------------
-        share_text = urllib.parse.quote(
-            f"{shop}\n{offer}\n{result}\nPhone: {customer_phone}"
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+            config={
+                "temperature": 1.0,
+                "max_output_tokens": 200,
+            }
         )
-        whatsapp_url = f"https://api.whatsapp.com/send?text={share_text}"
-        APP_URL = "https://tea-poster-website.streamlit.app"
-        st.markdown(f"""
-        <a href="{whatsapp_url} {APP_URL}" target="_blank">
-            <button style="
-                background:#25D366;
-                color:white;
-                padding:15px 30px;
-                border:none;
-                border-radius:10px;
-                font-size:20px;
-                cursor:pointer;">
-                Share to WhatsApp
-            </button>
-        </a>
-        """, unsafe_allow_html=True)
+        result = response.text.strip().split("\n")[0]
 
-        # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
-        st.session_state.poster_count += 1
-        st.session_state.poster_generated = True
+        if not result or len(result) < 20:
+            raise ValueError("Too short")
 
-        # Save to sheet for ALL users after poster generated
-        latest_sheet = read_sheet_direct()
-        if not latest_sheet.empty and "Phone" in latest_sheet.columns:
-            latest_sheet["Phone"] = latest_sheet["Phone"].astype(str)
-            idx = latest_sheet[latest_sheet["Phone"] == str(customer_phone)].index
-
-            if len(idx) > 0:
-                latest_sheet.loc[idx[0], "PosterCount"] = total_posts + 1
-                latest_sheet.loc[idx[0], "LastPostDate"] = today
-                write_sheet_direct(latest_sheet)
-            else:
-                # New user — add row
-                new_row = pd.DataFrame([{
-                    "Phone": customer_phone,
-                    "PremiumCode": "",
-                    "Status": "Free",
-                    "PosterCount": 1,
-                    "Premium": False,
-                    "ExpiryDate": "",
-                    "LastPostDate": today
-                }])
-                latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
-                write_sheet_direct(latest_sheet)
+    except Exception:
+        if language == "Telugu":
+            result = f"{festival} స్పెషల్ ఆఫర్! {shop} వద్ద {offer} మాత్రమే. వెంటనే వచ్చి ఆఫర్ పొందండి!"
         else:
-            # Sheet is empty — create first row
-            new_sheet = pd.DataFrame([{
+            result = f"{festival} special offer at {shop}! Get {offer} today. Visit now!"
+
+    # ---------------- ICON URLS ----------------
+    themes = {
+    "Grocery shop": "#DFF6DD",
+    "Tiffin center": "#FFF3CD",
+    "Tea shop & Snacks": "#FFF4E0",
+    "Clothing store": "#E8DAEF",
+    "Mobile shop": "#D6EAF8",
+    "Salon": "#FADBD8",
+    "Medical store": "#D5F5E3",
+    "Bakery": "#FCF3CF",
+    "Fruit shop": "#F9E79F",
+    "Bike repair": "#D6DBDF",
+    "Tuition center": "#EBDEF0",
+    "Real estate": "#D4E6F1"
+}
+
+shop_icons = {
+    "Grocery shop":     "https://cdn-icons-png.flaticon.com/512/3724/3724788.png",
+    "Tiffin center":    "https://cdn-icons-png.flaticon.com/512/857/857681.png",
+    "Tea shop & Snacks":"https://cdn-icons-png.flaticon.com/512/590/590836.png",
+    "Clothing store":   "https://cdn-icons-png.flaticon.com/512/892/892458.png",
+    "Mobile shop":      "https://cdn-icons-png.flaticon.com/512/545/545245.png",
+    "Salon":            "https://cdn-icons-png.flaticon.com/512/2553/2553627.png",
+    "Medical store":    "https://cdn-icons-png.flaticon.com/512/2382/2382461.png",
+    "Bakery":           "https://cdn-icons-png.flaticon.com/512/3082/3082053.png",
+    "Fruit shop":       "https://cdn-icons-png.flaticon.com/512/415/415733.png",
+    "Bike repair":      "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
+    "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
+    "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
+}
+
+    # ---------------- LOGO ----------------
+    logo_html = ""
+    if logo:
+        logo_bytes = logo.read()
+        logo_base64 = base64.b64encode(logo_bytes).decode()
+        logo_html = f"""
+        <img src="data:image/png;base64,{logo_base64}"
+            style="width:150px;height:150px;border-radius:80px;
+            object-fit:cover;margin-bottom:20px;">
+        """
+
+    # ---------------- POSTER HTML ----------------
+    poster_html = f"""
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600;700;800&family=Noto+Sans+Telugu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+    * {{ margin:0; padding:0; box-sizing:border-box; }}
+    body {{ background:#e8e8e8; display:flex; justify-content:center; padding:40px; }}
+    .poster {{
+        width: 900px;
+        background: linear-gradient(150deg, #fffdf7 0%, {bg_color} 50%, #ffffff 100%);
+        border-radius: 36px;
+        overflow: hidden;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+        position: relative;
+    }}
+    .top-bar {{
+        height: 16px;
+        background: linear-gradient(90deg, #FF6B35 0%, #FFD93D 30%, #6BCB77 60%, #4D96FF 100%);
+    }}
+    .bg-circle1 {{
+        position:absolute; width:400px; height:400px; border-radius:50%;
+        background: radial-gradient(circle, {bg_color}88, transparent);
+        top:-100px; right:-100px; z-index:0;
+    }}
+    .bg-circle2 {{
+        position:absolute; width:250px; height:250px; border-radius:50%;
+        background: radial-gradient(circle, {bg_color}66, transparent);
+        bottom:150px; left:-80px; z-index:0;
+    }}
+    .content {{ padding: 55px 65px; position:relative; z-index:2; }}
+
+    .header {{
+        display:flex; align-items:center; gap:30px; margin-bottom:40px;
+        border-bottom: 2px solid {bg_color}; padding-bottom: 30px;
+    }}
+    .logo-wrap {{
+        width:130px; height:130px; border-radius:22px;
+        overflow:hidden; border:5px solid white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        flex-shrink:0; background:white;
+        display:flex; align-items:center; justify-content:center;
+    }}
+    .logo-wrap img {{ width:100%; height:100%; object-fit:cover; }}
+    .shop-name {{
+        font-family:'Playfair Display', serif;
+        font-size:72px; font-weight:900;
+        color:#1a1a2e; line-height:1.0;
+        letter-spacing:-1px;
+    }}
+    .shop-tag {{
+        display:inline-block;
+        background:#1a1a2e; color:white;
+        font-size:17px; font-weight:700;
+        padding:7px 20px; border-radius:50px;
+        margin-top:12px; letter-spacing:2px;
+        text-transform:uppercase;
+    }}
+
+    .festival-row {{
+        display:flex; align-items:center; gap:14px;
+        margin-bottom:28px;
+    }}
+    .festival-pill {{
+        display:inline-flex; align-items:center; gap:10px;
+        background:white; border:3px solid #FFD93D;
+        border-radius:50px; padding:12px 30px;
+        box-shadow: 0 4px 20px rgba(255,217,61,0.25);
+    }}
+    .festival-pill img {{ width:34px; height:34px; }}
+    .festival-pill span {{
+        font-size:24px; font-weight:800; color:#1a1a2e;
+    }}
+
+    .offer-box {{
+        background: linear-gradient(135deg, #FF6B35 0%, #e8203e 100%);
+        border-radius:28px; padding:35px 45px;
+        margin:28px 0;
+        box-shadow: 0 16px 45px rgba(255,60,60,0.4);
+        display:flex; align-items:center; gap:28px;
+        position:relative; overflow:hidden;
+    }}
+    .offer-box::before {{
+        content:'';
+        position:absolute; top:-30px; right:-30px;
+        width:180px; height:180px; border-radius:50%;
+        background:rgba(255,255,255,0.1);
+    }}
+    .offer-box::after {{
+        content:'';
+        position:absolute; bottom:-40px; right:80px;
+        width:120px; height:120px; border-radius:50%;
+        background:rgba(255,255,255,0.08);
+    }}
+    .offer-left {{ flex:1; }}
+    .offer-label {{
+        font-size:15px; font-weight:800;
+        color:rgba(255,255,255,0.75);
+        letter-spacing:3px; text-transform:uppercase;
+        margin-bottom:8px;
+    }}
+    .offer-value {{
+        font-family:'Playfair Display', serif;
+        font-size:64px; font-weight:900;
+        color:white; line-height:1.0;
+        text-shadow: 3px 5px 15px rgba(0,0,0,0.25);
+    }}
+    .offer-shop-icon {{
+        width:90px; height:90px;
+        opacity:0.25; filter:brightness(10);
+        position:relative; z-index:1;
+    }}
+
+    .caption-box {{
+        background:rgba(255,255,255,0.8);
+        backdrop-filter:blur(8px);
+        border-left:7px solid #4D96FF;
+        border-radius:0 20px 20px 0;
+        padding:28px 35px;
+        margin:28px 0;
+        box-shadow: 0 4px 20px rgba(77,150,255,0.1);
+    }}
+    .caption-text {{
+        font-size:30px; line-height:1.75;
+        color:#2d2d2d; font-weight:500;
+        font-family:'Noto Sans Telugu','Poppins',sans-serif;
+    }}
+
+    .divider {{
+        height:2px;
+        background:linear-gradient(90deg, transparent, #ddd 30%, #ddd 70%, transparent);
+        margin:32px 0;
+    }}
+
+    .contact-row {{
+        display:flex; flex-direction:column; gap:16px;
+    }}
+    .contact-item {{
+        display:flex; align-items:center; gap:18px;
+    }}
+    .contact-icon-box {{
+        width:50px; height:50px; border-radius:14px;
+        background:#1a1a2e; display:flex;
+        align-items:center; justify-content:center;
+        flex-shrink:0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }}
+    .contact-icon-box img {{ width:26px; height:26px; filter:invert(1); }}
+    .contact-text {{
+        font-size:28px; font-weight:700;
+        color:#1a1a2e; font-family:'Poppins',sans-serif;
+    }}
+
+    .watermark {{
+        position:absolute; bottom:50px; right:55px;
+        width:140px; height:140px;
+        opacity:0.08; z-index:1;
+    }}
+    .bottom-bar {{
+        height:14px;
+        background:linear-gradient(90deg, #4D96FF 0%, #6BCB77 30%, #FFD93D 60%, #FF6B35 100%);
+        margin-top:45px;
+    }}
+    </style>
+    </head>
+    <body>
+    <div class="poster">
+    <div class="top-bar"></div>
+    <div class="bg-circle1"></div>
+    <div class="bg-circle2"></div>
+
+    <div class="content">
+
+        <div class="header">
+        <div class="logo-wrap">
+            {"<img src='data:image/png;base64," + logo_base64 + "'>" if logo else f'<img src="{shop_icon}" style="width:80px;height:80px;object-fit:contain;">'}
+        </div>
+        <div>
+            <div class="shop-name">{shop}</div>
+            <div class="shop-tag">{shop_type}</div>
+        </div>
+        </div>
+
+        <div class="festival-row">
+        <div class="festival-pill">
+            <img src="{festival_icon}">
+            <span>{festival} Special</span>
+        </div>
+        </div>
+
+        <div class="offer-box">
+        <div class="offer-left">
+            <div class="offer-label">Exclusive Offer</div>
+            <div class="offer-value">{offer}</div>
+        </div>
+        <img class="offer-shop-icon" src="{shop_icon}">
+        </div>
+
+        <div class="caption-box">
+        <div class="caption-text">{result}</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="contact-row">
+        <div class="contact-item">
+            <div class="contact-icon-box">
+            <img src="https://cdn-icons-png.flaticon.com/512/597/597177.png">
+            </div>
+            <div class="contact-text">{customer_phone}</div>
+        </div>
+        <div class="contact-item">
+            <div class="contact-icon-box">
+            <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png">
+            </div>
+            <div class="contact-text">{customer_address}</div>
+        </div>
+        </div>
+
+    </div>
+
+    <img class="watermark" src="{shop_icon}">
+    <div class="bottom-bar"></div>
+    </div>
+    </body>
+    </html>
+    """
+
+    # ---------------- HTML TO PNG ----------------
+    async def render_html_to_png(html):
+        async with async_playwright() as p:
+            browser = await p.chromium.launch()
+            page = await browser.new_page(viewport={"width": 900, "height": 1400})
+            await page.set_content(html)
+            await page.wait_for_timeout(2000)
+
+            file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+            await page.screenshot(path=file.name, full_page=True)
+
+            await browser.close()
+            return file.name
+
+    png_file = asyncio.run(render_html_to_png(poster_html))
+
+    st.image(png_file, use_container_width=True)
+
+    with open(png_file, "rb") as f:
+        st.download_button(
+            "Download Poster",
+            f.read(),
+            file_name="poster.png",
+            mime="image/png"
+        )
+
+    # ---------------- WHATSAPP SHARE ----------------
+    share_text = urllib.parse.quote(
+        f"{shop}\n{offer}\n{result}\nPhone: {customer_phone}"
+    )
+    whatsapp_url = f"https://api.whatsapp.com/send?text={share_text}"
+    APP_URL = "https://tea-poster-website.streamlit.app"
+    st.markdown(f"""
+    <a href="{whatsapp_url} {APP_URL}" target="_blank">
+        <button style="
+            background:#25D366;
+            color:white;
+            padding:15px 30px;
+            border:none;
+            border-radius:10px;
+            font-size:20px;
+            cursor:pointer;">
+            Share to WhatsApp
+        </button>
+    </a>
+    """, unsafe_allow_html=True)
+
+    # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
+    st.session_state.poster_count += 1
+    st.session_state.poster_generated = True
+
+    # Save to sheet for ALL users after poster generated
+    latest_sheet = read_sheet_direct()
+    if not latest_sheet.empty and "Phone" in latest_sheet.columns:
+        latest_sheet["Phone"] = latest_sheet["Phone"].astype(str)
+        idx = latest_sheet[latest_sheet["Phone"] == str(customer_phone)].index
+
+        if len(idx) > 0:
+            latest_sheet.loc[idx[0], "PosterCount"] = total_posts + 1
+            latest_sheet.loc[idx[0], "LastPostDate"] = today
+            write_sheet_direct(latest_sheet)
+        else:
+            # New user — add row
+            new_row = pd.DataFrame([{
                 "Phone": customer_phone,
                 "PremiumCode": "",
                 "Status": "Free",
@@ -699,8 +686,21 @@ if submitted:
                 "ExpiryDate": "",
                 "LastPostDate": today
             }])
-            write_sheet_direct(new_sheet)
+            latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
+            write_sheet_direct(latest_sheet)
+    else:
+        # Sheet is empty — create first row
+        new_sheet = pd.DataFrame([{
+            "Phone": customer_phone,
+            "PremiumCode": "",
+            "Status": "Free",
+            "PosterCount": 1,
+            "Premium": False,
+            "ExpiryDate": "",
+            "LastPostDate": today
+        }])
+        write_sheet_direct(new_sheet)
 
-        # Save count to sheet only if user exists (paid users)
-        
-        st.success("✅ Poster generated successfully!")
+    # Save count to sheet only if user exists (paid users)
+    
+    st.success("✅ Poster generated successfully!")
