@@ -336,10 +336,11 @@ with st.form("poster_form"):
         if not customer_address.strip(): missing.append("📍 Customer Address")
         
         st.warning(f"Please fill: {', '.join(missing)}")
-        st.button("🚀 Generate AI Poster", disabled=True)  # show disabled button
+        
+        submitted=st.form_submit_button("🚀 Generate AI Poster", disabled=True)  # show disabled button
 
     else:
-        if st.button("🚀 Generate AI Poster"): 
+        if submitted: 
             fresh_check = read_sheet_direct()
             if fresh_check.empty or "Phone" not in fresh_check.columns:
                 total_posts = 0
