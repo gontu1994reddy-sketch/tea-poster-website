@@ -684,7 +684,7 @@ if submitted:
             latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
             write_sheet_direct(latest_sheet)
     else:
-        new_sheet = pd.DataFrame([{
+        latest_sheet = pd.DataFrame([{
             "Phone": str(customer_phone),
             "PremiumCode": "",
             "Status": "Free",
@@ -693,7 +693,13 @@ if submitted:
             "ExpiryDate": "",
             "LastPostDate": str(today)
         }])
-        write_sheet_direct(new_sheet)    
+    try:    
+        write_sheet_direct(new_sheet)
+        st.success("poster generated and saved!") 
+    except Exception as e:
+        st.error(f"Save error: {e}")
+        import traceback
+        st.code(trace.format_exc())       
                 
     
     # Save count to sheet only if user exists (paid users)
