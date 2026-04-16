@@ -357,22 +357,22 @@ if submitted:
     "Bike repair": "#D6DBDF",
     "Tuition center": "#EBDEF0",
     "Real estate": "#D4E6F1"
-}
+    }
 
-shop_icons = {
-    "Grocery shop":     "https://cdn-icons-png.flaticon.com/512/3724/3724788.png",
-    "Tiffin center":    "https://cdn-icons-png.flaticon.com/512/857/857681.png",
-    "Tea shop & Snacks":"https://cdn-icons-png.flaticon.com/512/590/590836.png",
-    "Clothing store":   "https://cdn-icons-png.flaticon.com/512/892/892458.png",
-    "Mobile shop":      "https://cdn-icons-png.flaticon.com/512/545/545245.png",
-    "Salon":            "https://cdn-icons-png.flaticon.com/512/2553/2553627.png",
-    "Medical store":    "https://cdn-icons-png.flaticon.com/512/2382/2382461.png",
-    "Bakery":           "https://cdn-icons-png.flaticon.com/512/3082/3082053.png",
-    "Fruit shop":       "https://cdn-icons-png.flaticon.com/512/415/415733.png",
-    "Bike repair":      "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
-    "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
-    "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
-}
+    shop_icons = {
+        "Grocery shop":     "https://cdn-icons-png.flaticon.com/512/3724/3724788.png",
+        "Tiffin center":    "https://cdn-icons-png.flaticon.com/512/857/857681.png",
+        "Tea shop & Snacks":"https://cdn-icons-png.flaticon.com/512/590/590836.png",
+        "Clothing store":   "https://cdn-icons-png.flaticon.com/512/892/892458.png",
+        "Mobile shop":      "https://cdn-icons-png.flaticon.com/512/545/545245.png",
+        "Salon":            "https://cdn-icons-png.flaticon.com/512/2553/2553627.png",
+        "Medical store":    "https://cdn-icons-png.flaticon.com/512/2382/2382461.png",
+        "Bakery":           "https://cdn-icons-png.flaticon.com/512/3082/3082053.png",
+        "Fruit shop":       "https://cdn-icons-png.flaticon.com/512/415/415733.png",
+        "Bike repair":      "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
+        "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
+        "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
+    }
 
     # ---------------- LOGO ----------------
     logo_html = ""
