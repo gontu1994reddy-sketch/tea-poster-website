@@ -258,6 +258,7 @@ if submitted:
         if not fresh_user.empty:
             total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
             last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
+            expiry_col = str(fresh_user.iloc[0]["ExpiryDate"]) if "ExpiryDate" in user_row.columns else ""
             st.session_state.is_premium = str(fresh_user.iloc[0]["Premium"]).upper() == "TRUE"
             st.session_state.poster_count = total_posts
             if st.session_state.is_premium and expiry_col:
