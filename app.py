@@ -685,15 +685,15 @@ if submitted:
             write_sheet_direct(latest_sheet)
     else:
         new_sheet = pd.DataFrame([{
-                "Phone": str(customer_phone),
-                "PremiumCode": "",
-                "Status": "Free",
-                "PosterCount": 1,
-                "Premium": False,
-                "ExpiryDate": "",
-                "LastPostDate": str(today)
-            }])
-            write_sheet_direct(new_sheet)    
+            "Phone": str(customer_phone),
+            "PremiumCode": "",
+            "Status": "Free",
+            "PosterCount": 1,
+            "Premium": False,
+            "ExpiryDate": "",
+            "LastPostDate": str(today)
+        }])
+        write_sheet_direct(new_sheet)    
                 
     
     # Save count to sheet only if user exists (paid users)
