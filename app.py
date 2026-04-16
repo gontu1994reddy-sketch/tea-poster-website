@@ -53,14 +53,32 @@ def read_sheet_direct():
             else:
                 raise e    
 def write_sheet_direct(df):
+    g = st.secrets["connections"]["gsheets"]
+    creds_dict = {
+        "type": "service_account",
+        "project_id": g["project_id"],
+        "private_key_id": g["private_key_id"],
+        "private_key": g["private_key"].replace("\\n", "\n"),
+        "client_email": g["client_email"],
+        "client_id": g["client_id"],
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": f"https://www.googleapis.com/robot/v1/metadata/x509/{g['client_email']}"
+    }
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+    gc = gspread.authorize(creds)
+    sh = gc.open_by_url(str(g["spreadsheet"]))
+    worksheet = sh.sheet1
+    data = [df.columns.tolist()] + df.fillna("").astype(str).values.tolist()
+    worksheet.clear()
+    worksheet.update(data)
    
-    try:
-         # show last 3 rows
-        write_sheet_direct(latest_sheet)
-        st.write("✅ Save successful!")
-    except Exception as e:
-        st.error(f"Save failed: {e}")
-        
+    
     
 
 if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
