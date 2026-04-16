@@ -300,9 +300,7 @@ if submitted:
         st.warning("🚫 Already generated today. Come back tomorrow!")
         st.stop()        
 
-    bg_color = themes.get(shop_type, "#FFF8E7")
-    shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
-
+    
     prompt = f"""
     You are a creative marketing expert for small businesses in India.
     Create a UNIQUE and catchy advertisement caption in {language} for this specific shop.
@@ -376,6 +374,9 @@ if submitted:
         "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
         "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
     }
+    
+    bg_color = themes.get(shop_type, "#FFF8E7")
+    shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
 
     # ---------------- LOGO ----------------
     logo_html = ""
