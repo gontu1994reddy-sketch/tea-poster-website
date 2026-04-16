@@ -229,15 +229,7 @@ with st.form("poster_form", clear_on_submit=False):
     language = st.selectbox("Language", ["English", "Telugu"])
     festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
     submitted = st.form_submit_button("🚀 Generate AI Poster")
-    try:
-        st.write("Attempting to save...")
-        st.write("Data to save:", latest_sheet.tail(3))  # show last 3 rows
-        write_sheet_direct(latest_sheet)
-        st.write("✅ Save successful!")
-    except Exception as e:
-        st.error(f"Save failed: {e}")
-        import traceback
-        st.code(traceback.format_exc())
+    
 
     
 # ---- GENERATE ----
