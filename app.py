@@ -192,18 +192,18 @@ else:
     if len(idx) > 0:         
         latest.loc[idx[0], "Premium"] = True
         latest.loc[idx[0], "Status"] = "Active"
-        latest.loc[idx[0], "ExpiryDate"] = expiry_date
-        latest.loc[idx[0], "PremiumCode"] = premium_code
-        latest.loc[idx[0], "PosterCount"] = 0
+        latest.loc[idx[0], "ExpiryDate"] = str(expiry_date)
+        latest.loc[idx[0], "PremiumCode"] = str(premium_code)
+        latest.loc[idx[0], "PosterCount"] = "0"
         latest.loc[idx[0], "LastPostDate"] = ""
     else:
         new_row = pd.DataFrame([{
-            "Phone": phone,
-            "PremiumCode": premium_code,
+            "Phone": str(phone),
+            "PremiumCode": str(premium_code),
             "Status": "Active",
-            "PosterCount": 0,
+            "PosterCount": "0",
             "Premium": True,
-            "ExpiryDate": expiry_date,
+            "ExpiryDate": str(expiry_date),
             "LastPostDate": ""
         }])
         latest = pd.concat([latest, new_row], ignore_index=True)
