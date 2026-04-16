@@ -166,53 +166,53 @@ elif remaining > 0:
     st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
 else:
     st.error("🚫 Free posters used up!")
-    st.markdown(f"""
-    <a href="{PAYMENT_LINK}" target="_blank">
-        <button style="background:#25D366;color:white;padding:14px 28px;
-        border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
-        💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
-        </button>
-    </a>
-    """, unsafe_allow_html=True)
+   # st.markdown(f"""
+    #<a href="{PAYMENT_LINK}" target="_blank">
+    #   <button style="background:#25D366;color:white;padding:14px 28px;
+    #    border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
+    #    💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
+    #    </button>
+    #</a>
+    #""", unsafe_allow_html=True)
 
 # ---- PAYMENT ----
-if st.button("✅ I Have Paid"):
-    phone = st.session_state.get("form_phone", "")
-    if not phone:
-        st.error("Please fill the form and submit first.")
+#if st.button("✅ I Have Paid"):
+phone = st.session_state.get("form_phone", "")
+if not phone:
+    st.error("Please fill the form and submit first.")
+else:
+    expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
+    premium_code = f"RAMA{phone[-4:]}"
+    latest = read_sheet_direct()
+    if "Phone" in latest.columns:
+        latest["Phone"] = latest["Phone"].astype(str)  
+        idx = latest[latest["Phone"] == str(phone)].index
     else:
-        expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-        premium_code = f"RAMA{phone[-4:]}"
-        latest = read_sheet_direct()
-        if "Phone" in latest.columns:
-            latest["Phone"] = latest["Phone"].astype(str)  
-            idx = latest[latest["Phone"] == str(phone)].index
-        else:
-            idx = []
-        if len(idx) > 0:         
-            latest.loc[idx[0], "Premium"] = True
-            latest.loc[idx[0], "Status"] = "Active"
-            latest.loc[idx[0], "ExpiryDate"] = expiry_date
-            latest.loc[idx[0], "PremiumCode"] = premium_code
-            latest.loc[idx[0], "PosterCount"] = 0
-            latest.loc[idx[0], "LastPostDate"] = ""
-        else:
-            new_row = pd.DataFrame([{
-                "Phone": phone,
-                "PremiumCode": premium_code,
-                "Status": "Active",
-                "PosterCount": 0,
-                "Premium": True,
-                "ExpiryDate": expiry_date,
-                "LastPostDate": ""
-            }])
-            latest = pd.concat([latest, new_row], ignore_index=True)
-        write_sheet_direct(latest)
-        st.session_state.is_premium = True
-        st.session_state.poster_count = 0
-        st.session_state.last_phone = ""  # force refresh
-        st.success(f"🎉 Premium activated till {expiry_date}!")
-        st.rerun()
+        idx = []
+    if len(idx) > 0:         
+        latest.loc[idx[0], "Premium"] = True
+        latest.loc[idx[0], "Status"] = "Active"
+        latest.loc[idx[0], "ExpiryDate"] = expiry_date
+        latest.loc[idx[0], "PremiumCode"] = premium_code
+        latest.loc[idx[0], "PosterCount"] = 0
+        latest.loc[idx[0], "LastPostDate"] = ""
+    else:
+        new_row = pd.DataFrame([{
+            "Phone": phone,
+            "PremiumCode": premium_code,
+            "Status": "Active",
+            "PosterCount": 0,
+            "Premium": True,
+            "ExpiryDate": expiry_date,
+            "LastPostDate": ""
+        }])
+        latest = pd.concat([latest, new_row], ignore_index=True)
+    write_sheet_direct(latest)
+    st.session_state.is_premium = True
+    st.session_state.poster_count = 0
+    st.session_state.last_phone = ""  # force refresh
+    st.success(f"🎉 Premium activated till {expiry_date}!")
+    st.rerun()
 
 # ---- FORM ----
 st.markdown("---")
