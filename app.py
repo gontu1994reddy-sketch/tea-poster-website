@@ -553,7 +553,7 @@ if submitted:
 
         <div class="festival-row">
         <div class="festival-pill">
-            <img class="offer-shop-icon" src="https://cbn-icons-png.flatiocon.com/512/1828/1828884.png">
+            <img src="https://cbn-icons-png.flatiocon.com/512/1828/1828884.png">
             <span>{festival} Special</span>
         </div>
         </div>
