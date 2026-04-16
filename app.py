@@ -346,18 +346,18 @@ if submitted:
 
     # ---------------- ICON URLS ----------------
     themes = {
-    "Grocery shop": "#DFF6DD",
-    "Tiffin center": "#FFF3CD",
-    "Tea shop & Snacks": "#FFF4E0",
-    "Clothing store": "#E8DAEF",
-    "Mobile shop": "#D6EAF8",
-    "Salon": "#FADBD8",
-    "Medical store": "#D5F5E3",
-    "Bakery": "#FCF3CF",
-    "Fruit shop": "#F9E79F",
-    "Bike repair": "#D6DBDF",
-    "Tuition center": "#EBDEF0",
-    "Real estate": "#D4E6F1"
+        "Grocery shop": "#DFF6DD",
+        "Tiffin center": "#FFF3CD",
+        "Tea shop & Snacks": "#FFF4E0",
+        "Clothing store": "#E8DAEF",
+        "Mobile shop": "#D6EAF8",
+        "Salon": "#FADBD8",
+        "Medical store": "#D5F5E3",
+        "Bakery": "#FCF3CF",
+        "Fruit shop": "#F9E79F",
+        "Bike repair": "#D6DBDF",
+        "Tuition center": "#EBDEF0",
+        "Real estate": "#D4E6F1"
     }
 
     shop_icons = {
@@ -374,7 +374,7 @@ if submitted:
         "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
         "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
     }
-    
+    festival_icon="https://cdn-icons-png.flation.com/512/616/616490.png"
     bg_color = themes.get(shop_type, "#FFF8E7")
     shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
 
