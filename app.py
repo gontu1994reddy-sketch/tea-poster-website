@@ -671,7 +671,12 @@ if submitted:
                 "LastPostDate": today
             }])
             latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
-            write_sheet_direct(latest_sheet)
+            try:
+                write_sheet_direct(latest_sheet)
+                st.success("saved to sheet")
+            except Exception as e:
+                st.error(f"save error: {e}")
+                st.write(latest_sheet)    
     
         
     # Save count to sheet only if user exists (paid users)
