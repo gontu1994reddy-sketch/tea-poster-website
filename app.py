@@ -101,8 +101,8 @@ st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
 
 # ---------------- PREMIUM PAYMENT ----------------
-pay_link = "https://rzp.io"   # your real UPI
-plan_price = 299
+#pay_link = "https://rzp.io"   # your real UPI
+#plan_price = 299
 
 today = datetime.now().strftime("%Y-%m-%d")
 
@@ -237,7 +237,7 @@ if st.button("✅ I Have Paid"):
             }])
             sheet_data = pd.concat([sheet_data, new_row], ignore_index=True)
 
-        conn.update(data=sheet_data)
+        write_sheet_direct(sheet_data)
         st.session_state.is_premium = True
         st.session_state.poster_count = 0
         st.success(f"🎉 Premium activated till {expiry_date}! You can now generate unlimited posters.")
