@@ -437,7 +437,7 @@ if submitted:
         border-radius:50px; padding:12px 30px;
         box-shadow: 0 4px 20px rgba(255,217,61,0.25);
     }}
-    .festival-pill img {{ width:34px; height:34px; }}
+    .festival-pill img {{ width:24px; height:24px; }}
     .festival-pill span {{
         font-size:24px; font-weight:800; color:#1a1a2e;
     }}
@@ -553,10 +553,10 @@ if submitted:
 
         <div class="festival-row">
         <div class="festival-pill">
-            <div class="festival-pill>
+            
             <img src="https://cbn-icons-png.flatiocon.com/512/616/616490.png">
             <span>{festival} Special</span>
-            </div>
+            
         </div>
         </div>
 
