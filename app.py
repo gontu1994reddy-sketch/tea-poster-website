@@ -119,46 +119,27 @@ if "last_phone" not in st.session_state:
 
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
     try:
-        
-        
         sheet_data = read_sheet_direct()
         st.session_state.sheet_data = sheet_data
         st.session_state.last_phone = customer_phone
-
     except Exception as e:
-        import traceback
         st.error(f"Google sheet error: {e}")
-        st.code(traceback.format_exc())
         st.stop()
 
-# restore cache
 if "sheet_data" in st.session_state:
-    cached = st.session_state.sheet_data
+    sheet_data = st.session_state.sheet_data
+    if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty and "Phone" in sheet_data.columns:
+        sheet_data["Phone"] = sheet_data["Phone"].astype(str)
+        user_row = sheet_data[sheet_data["Phone"] == str(customer_phone)]
 
-    if isinstance(cached, pd.DataFrame):
-        sheet_data = cached.copy()
-    else:
-        sheet_data = pd.DataFrame()
-
-# safe filter
-if not sheet_data.empty and "Phone" in sheet_data.columns:
-    sheet_data["Phone"] = sheet_data["Phone"].astype(str)
-
-    user_row = sheet_data[
-        sheet_data["Phone"] == str(customer_phone)
-    ] 
-
-
-
-
+# ---- USER STATUS ----
 if not user_row.empty:
-    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"])
-    st.session_state.is_premium = user_row.iloc[0]["Premium"] == "TRUE" or user_row.iloc[0]["Premium"] == True
-
-    expiry_col = user_row.iloc[0]["ExpiryDate"] if "ExpiryDate" in user_row.columns else ""
+    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
+    st.session_state.is_premium = str(user_row.iloc[0]["Premium"]).upper() == "TRUE"
+    expiry_col = str(user_row.iloc[0]["ExpiryDate"]) if "ExpiryDate" in user_row.columns else ""
     if st.session_state.is_premium and expiry_col:
         try:
-            expiry = datetime.strptime(str(expiry_col), "%Y-%m-%d")
+            expiry = datetime.strptime(expiry_col.strip(), "%Y-%m-%d")
             if datetime.now() > expiry:
                 st.session_state.is_premium = False
                 st.warning("⚠️ Premium expired. Please renew ₹299.")
@@ -168,64 +149,49 @@ if not user_row.empty:
         except:
             pass
 else:
-    st.session_state.poster_count = 0
-    st.session_state.is_premium = False
+    if "poster_count" not in st.session_state:
+        st.session_state.poster_count = 0
+    if "is_premium" not in st.session_state:
+        st.session_state.is_premium = False
 
-# ---------------- SHOW STATUS ----------------
+# ---- STATUS DISPLAY ----
 FREE_LIMIT = 3
-if "poster_count" not in st.session_state:
-    st.session_state.poster_count = 0
-if "is_premium" not in st.session_state:
-    st.session_state.is_premium = False
-
 remaining = FREE_LIMIT - st.session_state.poster_count
 
 if st.session_state.is_premium:
     st.success("💎 Premium active: Unlimited posters")
 elif remaining > 0:
     st.info(f"🎁 Free posters left: {remaining}")
+    st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
 else:
-    st.warning("🚫 Free posters used up. Please pay ₹299 for premium.")
+    st.error("🚫 Free posters used up!")
+    st.markdown(f"""
+    <a href="{PAYMENT_LINK}" target="_blank">
+        <button style="background:#25D366;color:white;padding:14px 28px;
+        border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
+        💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
+        </button>
+    </a>
+    """, unsafe_allow_html=True)
 
-# ---------------- PAYMENT BUTTON ----------------
-if customer_phone:
-    if not st.session_state.is_premium:
-        remaining = FREE_LIMIT - st.session_state.poster_count
-        if remaining > 0:
-            # Free posters still available — show small link only
-            st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{plan_price}]({pay_link})")
-        else:
-            # Free limit reached — show big button
-            st.error("🚫 Free posters used up!")
-            st.markdown(f"""
-            <a href="{pay_link}" target="_blank">
-                <button style="background:#25D366;color:white;padding:14px 28px;
-                border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
-                💎 Pay ₹{plan_price} — Get 30 Posters / Month
-                </button>
-            </a>
-            """, unsafe_allow_html=True)
-    else:
-        st.success("💎 Premium Active — Unlimited posters!")
-
+# ---- PAYMENT ----
 if st.button("✅ I Have Paid"):
     if not customer_phone.strip():
-        st.error("Please enter your phone number first.")
+        st.error("Please enter phone number first.")
     else:
         expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
         premium_code = f"RAMA{customer_phone[-4:]}"
-
-        if not user_row.empty:
-            # existing user — update their row
-            row_index = user_row.index[0]
-            sheet_data.loc[row_index, "Premium"] = True
-            sheet_data.loc[row_index, "Status"] = "Active"
-            sheet_data.loc[row_index, "ExpiryDate"] = expiry_date
-            sheet_data.loc[row_index, "PremiumCode"] = premium_code
-            sheet_data.loc[row_index, "PosterCount"] = 0
-            sheet_data.loc[row_index, "LastPostDate"] = ""
+        latest = read_sheet_direct()
+        latest["Phone"] = latest["Phone"].astype(str) if "Phone" in latest.columns else latest["Phone"]
+        idx = latest[latest["Phone"] == str(customer_phone)].index if "Phone" in latest.columns else []
+        if len(idx) > 0:
+            latest.loc[idx[0], "Premium"] = True
+            latest.loc[idx[0], "Status"] = "Active"
+            latest.loc[idx[0], "ExpiryDate"] = expiry_date
+            latest.loc[idx[0], "PremiumCode"] = premium_code
+            latest.loc[idx[0], "PosterCount"] = 0
+            latest.loc[idx[0], "LastPostDate"] = ""
         else:
-            # new user — add to sheet
             new_row = pd.DataFrame([{
                 "Phone": customer_phone,
                 "PremiumCode": premium_code,
@@ -235,139 +201,101 @@ if st.button("✅ I Have Paid"):
                 "ExpiryDate": expiry_date,
                 "LastPostDate": ""
             }])
-            sheet_data = pd.concat([sheet_data, new_row], ignore_index=True)
-
-        write_sheet_direct(sheet_data)
+            latest = pd.concat([latest, new_row], ignore_index=True)
+        write_sheet_direct(latest)
         st.session_state.is_premium = True
         st.session_state.poster_count = 0
-        st.success(f"🎉 Premium activated till {expiry_date}! You can now generate unlimited posters.")
+        st.session_state.last_phone = ""  # force refresh
+        st.success(f"🎉 Premium activated till {expiry_date}!")
         st.rerun()
-# ---------------- INPUTS ----------------
 
-shop = st.text_input("🏪 Shop Name")
-offer = st.text_input("🔥 Offer")
-logo = st.file_uploader("📷 Upload Shop Logo", type=["png", "jpg", "jpeg"])
-# Reset flag if user changes shop or offer
-if "last_shop" not in st.session_state:
-    st.session_state.last_shop = ""
-if shop != st.session_state.last_shop:
-    st.session_state.poster_generated = False
-    st.session_state.last_shop = shop
+# ---- FORM ----
+st.markdown("---")
+with st.form("poster_form", clear_on_submit=False):
+    shop = st.text_input("🏪 Shop Name")
+    offer = st.text_input("🔥 Offer")
+    logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"])
+    # Reset flag if user changes shop or offer
+    if "last_shop" not in st.session_state:
+        st.session_state.last_shop = ""
+    if shop != st.session_state.last_shop:
+        st.session_state.poster_generated = False
+        st.session_state.last_shop = shop
 
-shop_type = st.selectbox(
-    "Select Shop Type",
-    [
-        "Grocery shop",
-        "Tiffin center",
-        "Tea shop & Snacks",
-        "Clothing store",
-        "Mobile shop",
-        "Salon",
-        "Medical store",
-        "Bakery",
-        "Fruit shop",
-        "Bike repair",
-        "Tuition center",
-        "Real estate"
-    ]
-)
+    shop_type = st.selectbox(
+        "Select Shop Type",
+        [
+            "Grocery shop",
+            "Tiffin center",
+            "Tea shop & Snacks",
+            "Clothing store",
+            "Mobile shop",
+            "Salon",
+            "Medical store",
+            "Bakery",
+            "Fruit shop",
+            "Bike repair",
+            "Tuition center",
+            "Real estate"
+        ]
+    )
 
-themes = {
-    "Grocery shop": "#DFF6DD",
-    "Tiffin center": "#FFF3CD",
-    "Tea shop & Snacks": "#FFF4E0",
-    "Clothing store": "#E8DAEF",
-    "Mobile shop": "#D6EAF8",
-    "Salon": "#FADBD8",
-    "Medical store": "#D5F5E3",
-    "Bakery": "#FCF3CF",
-    "Fruit shop": "#F9E79F",
-    "Bike repair": "#D6DBDF",
-    "Tuition center": "#EBDEF0",
-    "Real estate": "#D4E6F1"
-}
-
-shop_icons = {
-    "Grocery shop":     "https://cdn-icons-png.flaticon.com/512/3724/3724788.png",
-    "Tiffin center":    "https://cdn-icons-png.flaticon.com/512/857/857681.png",
-    "Tea shop & Snacks":"https://cdn-icons-png.flaticon.com/512/590/590836.png",
-    "Clothing store":   "https://cdn-icons-png.flaticon.com/512/892/892458.png",
-    "Mobile shop":      "https://cdn-icons-png.flaticon.com/512/545/545245.png",
-    "Salon":            "https://cdn-icons-png.flaticon.com/512/2553/2553627.png",
-    "Medical store":    "https://cdn-icons-png.flaticon.com/512/2382/2382461.png",
-    "Bakery":           "https://cdn-icons-png.flaticon.com/512/3082/3082053.png",
-    "Fruit shop":       "https://cdn-icons-png.flaticon.com/512/415/415733.png",
-    "Bike repair":      "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
-    "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
-    "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
-}
+    
 
 
 
-customer_address = st.text_input("📍 Customer Address")
-language = st.selectbox("Language", ["English", "Telugu"])
-festival = st.selectbox(
-    "Festival",
-    ["Special Offer", "Ugadi", "Diwali", "Sankranti"]
-)
 
 # Telugu font
-st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
-""", unsafe_allow_html=True)
 
-#-----------VALIDATION CHECK----------------
 
-all_filled = (
-    customer_phone.strip() != "" and
-    shop.strip() != "" and
-    offer.strip() != "" and
-    customer_address.strip() != ""
-)
 
-if not all_filled:
-    missing = []
-    if not customer_phone.strip(): missing.append("📞 Customer Phone")
-    if not shop.strip(): missing.append("🏪 Shop Name")
-    if not offer.strip(): missing.append("🔥 Offer")
-    if not customer_address.strip(): missing.append("📍 Customer Address")
-    
-    st.warning(f"Please fill: {', '.join(missing)}")
-    st.button("🚀 Generate AI Poster", disabled=True)  # show disabled button
 
-else:
-    if st.button("🚀 Generate AI Poster"): 
-        fresh_check = read_sheet_direct()
-        if fresh_check.empty or "Phone" not in fresh_check.columns:
+    customer_address = st.text_input("📍 Customer Address")
+    language = st.selectbox("Language", ["English", "Telugu"])
+    festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
+    submitted = st.form_submit_button("🚀 Generate AI Poster")
+    st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
+    """, unsafe_allow_html=True)
+# ---- GENERATE ----
+if submitted:
+    if not customer_phone.strip():
+        st.warning("⚠️ Please enter Customer Phone first.")
+        st.stop()
+    if not shop.strip() or not offer.strip() or not customer_address.strip():
+        st.warning("⚠️ Please fill all fields.")
+        st.stop()
+    if st.session_state.poster_generated:
+        st.warning("🚫 Already generated today. Come back tomorrow!")
+        st.stop()
+
+    # fresh check
+    fresh_check = read_sheet_direct()
+    if not fresh_check.empty and "Phone" in fresh_check.columns:
+        fresh_check["Phone"] = fresh_check["Phone"].astype(str)
+        fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
+        if not fresh_user.empty:
+            total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
+            last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
+        else:
             total_posts = 0
             last_post_date = ""
-        else:
-            fresh_check["Phone"] = fresh_check["Phone"].astype(str)
-            fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
-            if not fresh_user.empty:
-                total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
-                last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
-            else:
-                total_posts = 0
-                last_post_date = ""
+    else:
+        total_posts = 0
+        last_post_date = ""
 
-        # ✅ Block if already posted today (works after refresh too)
-        if last_post_date == today:
-            st.warning("🚫 You already generated a poster today. Come back tomorrow!")
+    if last_post_date == today:
+        st.warning("🚫 You already generated a poster today. Come back tomorrow!")
+        st.stop()
+
+    if not st.session_state.is_premium:
+        if st.session_state.poster_count >= FREE_LIMIT:
+            st.warning("💎 Your 3 free posters are used. Please pay ₹299.")
             st.stop()
-
-        if not st.session_state.is_premium:
-            if st.session_state.poster_count >= FREE_LIMIT:
-                st.warning("💎 Your 3 free posters are used. Please pay ₹299.")
-                st.stop()
-        else:
-            if total_posts >= 30:
-                st.warning("🚫 You have used all 30 posts. Please renew ₹299.")
-                st.stop()
-                                    
-        if not shop or not offer:
-            st.warning("Please enter shop name and offer") 
-            st.stop()     
+    else:
+        if total_posts >= 30:
+            st.warning("🚫 You have used all 30 posts. Please renew ₹299.")
+            st.stop()
 
         bg_color = themes.get(shop_type, "#FFF8E7")
         shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
@@ -416,11 +344,35 @@ else:
                 result = f"{festival} special offer at {shop}! Get {offer} today. Visit now!"
 
         # ---------------- ICON URLS ----------------
-        #tea_icon = "https://cdn-icons-png.flaticon.com/512/590/590836.png"
-        fire_icon = "https://cdn-icons-png.flaticon.com/512/1828/1828884.png"
-        phone_icon = "https://cdn-icons-png.flaticon.com/512/597/597177.png"
-        location_icon = "https://cdn-icons-png.flaticon.com/512/684/684908.png"
-        festival_icon = "https://cdn-icons-png.flaticon.com/512/616/616490.png"
+        themes = {
+        "Grocery shop": "#DFF6DD",
+        "Tiffin center": "#FFF3CD",
+        "Tea shop & Snacks": "#FFF4E0",
+        "Clothing store": "#E8DAEF",
+        "Mobile shop": "#D6EAF8",
+        "Salon": "#FADBD8",
+        "Medical store": "#D5F5E3",
+        "Bakery": "#FCF3CF",
+        "Fruit shop": "#F9E79F",
+        "Bike repair": "#D6DBDF",
+        "Tuition center": "#EBDEF0",
+        "Real estate": "#D4E6F1"
+    }
+
+    shop_icons = {
+        "Grocery shop":     "https://cdn-icons-png.flaticon.com/512/3724/3724788.png",
+        "Tiffin center":    "https://cdn-icons-png.flaticon.com/512/857/857681.png",
+        "Tea shop & Snacks":"https://cdn-icons-png.flaticon.com/512/590/590836.png",
+        "Clothing store":   "https://cdn-icons-png.flaticon.com/512/892/892458.png",
+        "Mobile shop":      "https://cdn-icons-png.flaticon.com/512/545/545245.png",
+        "Salon":            "https://cdn-icons-png.flaticon.com/512/2553/2553627.png",
+        "Medical store":    "https://cdn-icons-png.flaticon.com/512/2382/2382461.png",
+        "Bakery":           "https://cdn-icons-png.flaticon.com/512/3082/3082053.png",
+        "Fruit shop":       "https://cdn-icons-png.flaticon.com/512/415/415733.png",
+        "Bike repair":      "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
+        "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
+        "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
+    }
 
         # ---------------- LOGO ----------------
         logo_html = ""
