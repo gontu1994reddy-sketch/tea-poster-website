@@ -371,7 +371,7 @@ else:
             st.warning("Please enter shop name and offer") 
             st.stop()     
 
-            bg_color = themes.get(shop_type, "#FFF8E7")
+        bg_color = themes.get(shop_type, "#FFF8E7")
         shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
 
         prompt = f"""
