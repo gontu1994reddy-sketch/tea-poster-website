@@ -126,6 +126,25 @@ if "poster_generated" not in st.session_state:
     st.session_state.poster_generated = False
 
 
+
+if "sheet_data" in st.session_state:
+    sheet_data = st.session_state.sheet_data
+    if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty and "Phone" in sheet_data.columns:
+        sheet_data["Phone"] = sheet_data["Phone"].astype(str)
+        user_row = sheet_data[sheet_data["Phone"] == str(customer_phone)]
+
+# ---- USER STATUS ----
+if not user_row.empty:
+    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
+    st.session_state.is_premium = str(user_row.iloc[0]["Premium"]).upper() == "TRUE"
+    expiry_col = str(user_row.iloc[0]["ExpiryDate"]) if "ExpiryDate" in user_row.columns else ""
+    
+else:
+    if "poster_count" not in st.session_state:
+        st.session_state.poster_count = 0
+    if "is_premium" not in st.session_state:
+        st.session_state.is_premium = False
+
 # ---- STATUS DISPLAY ----
 FREE_LIMIT = 3
 remaining = FREE_LIMIT - st.session_state.poster_count
