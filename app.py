@@ -101,8 +101,8 @@ st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
 
 # ---------------- PREMIUM PAYMENT ----------------
-#pay_link = "https://rzp.io"   # your real UPI
-#plan_price = 299
+pay_link = "https://rzp.io"   # your real UPI
+plan_price = 299
 
 today = datetime.now().strftime("%Y-%m-%d")
 
