@@ -72,6 +72,15 @@ def write_sheet_direct(df):
     ]
     creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
     gc = gspread.authorize(creds)
+    try:
+        st.write("Attempting to save...")
+        st.write("Data to save:", latest_sheet.tail(3))  # show last 3 rows
+        write_sheet_direct(latest_sheet)
+        st.write("✅ Save successful!")
+    except Exception as e:
+        st.error(f"Save failed: {e}")
+        import traceback
+        st.code(traceback.format_exc())
 
     for attempt in range(3):
         try:
@@ -220,9 +229,17 @@ with st.form("poster_form", clear_on_submit=False):
     language = st.selectbox("Language", ["English", "Telugu"])
     festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
     submitted = st.form_submit_button("🚀 Generate AI Poster")
-    st.markdown("""
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
-    """, unsafe_allow_html=True)
+    try:
+        st.write("Attempting to save...")
+        st.write("Data to save:", latest_sheet.tail(3))  # show last 3 rows
+        write_sheet_direct(latest_sheet)
+        st.write("✅ Save successful!")
+    except Exception as e:
+        st.error(f"Save failed: {e}")
+        import traceback
+        st.code(traceback.format_exc())
+
+    
 # ---- GENERATE ----
 if submitted:
     st.session_state.form_phone = customer_phone
@@ -277,7 +294,9 @@ if submitted:
         st.warning("🚫 Already generated today. Come back tomorrow!")
         st.stop()        
 
-    
+    st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
+    """, unsafe_allow_html=True)
     prompt = f"""
     You are a creative marketing expert for small businesses in India.
     Create a UNIQUE and catchy advertisement caption in {language} for this specific shop.
