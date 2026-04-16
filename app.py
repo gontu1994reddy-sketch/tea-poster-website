@@ -656,14 +656,7 @@ if submitted:
             "ExpiryDate": "",
             "LastPostDate": str(today)
         }])
-    try:    
-        write_sheet_direct(new_sheet)
-        st.success("poster generated and saved!") 
-    except Exception as e:
-        st.error(f"Save error: {e}")
-        import traceback
-        st.code(trace.format_exc())       
-                
+    
     
     # Save count to sheet only if user exists (paid users)
     
