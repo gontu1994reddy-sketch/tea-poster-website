@@ -673,22 +673,32 @@ if submitted:
         else:
             # New user — add row
             new_row = pd.DataFrame([{
-                "Phone": customer_phone,
+                "Phone": str(customer_phone),
                 "PremiumCode": "",
                 "Status": "Free",
                 "PosterCount": 1,
                 "Premium": False,
                 "ExpiryDate": "",
-                "LastPostDate": today
+                "LastPostDate": str(today)
             }])
             latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
-            try:
-                write_sheet_direct(latest_sheet)
-                st.success("saved to sheet")
-            except Exception as e:
-                st.error(f"save error: {e}")
-                st.write(latest_sheet)    
-    
+    else:
+        latest_sheet = pd.DataFrame([{
+                "Phone": str(customer_phone),
+                "PremiumCode": "",
+                "Status": "Free",
+                "PosterCount": 1,
+                "Premium": False,
+                "ExpiryDate": "",
+                "LastPostDate": str(today)
+            }])    
+                
+    try:
+        write_sheet_direct(latest_sheet)
+        st.success("saved to sheet")
+    except Exception as e:
+        st.error(f"save error: {e}")
+        st.write(latest_sheet)
         
     # Save count to sheet only if user exists (paid users)
     
