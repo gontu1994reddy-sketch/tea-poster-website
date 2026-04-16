@@ -657,22 +657,22 @@ if submitted:
             "LastPostDate": str(today)
         }])
     if st.button("🧪 Test Sheet Write"):
-    try:
-        test_df = pd.DataFrame([{
-            "Phone": "TEST123",
-            "PremiumCode": "",
-            "Status": "Test",
-            "PosterCount": "1",
-            "Premium": "FALSE",
-            "ExpiryDate": "",
-            "LastPostDate": "2026-04-16"
-        }])
-        write_sheet_direct(test_df)
-        st.success("✅ Test write worked! Check your Google Sheet.")
-    except Exception as e:
-        st.error(f"Test failed: {e}")
-        import traceback
-        st.code(traceback.format_exc())
+        try:
+            test_df = pd.DataFrame([{
+                "Phone": "TEST123",
+                "PremiumCode": "",
+                "Status": "Test",
+                "PosterCount": "1",
+                "Premium": "FALSE",
+                "ExpiryDate": "",
+                "LastPostDate": "2026-04-16"
+            }])
+            write_sheet_direct(test_df)
+            st.success("✅ Test write worked! Check your Google Sheet.")
+        except Exception as e:
+            st.error(f"Test failed: {e}")
+            import traceback
+            st.code(traceback.format_exc())
     
     # Save count to sheet only if user exists (paid users)
     
