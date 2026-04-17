@@ -285,10 +285,9 @@ if submitted:
     
     prompt = f"write a 25 word ad for {shop} shop. offer:{offer}. Festival:{festival}"
     response = groq_client.chat.completions.create(
-        model="llama3-8b-8192",
+        
         messages=[{"role": "user","content":prompt}],
-        max_tokens=200,
-        temperature=1.0
+        model="llama3-8b-8192"
     )
     result = response.choices[0].message.content.strip()
     result = result.strip('"').strip('"')
