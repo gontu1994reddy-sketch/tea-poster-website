@@ -101,25 +101,50 @@ if "poster_generated" not in st.session_state:
 
 
 
+customer_phone = st.text_input("📞 Customer Phone")
+
 sheet_data = pd.DataFrame()
 user_row = pd.DataFrame()
 
 if "last_phone" not in st.session_state:
     st.session_state.last_phone = ""
-if "sheet_data" not in st.session_state:
-    st.session_state.sheet_data = pd.DataFrame()
-if "poster_count" not in st.session_state:
-    st.session_state.poster_count = 0
-if "is_premium" not in st.session_state:
-    st.session_state.is_premium = False
-if "poster_generated" not in st.session_state:
-    st.session_state.poster_generated = False
 
+if customer_phone.strip() and customer_phone != st.session_state.last_phone:
+    try:
+        sheet_data = read_sheet_direct()
+        st.session_state.sheet_data = sheet_data
+        st.session_state.last_phone = customer_phone
+    except Exception as e:
+        st.error(f"Google sheet error: {e}")
+        st.stop()
 
+if "sheet_data" in st.session_state:
+    sheet_data = st.session_state.sheet_data
+    if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty and "Phone" in sheet_data.columns:
+        sheet_data["Phone"] = sheet_data["Phone"].astype(str)
+        user_row = sheet_data[sheet_data["Phone"] == str(customer_phone)]
 
-
-    
-
+# ---- USER STATUS ----
+if not user_row.empty:
+    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
+    st.session_state.is_premium = str(user_row.iloc[0]["Premium"]).upper() == "TRUE"
+    expiry_col = str(user_row.iloc[0]["ExpiryDate"]) if "ExpiryDate" in user_row.columns else ""
+    if st.session_state.is_premium and expiry_col:
+        try:
+            expiry = datetime.strptime(expiry_col.strip(), "%Y-%m-%d")
+            if datetime.now() > expiry:
+                st.session_state.is_premium = False
+                st.warning("⚠️ Premium expired. Please renew ₹299.")
+            else:
+                days_left = (expiry - datetime.now()).days
+                st.success(f"💎 Premium active | {days_left} days left")
+        except:
+            pass
+else:
+    if "poster_count" not in st.session_state:
+        st.session_state.poster_count = 0
+    if "is_premium" not in st.session_state:
+        st.session_state.is_premium = False
 
 # ---- STATUS DISPLAY ----
 FREE_LIMIT = 3
@@ -132,44 +157,40 @@ elif remaining > 0:
     st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
 else:
     st.error("🚫 Free posters used up!")
-   # st.markdown(f"""
-    #<a href="{PAYMENT_LINK}" target="_blank">
-    #   <button style="background:#25D366;color:white;padding:14px 28px;
-    #    border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
-    #    💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
-    #    </button>
-    #</a>
-    #""", unsafe_allow_html=True)
+    st.markdown(f"""
+    <a href="{PAYMENT_LINK}" target="_blank">
+        <button style="background:#25D366;color:white;padding:14px 28px;
+        border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
+        💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
+        </button>
+    </a>
+    """, unsafe_allow_html=True)
 
 # ---- PAYMENT ----
 if st.button("✅ I Have Paid"):
-    phone = st.session_state.get("form_phone", "")
-    if not phone:
-        st.error("Please fill the form and submit first.")
+    if not customer_phone.strip():
+        st.error("Please enter phone number first.")
     else:
         expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-        premium_code = f"RAMA{phone[-4:]}"
+        premium_code = f"RAMA{customer_phone[-4:]}"
         latest = read_sheet_direct()
-        if "Phone" in latest.columns:
-            latest["Phone"] = latest["Phone"].astype(str)  
-            idx = latest[latest["Phone"] == str(phone)].index
-        else:
-            idx = []
-        if len(idx) > 0:         
+        latest["Phone"] = latest["Phone"].astype(str) if "Phone" in latest.columns else latest["Phone"]
+        idx = latest[latest["Phone"] == str(customer_phone)].index if "Phone" in latest.columns else []
+        if len(idx) > 0:
             latest.loc[idx[0], "Premium"] = True
             latest.loc[idx[0], "Status"] = "Active"
-            latest.loc[idx[0], "ExpiryDate"] = str(expiry_date)
-            latest.loc[idx[0], "PremiumCode"] = str(premium_code)
-            latest.loc[idx[0], "PosterCount"] = "0"
+            latest.loc[idx[0], "ExpiryDate"] = expiry_date
+            latest.loc[idx[0], "PremiumCode"] = premium_code
+            latest.loc[idx[0], "PosterCount"] = 0
             latest.loc[idx[0], "LastPostDate"] = ""
         else:
             new_row = pd.DataFrame([{
-                "Phone": str(phone),
-                "PremiumCode": str(premium_code),
+                "Phone": customer_phone,
+                "PremiumCode": premium_code,
                 "Status": "Active",
-                "PosterCount": "0",
+                "PosterCount": 0,
                 "Premium": True,
-                "ExpiryDate": str(expiry_date),
+                "ExpiryDate": expiry_date,
                 "LastPostDate": ""
             }])
             latest = pd.concat([latest, new_row], ignore_index=True)
@@ -183,66 +204,39 @@ if st.button("✅ I Have Paid"):
 # ---- FORM ----
 st.markdown("---")
 with st.form("poster_form", clear_on_submit=False):
-    customer_phone = st.text_input("📞 Mobile Number")
     shop = st.text_input("🏪 Shop Name")
     offer = st.text_input("🔥 Offer")
     logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"])
-    # Reset flag if user changes shop or offer
-    shop_type = st.selectbox(
-        "Select Shop Type",
-        [
-            "Grocery shop",
-            "Tiffin center",
-            "Tea shop & Snacks",
-            "Clothing store",
-            "Mobile shop",
-            "Salon",
-            "Medical store",
-            "Bakery",
-            "Fruit shop",
-            "Bike repair",
-            "Tuition center",
-            "Real estate"
-        ]
-    )
-
+    shop_type = st.selectbox("Select Shop Type", [
+        "Grocery shop","Tiffin center","Tea shop & Snacks","Clothing store",
+        "Mobile shop","Salon","Medical store","Bakery","Fruit shop",
+        "Bike repair","Tuition center","Real estate"
+    ])
     customer_address = st.text_input("📍 Customer Address")
     language = st.selectbox("Language", ["English", "Telugu"])
     festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
     submitted = st.form_submit_button("🚀 Generate AI Poster")
-    
 
-    
 # ---- GENERATE ----
 if submitted:
-    st.session_state.form_phone = customer_phone
-    if not customer_phone.strip() or not shop.strip() or not offer.strip() or not customer_address.strip():
+    if not customer_phone.strip():
+        st.warning("⚠️ Please enter Customer Phone first.")
+        st.stop()
+    if not shop.strip() or not offer.strip() or not customer_address.strip():
         st.warning("⚠️ Please fill all fields.")
         st.stop()
-    
-
-    # fresh check
-    try:
-        fresh_check = read_sheet_direct()
-    except Exception as e:
-        st.error(f"Sheet error: {e}")
+    if st.session_state.poster_generated:
+        st.warning("🚫 Already generated today. Come back tomorrow!")
         st.stop()
 
+    # fresh check
+    fresh_check = read_sheet_direct()
     if not fresh_check.empty and "Phone" in fresh_check.columns:
         fresh_check["Phone"] = fresh_check["Phone"].astype(str)
         fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
         if not fresh_user.empty:
             total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
             last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
-            expiry_col = str(fresh_user.iloc[0]["ExpiryDate"]) if "ExpiryDate" in user_row.columns else ""
-            st.session_state.is_premium = str(fresh_user.iloc[0]["Premium"]).upper() == "TRUE"
-            st.session_state.poster_count = total_posts
-            if st.session_state.is_premium and expiry_col:
-                try:
-                    if datetime.now() > datetime.strptime(expiry_col, "%Y-%m-%d"):
-                        st.session_state.is_premium = False
-                except:
-                    pass
         else:
             total_posts = 0
             last_post_date = ""
@@ -263,9 +257,10 @@ if submitted:
             st.warning("🚫 You have used all 30 posts. Please renew ₹299.")
             st.stop()
 
-    if st.session_state.poster_generated:
-        st.warning("🚫 Already generated today. Come back tomorrow!")
-        st.stop()        
+
+    
+
+
 
     st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
@@ -654,71 +649,17 @@ if submitted:
         else:
             # New user — add row
             new_row = pd.DataFrame([{
-                "Phone": str(customer_phone),
+                "Phone": customer_phone,
                 "PremiumCode": "",
                 "Status": "Free",
                 "PosterCount": 1,
                 "Premium": False,
                 "ExpiryDate": "",
-                "LastPostDate": str(today)
+                "LastPostDate": today
             }])
             latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
             write_sheet_direct(latest_sheet)
-    else:
-        latest_sheet = pd.DataFrame([{
-            "Phone": str(customer_phone),
-            "PremiumCode": "",
-            "Status": "Free",
-            "PosterCount": 1,
-            "Premium": False,
-            "ExpiryDate": "",
-            "LastPostDate": str(today)
-        }])
-    if st.button("🧪 Debug Sheet"):
-        g = st.secrets["connections"]["gsheets"]
-        st.write("spreadsheet URL:", g["spreadsheet"])
-        st.write("client_email:", g["client_email"])
-        
-        try:
-       #     import gspread
-       #     from google.oauth2.service_account import Credentials
-            creds_dict = {
-                "type": "service_account",
-                "project_id": g["project_id"],
-                "private_key_id": g["private_key_id"],
-                "private_key": g["private_key"].replace("\\n", "\n"),
-                "client_email": g["client_email"],
-                "client_id": g["client_id"],
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token",
-                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-                "client_x509_cert_url": f"https://www.googleapis.com/robot/v1/metadata/x509/{g['client_email']}"
-            }
-            scopes = [
-                "https://www.googleapis.com/auth/spreadsheets",
-                "https://www.googleapis.com/auth/drive"
-            ]
-            creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-            st.write("✅ Credentials created")
-            
-            gc = gspread.authorize(creds)
-            st.write("✅ gspread authorized")
-            
-            sh = gc.open_by_url(str(g["spreadsheet"]))
-            st.write("✅ Sheet opened:", sh.title)
-            
-            worksheet = sh.sheet1
-            st.write("✅ Worksheet:", worksheet.title)
-            st.write("✅ Current rows:", len(worksheet.get_all_values()))
-            
-            # Try writing one cell only
-            worksheet.update_cell(1, 1, "Phone")
-            st.write("✅ Write cell worked!")
-            
-        except Exception as e:
-            import traceback
-            st.error(str(e))
-            st.code(traceback.format_exc())
+    
     # Save count to sheet only if user exists (paid users)
     
     st.success("✅ Poster generated successfully!")
