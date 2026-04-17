@@ -3,5 +3,4 @@ pandas
 genai
 qrcode
 Pillow
-gspread
-google-auth
+
