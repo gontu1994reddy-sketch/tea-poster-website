@@ -304,10 +304,6 @@ if submitted:
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt,
-        config={
-            "temperature": 1.0,
-            "max_output_tokens": 200,
-            }
     )
     result = response.text.strip().split("\n")[0]
 
