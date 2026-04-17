@@ -678,7 +678,7 @@ if submitted:
             "ExpiryDate": "",
             "LastPostDate": today
         }])
-        wirte_sheet_direct(new_sheet)    
+        write_sheet_direct(new_sheet)    
     
     # Save count to sheet only if user exists (paid users)
     
