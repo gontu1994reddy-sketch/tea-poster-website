@@ -301,26 +301,24 @@ if submitted:
     - Use random seed: {random.randint(1, 99999)}
     Return ONLY the caption text, nothing else.
     """
-
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-            config={
-                "temperature": 1.0,
-                "max_output_tokens": 200,
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
+        config={
+            "temperature": 1.0,
+            "max_output_tokens": 200,
             }
-        )
-        result = response.text.strip().split("\n")[0]
+    )
+    result = response.text.strip().split("\n")[0]
 
-        if not result or len(result) < 20:
-            raise ValueError("Too short")
+    if not result or len(result) < 20:
+        raise ValueError("Too short")
 
-    except Exception:
-        if language == "Telugu":
-            result = f"{festival} స్పెషల్ ఆఫర్! {shop} వద్ద {offer} మాత్రమే. వెంటనే వచ్చి ఆఫర్ పొందండి!"
-        else:
-            result = f"{festival} special offer at {shop}! Get {offer} today. Visit now!"
+    #except Exception:
+     #   if language == "Telugu":
+      #      result = f"{festival} స్పెషల్ ఆఫర్! {shop} వద్ద {offer} మాత్రమే. వెంటనే వచ్చి ఆఫర్ పొందండి!"
+      #  else:
+      #      result = f"{festival} special offer at {shop}! Get {offer} today. Visit now!"
 
     # ---------------- ICON URLS ----------------
     themes = {
