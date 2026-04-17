@@ -304,7 +304,7 @@ if submitted:
     
     response = genai.GenerativeaiModel("gemini-1.5-flash"), generate_content(prompt)
     result = response.text
-    result = response.text.strip().split("\n")[0]
+    
 
     if not result or len(result) < 15:
         raise ValueError("Too short")
