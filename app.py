@@ -109,7 +109,7 @@ if "poster_generated" not in st.session_state:
     st.session_state.poster_generated = False
 
 
-
+st.markdown("---")
 customer_phone = st.text_input("📞 Customer Phone")
 
 sheet_data = pd.DataFrame()
@@ -211,7 +211,7 @@ if st.button("✅ I Have Paid"):
         st.rerun()
 
 # ---- FORM ----
-st.markdown("---")
+
 with st.form("poster_form", clear_on_submit=False):
     shop = st.text_input("🏪 Shop Name")
     offer = st.text_input("🔥 Offer")
