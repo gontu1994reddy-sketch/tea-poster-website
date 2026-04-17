@@ -17,16 +17,7 @@ from google.oauth2.service_account import Credentials
 import random
 import time
 
-if "sheet_data" not in st.session_state:
-    st.session_state.sheet_data = pd.DataFrame()
-if "last_phone" not in st.session_state:
-    st.session_state.last_phone = ""
-if "is_premium" not in st.session_state:
-    st.session_state.is_premium = False
-if "poster_count" not in st.session_state:
-    st.session_state.poster_count = 0
-if "poster_generated" not in st.session_state:
-    st.session_state.poster_generated = False
+
 
 def read_sheet_direct():
     g = st.secrets["connections"]["gsheets"]
@@ -120,8 +111,22 @@ if "poster_generated" not in st.session_state:
     st.session_state.poster_generated = False
 
 
+st.markdown("---")
+with st.form("poster_form", clear_on_submit=False):
+    customer_phone = st.text_input("📞 Customer Phone")
+    shop = st.text_input("🏪 Shop Name")
+    offer = st.text_input("🔥 Offer")
+    logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"])
+    shop_type = st.selectbox("Select Shop Type", [
+        "Grocery shop","Tiffin center","Tea shop & Snacks","Clothing store",
+        "Mobile shop","Salon","Medical store","Bakery","Fruit shop",
+        "Bike repair","Tuition center","Real estate"
+    ])
+    customer_address = st.text_input("📍 Customer Address")
+    language = st.selectbox("Language", ["English", "Telugu"])
+    festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
+    submitted = st.form_submit_button("🚀 Generate AI Poster")
 
-customer_phone = st.text_input("📞 Customer Phone")
 
 sheet_data = pd.DataFrame()
 user_row = pd.DataFrame()
@@ -130,14 +135,14 @@ if "last_phone" not in st.session_state:
     st.session_state.last_phone = ""
 
 if customer_phone.strip() and customer_phone != st.session_state.last_phone:
-    with st.spinner("Loading..."):
-        try:
-            sheet_data = read_sheet_direct()
-            st.session_state.sheet_data = sheet_data
-            st.session_state.last_phone = customer_phone
-        except Exception as e:
-            st.error(f"Google sheet error: {e}")
-            st.stop()
+   
+    try:
+        sheet_data = read_sheet_direct()
+        st.session_state.sheet_data = sheet_data
+        st.session_state.last_phone = customer_phone
+    except Exception as e:
+        st.error(f"Google sheet error: {e}")
+        st.stop()
 
 if "sheet_data" in st.session_state:
     sheet_data = st.session_state.sheet_data
@@ -224,20 +229,7 @@ if st.button("✅ I Have Paid"):
 
     # ---- FORM ----
 
-st.markdown("---")
-with st.form("poster_form", clear_on_submit=False):
-    shop = st.text_input("🏪 Shop Name")
-    offer = st.text_input("🔥 Offer")
-    logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"])
-    shop_type = st.selectbox("Select Shop Type", [
-        "Grocery shop","Tiffin center","Tea shop & Snacks","Clothing store",
-        "Mobile shop","Salon","Medical store","Bakery","Fruit shop",
-        "Bike repair","Tuition center","Real estate"
-    ])
-    customer_address = st.text_input("📍 Customer Address")
-    language = st.selectbox("Language", ["English", "Telugu"])
-    festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
-    submitted = st.form_submit_button("🚀 Generate AI Poster")
+
 
 # ---- GENERATE ----
 if submitted:
