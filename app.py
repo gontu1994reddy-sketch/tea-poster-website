@@ -308,11 +308,12 @@ if submitted:
     response = groq_client.chat.completions.create(
         model="llama3-8b-8192",
         messages=[{"role": "user","content":prompt}],
-        max_tokens=150
+        max_tokens=200,
+        temperature=1.0
     )
-    result = response.choices[0].message.content.strip().split("\n")[0]
-
-    if not result or len(result) < 20:
+    result = response.choices[0].message.content.strip().
+    result = result.strip('"').strip('"')
+    if not result or len(result) < 15:
         raise ValueError("Too short")
 
     #except Exception:
