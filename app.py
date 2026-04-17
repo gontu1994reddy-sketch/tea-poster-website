@@ -359,7 +359,7 @@ if submitted:
         "Sankranti": "https://cdn-icons-png.flaticon.com/512/2933/2933245.png"
     }
     festival_icon = festival_icons.get(festival, "https://cdn-icons-png.flaticon.com/512/1828/1828884.png")
-        bg_color = themes.get(shop_type, "#FFF8E7")
+    bg_color = themes.get(shop_type, "#FFF8E7")
     shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
 
     # ---------------- LOGO ----------------
