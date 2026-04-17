@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
-import google.generativeai as genai
+from google import genai
 import urllib.parse
 import asyncio
 from playwright.async_api import async_playwright
@@ -96,7 +96,7 @@ if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
 
 # ---------------- CONFIG ----------------
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
@@ -302,10 +302,12 @@ if submitted:
     Return ONLY the caption text, nothing else.
     """
     
-    model = genai.GenerativeModel("gemini-3.1-flsh")
-    response =model.generate_content(prompt)
-    result = response.text
-    
+    response = client.models.generate_content(
+       model="gemini-2.5-flash",
+       contents=prompt
+    )
+
+    result = response.text.strip().split("\n")[0]
 
     if not result or len(result) < 15:
         raise ValueError("Too short")
