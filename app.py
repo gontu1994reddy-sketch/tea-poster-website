@@ -674,24 +674,51 @@ if submitted:
             "ExpiryDate": "",
             "LastPostDate": str(today)
         }])
-    if st.button("🧪 Test Sheet Write"):
+    if st.button("🧪 Debug Sheet"):
+        g = st.secrets["connections"]["gsheets"]
+        st.write("spreadsheet URL:", g["spreadsheet"])
+        st.write("client_email:", g["client_email"])
+        
         try:
-            test_df = pd.DataFrame([{
-                "Phone": "TEST123",
-                "PremiumCode": "",
-                "Status": "Test",
-                "PosterCount": "1",
-                "Premium": "FALSE",
-                "ExpiryDate": "",
-                "LastPostDate": "2026-04-16"
-            }])
-            write_sheet_direct(test_df)
-            st.success("✅ Test write worked! Check your Google Sheet.")
+       #     import gspread
+       #     from google.oauth2.service_account import Credentials
+            creds_dict = {
+                "type": "service_account",
+                "project_id": g["project_id"],
+                "private_key_id": g["private_key_id"],
+                "private_key": g["private_key"].replace("\\n", "\n"),
+                "client_email": g["client_email"],
+                "client_id": g["client_id"],
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_x509_cert_url": f"https://www.googleapis.com/robot/v1/metadata/x509/{g['client_email']}"
+            }
+            scopes = [
+                "https://www.googleapis.com/auth/spreadsheets",
+                "https://www.googleapis.com/auth/drive"
+            ]
+            creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+            st.write("✅ Credentials created")
+            
+            gc = gspread.authorize(creds)
+            st.write("✅ gspread authorized")
+            
+            sh = gc.open_by_url(str(g["spreadsheet"]))
+            st.write("✅ Sheet opened:", sh.title)
+            
+            worksheet = sh.sheet1
+            st.write("✅ Worksheet:", worksheet.title)
+            st.write("✅ Current rows:", len(worksheet.get_all_values()))
+            
+            # Try writing one cell only
+            worksheet.update_cell(1, 1, "Phone")
+            st.write("✅ Write cell worked!")
+            
         except Exception as e:
-            st.error(f"Test failed: {e}")
             import traceback
+            st.error(str(e))
             st.code(traceback.format_exc())
-    
     # Save count to sheet only if user exists (paid users)
     
     st.success("✅ Poster generated successfully!")
