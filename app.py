@@ -352,9 +352,14 @@ if submitted:
         "Tuition center":   "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
         "Real estate":      "https://cdn-icons-png.flaticon.com/512/1040/1040993.png"
     }
-    #festival_icon="https://cdn-icons-png.flation.com/512/616/616490.png"
-    #fire_icon = "https://cdn-icons-png.flation.com/512/1828/1828884.png"
-    bg_color = themes.get(shop_type, "#FFF8E7")
+    festival_icons = {
+        "Special Offer": "https://cdn-icons-png.flaticon.com/512/1828/1828884.png",
+        "Ugadi": "https://cdn-icons-png.flaticon.com/512/616/616490.png",
+        "Diwali": "https://cdn-icons-png.flaticon.com/512/616/616494.png",
+        "Sankranti": "https://cdn-icons-png.flaticon.com/512/2933/2933245.png"
+    }
+    festival_icon = festival_icons.get(festival, "https://cdn-icons-png.flaticon.com/512/1828/1828884.png")
+        bg_color = themes.get(shop_type, "#FFF8E7")
     shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
 
     # ---------------- LOGO ----------------
