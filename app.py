@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
-from googlem import genai
+from google import genai
 import urllib.parse
 import asyncio
 from playwright.async_api import async_playwright
