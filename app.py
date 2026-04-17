@@ -302,7 +302,7 @@ if submitted:
     Return ONLY the caption text, nothing else.
     """
     
-    model = genai.GenerativeaiModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     response =model.generate_content(prompt)
     result = response.text
     
