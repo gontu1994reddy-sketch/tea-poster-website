@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
-from google import genai
+#from google import genai
+from groq import Groq
 import urllib.parse
 import asyncio
 from playwright.async_api import async_playwright
@@ -96,7 +97,7 @@ if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
 
 # ---------------- CONFIG ----------------
-client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+client = groq.Client(api_key=st.secrets["GROQ_API_KEY"])
 
 st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
@@ -301,11 +302,15 @@ if submitted:
     - Use random seed: {random.randint(1, 99999)}
     Return ONLY the caption text, nothing else.
     """
+    
+    
+
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
+        model="llama3-8b-8192",
+        messages=[{"role": "user","content":prompt}],
+        max_tokens=150
     )
-    result = response.text.strip().split("\n")[0]
+    result = response.choices[0].message.content.strip().split("\n")[0]
 
     if not result or len(result) < 20:
         raise ValueError("Too short")
