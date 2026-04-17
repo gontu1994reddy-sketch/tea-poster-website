@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
-#from google import genai
-from groq import Groq
+from google.generativeai import genai
 import urllib.parse
 import asyncio
 from playwright.async_api import async_playwright
@@ -97,7 +96,7 @@ if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
 
 # ---------------- CONFIG ----------------
-groq_client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+
 
 st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
@@ -280,17 +279,33 @@ if submitted:
     st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
     """, unsafe_allow_html=True)
+    prompt = f"""
+    You are a creative marketing expert for small businesses in India.
+    Create a UNIQUE and catchy advertisement caption in {language} for this specific shop.
+
+    Shop Name: {shop}
+    Shop Type: {shop_type}
+    Offer: {offer}
+    Festival/Occasion: {festival}
+    Location: {customer_address}
+
+    Rules:
+    - MUST be different and creative every time
+    - Include the shop name {shop} naturally
+    - Include the exact offer: {offer}
+    - Mention {festival} if not "Special Offer"
+    - Minimum 25 words, maximum 40 words
+    - One paragraph only, no bullet points
+    - If Telugu: mix Telugu and English naturally
+    - Make it emotional and exciting for local customers
+    - Use random seed: {random.randint(1, 99999)}
+    Return ONLY the caption text, nothing else.
+    """
     
-    
-    
-    prompt = f"write a 25 word ad for {shop} shop. offer:{offer}. Festival:{festival}"
-    response = groq_client.chat.completions.create(
-        
-        messages=[{"role": "user","content":prompt}],
-        model="llama3-8b-8192"
-    )
-    result = response.choices[0].message.content.strip()
-    result = result.strip('"').strip('"')
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    model=genai.GenarativeModel(gemini-1.5-flash)
+    response = model.generate_content(prompt)
+    result = response.text
     if not result or len(result) < 15:
         raise ValueError("Too short")
 

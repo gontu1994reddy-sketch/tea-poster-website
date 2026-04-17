@@ -1,10 +1,9 @@
 streamlit
 pandas
 st-gsheets-connection
-
+genai
 playwright
 qrcode
 Pillow
 gspread
 google-auth
-groq
