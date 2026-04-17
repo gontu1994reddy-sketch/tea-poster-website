@@ -97,7 +97,7 @@ if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
 
 # ---------------- CONFIG ----------------
-client = groq.Client(api_key=st.secrets["GROQ_API_KEY"])
+groq_client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
@@ -305,7 +305,7 @@ if submitted:
     
     
 
-    response = client.models.generate_content(
+    response = groq_client.models.generate_content(
         model="llama3-8b-8192",
         messages=[{"role": "user","content":prompt}],
         max_tokens=150
