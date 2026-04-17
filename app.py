@@ -96,7 +96,7 @@ if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
     subprocess.run(["playwright","install","chromium"])
 
 # ---------------- CONFIG ----------------
-
+client = genai.Client(api_key="GEMINI_API_KEY")
 
 st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
@@ -302,10 +302,12 @@ if submitted:
     Return ONLY the caption text, nothing else.
     """
     
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model=genai.GenarativeModel(gemini-1.5-flash)
-    response = model.generate_content(prompt)
-    result = response.text
+    response = client.models.generate_content(
+       model="gemini-1.5-flash",
+       contents=prompt
+    )
+    result = response.text.strip().split("\n")[0]
+
     if not result or len(result) < 15:
         raise ValueError("Too short")
 
