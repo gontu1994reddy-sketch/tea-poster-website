@@ -1,7 +1,7 @@
 streamlit
 pandas
 st-gsheets-connection
-google-genai
+
 playwright
 qrcode
 Pillow
