@@ -72,12 +72,21 @@ def write_sheet_direct(df):
     ]
     creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
     gc = gspread.authorize(creds)
-    sh = gc.open_by_url(str(g["spreadsheet"]))
-    worksheet = sh.sheet1
-    data = [df.columns.tolist()] + df.fillna("").astype(str).values.tolist()
-    worksheet.clear()
-    worksheet.update(data)
-   
+    for attempt in range(3):
+        try:
+            sh = gc.open_by_url(str(g["spreadsheet"]))
+            worksheet = sh.sheet1
+            worksheet.clear()
+            worksheet.update(
+                [df.columns.tolist()] + df.fillna("").astype(str).values.tolist()
+            )
+            return  # success
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(2)
+                continue
+            else:
+                raise e
     
     
 
@@ -659,6 +668,17 @@ if submitted:
             }])
             latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
             write_sheet_direct(latest_sheet)
+    else:        
+        new_sheet = pd.DataFrame([{
+            "Phone": customer_phone,
+            "PremiumCode": "",
+            "Status": "Free",
+            "PosterCount": 1,
+            "Premium": False,
+            "ExpiryDate": "",
+            "LastPostDate": today
+        }])
+        wirte_sheet_direct(new_sheet)    
     
     # Save count to sheet only if user exists (paid users)
     
