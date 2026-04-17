@@ -305,7 +305,7 @@ if submitted:
     
     
 
-    response = groq_client.models.generate_content(
+    response = groq_client.chat.completions.create(
         model="llama3-8b-8192",
         messages=[{"role": "user","content":prompt}],
         max_tokens=150
