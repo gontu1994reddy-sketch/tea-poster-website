@@ -214,18 +214,18 @@ with st.form("poster_form", clear_on_submit=False):
     # ---- FORM ----
 
 
-        shop = st.text_input("🏪 Shop Name")
-        offer = st.text_input("🔥 Offer")
-        logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"])
-        shop_type = st.selectbox("Select Shop Type", [
-            "Grocery shop","Tiffin center","Tea shop & Snacks","Clothing store",
-            "Mobile shop","Salon","Medical store","Bakery","Fruit shop",
-            "Bike repair","Tuition center","Real estate"
-        ])
-        customer_address = st.text_input("📍 Customer Address")
-        language = st.selectbox("Language", ["English", "Telugu"])
-        festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
-        submitted = st.form_submit_button("🚀 Generate AI Poster")
+    shop = st.text_input("🏪 Shop Name")
+    offer = st.text_input("🔥 Offer")
+    logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"])
+    shop_type = st.selectbox("Select Shop Type", [
+        "Grocery shop","Tiffin center","Tea shop & Snacks","Clothing store",
+        "Mobile shop","Salon","Medical store","Bakery","Fruit shop",
+        "Bike repair","Tuition center","Real estate"
+    ])
+    customer_address = st.text_input("📍 Customer Address")
+    language = st.selectbox("Language", ["English", "Telugu"])
+    festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
+    submitted = st.form_submit_button("🚀 Generate AI Poster")
 
 # ---- GENERATE ----
 if submitted:
