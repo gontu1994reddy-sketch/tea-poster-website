@@ -311,7 +311,7 @@ if submitted:
         max_tokens=200,
         temperature=1.0
     )
-    result = response.choices[0].message.content.strip().
+    result = response.choices[0].message.content.strip()
     result = result.strip('"').strip('"')
     if not result or len(result) < 15:
         raise ValueError("Too short")
