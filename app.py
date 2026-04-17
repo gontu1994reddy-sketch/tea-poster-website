@@ -110,121 +110,122 @@ if "poster_generated" not in st.session_state:
 
 
 st.markdown("---")
-customer_phone = st.text_input("📞 Customer Phone")
-
-sheet_data = pd.DataFrame()
-user_row = pd.DataFrame()
-
-if "last_phone" not in st.session_state:
-    st.session_state.last_phone = ""
-
-if customer_phone.strip() and customer_phone != st.session_state.last_phone:
-    try:
-        sheet_data = read_sheet_direct()
-        st.session_state.sheet_data = sheet_data
-        st.session_state.last_phone = customer_phone
-    except Exception as e:
-        st.error(f"Google sheet error: {e}")
-        st.stop()
-
-if "sheet_data" in st.session_state:
-    sheet_data = st.session_state.sheet_data
-    if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty and "Phone" in sheet_data.columns:
-        sheet_data["Phone"] = sheet_data["Phone"].astype(str)
-        user_row = sheet_data[sheet_data["Phone"] == str(customer_phone)]
-
-# ---- USER STATUS ----
-if not user_row.empty:
-    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
-    st.session_state.is_premium = str(user_row.iloc[0]["Premium"]).upper() == "TRUE"
-    expiry_col = str(user_row.iloc[0]["ExpiryDate"]) if "ExpiryDate" in user_row.columns else ""
-    if st.session_state.is_premium and expiry_col:
-        try:
-            expiry = datetime.strptime(expiry_col.strip(), "%Y-%m-%d")
-            if datetime.now() > expiry:
-                st.session_state.is_premium = False
-                st.warning("⚠️ Premium expired. Please renew ₹299.")
-            else:
-                days_left = (expiry - datetime.now()).days
-                st.success(f"💎 Premium active | {days_left} days left")
-        except:
-            pass
-else:
-    if "poster_count" not in st.session_state:
-        st.session_state.poster_count = 0
-    if "is_premium" not in st.session_state:
-        st.session_state.is_premium = False
-
-# ---- STATUS DISPLAY ----
-FREE_LIMIT = 3
-remaining = FREE_LIMIT - st.session_state.poster_count
-
-if st.session_state.is_premium:
-    st.success("💎 Premium active: Unlimited posters")
-elif remaining > 0:
-    st.info(f"🎁 Free posters left: {remaining}")
-    st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
-else:
-    st.error("🚫 Free posters used up!")
-    st.markdown(f"""
-    <a href="{PAYMENT_LINK}" target="_blank">
-        <button style="background:#25D366;color:white;padding:14px 28px;
-        border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
-        💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
-        </button>
-    </a>
-    """, unsafe_allow_html=True)
-
-# ---- PAYMENT ----
-if st.button("✅ I Have Paid"):
-    if not customer_phone.strip():
-        st.error("Please enter phone number first.")
-    else:
-        expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-        premium_code = f"RAMA{customer_phone[-4:]}"
-        latest = read_sheet_direct()
-        latest["Phone"] = latest["Phone"].astype(str) if "Phone" in latest.columns else latest["Phone"]
-        idx = latest[latest["Phone"] == str(customer_phone)].index if "Phone" in latest.columns else []
-        if len(idx) > 0:
-            latest.loc[idx[0], "Premium"] = True
-            latest.loc[idx[0], "Status"] = "Active"
-            latest.loc[idx[0], "ExpiryDate"] = expiry_date
-            latest.loc[idx[0], "PremiumCode"] = premium_code
-            latest.loc[idx[0], "PosterCount"] = 0
-            latest.loc[idx[0], "LastPostDate"] = ""
-        else:
-            new_row = pd.DataFrame([{
-                "Phone": customer_phone,
-                "PremiumCode": premium_code,
-                "Status": "Active",
-                "PosterCount": 0,
-                "Premium": True,
-                "ExpiryDate": expiry_date,
-                "LastPostDate": ""
-            }])
-            latest = pd.concat([latest, new_row], ignore_index=True)
-        write_sheet_direct(latest)
-        st.session_state.is_premium = True
-        st.session_state.poster_count = 0
-        st.session_state.last_phone = ""  # force refresh
-        st.success(f"🎉 Premium activated till {expiry_date}!")
-        st.rerun()
-
-# ---- FORM ----
-
 with st.form("poster_form", clear_on_submit=False):
-    shop = st.text_input("🏪 Shop Name")
-    offer = st.text_input("🔥 Offer")
-    logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"])
-    shop_type = st.selectbox("Select Shop Type", [
-        "Grocery shop","Tiffin center","Tea shop & Snacks","Clothing store",
-        "Mobile shop","Salon","Medical store","Bakery","Fruit shop",
-        "Bike repair","Tuition center","Real estate"
-    ])
-    customer_address = st.text_input("📍 Customer Address")
-    language = st.selectbox("Language", ["English", "Telugu"])
-    festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
-    submitted = st.form_submit_button("🚀 Generate AI Poster")
+    customer_phone = st.text_input("📞 Customer Phone")
+
+    sheet_data = pd.DataFrame()
+    user_row = pd.DataFrame()
+
+    if "last_phone" not in st.session_state:
+        st.session_state.last_phone = ""
+
+    if customer_phone.strip() and customer_phone != st.session_state.last_phone:
+        try:
+            sheet_data = read_sheet_direct()
+            st.session_state.sheet_data = sheet_data
+            st.session_state.last_phone = customer_phone
+        except Exception as e:
+            st.error(f"Google sheet error: {e}")
+            st.stop()
+
+    if "sheet_data" in st.session_state:
+        sheet_data = st.session_state.sheet_data
+        if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty and "Phone" in sheet_data.columns:
+            sheet_data["Phone"] = sheet_data["Phone"].astype(str)
+            user_row = sheet_data[sheet_data["Phone"] == str(customer_phone)]
+
+    # ---- USER STATUS ----
+    if not user_row.empty:
+        st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
+        st.session_state.is_premium = str(user_row.iloc[0]["Premium"]).upper() == "TRUE"
+        expiry_col = str(user_row.iloc[0]["ExpiryDate"]) if "ExpiryDate" in user_row.columns else ""
+        if st.session_state.is_premium and expiry_col:
+            try:
+                expiry = datetime.strptime(expiry_col.strip(), "%Y-%m-%d")
+                if datetime.now() > expiry:
+                    st.session_state.is_premium = False
+                    st.warning("⚠️ Premium expired. Please renew ₹299.")
+                else:
+                    days_left = (expiry - datetime.now()).days
+                    st.success(f"💎 Premium active | {days_left} days left")
+            except:
+                pass
+    else:
+        if "poster_count" not in st.session_state:
+            st.session_state.poster_count = 0
+        if "is_premium" not in st.session_state:
+            st.session_state.is_premium = False
+
+    # ---- STATUS DISPLAY ----
+    FREE_LIMIT = 3
+    remaining = FREE_LIMIT - st.session_state.poster_count
+
+    if st.session_state.is_premium:
+        st.success("💎 Premium active: Unlimited posters")
+    elif remaining > 0:
+        st.info(f"🎁 Free posters left: {remaining}")
+        st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
+    else:
+        st.error("🚫 Free posters used up!")
+        st.markdown(f"""
+        <a href="{PAYMENT_LINK}" target="_blank">
+            <button style="background:#25D366;color:white;padding:14px 28px;
+            border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
+            💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
+            </button>
+        </a>
+        """, unsafe_allow_html=True)
+
+    # ---- PAYMENT ----
+    if st.button("✅ I Have Paid"):
+        if not customer_phone.strip():
+            st.error("Please enter phone number first.")
+        else:
+            expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
+            premium_code = f"RAMA{customer_phone[-4:]}"
+            latest = read_sheet_direct()
+            latest["Phone"] = latest["Phone"].astype(str) if "Phone" in latest.columns else latest["Phone"]
+            idx = latest[latest["Phone"] == str(customer_phone)].index if "Phone" in latest.columns else []
+            if len(idx) > 0:
+                latest.loc[idx[0], "Premium"] = True
+                latest.loc[idx[0], "Status"] = "Active"
+                latest.loc[idx[0], "ExpiryDate"] = expiry_date
+                latest.loc[idx[0], "PremiumCode"] = premium_code
+                latest.loc[idx[0], "PosterCount"] = 0
+                latest.loc[idx[0], "LastPostDate"] = ""
+            else:
+                new_row = pd.DataFrame([{
+                    "Phone": customer_phone,
+                    "PremiumCode": premium_code,
+                    "Status": "Active",
+                    "PosterCount": 0,
+                    "Premium": True,
+                    "ExpiryDate": expiry_date,
+                    "LastPostDate": ""
+                }])
+                latest = pd.concat([latest, new_row], ignore_index=True)
+            write_sheet_direct(latest)
+            st.session_state.is_premium = True
+            st.session_state.poster_count = 0
+            st.session_state.last_phone = ""  # force refresh
+            st.success(f"🎉 Premium activated till {expiry_date}!")
+            st.rerun()
+
+    # ---- FORM ----
+
+
+        shop = st.text_input("🏪 Shop Name")
+        offer = st.text_input("🔥 Offer")
+        logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"])
+        shop_type = st.selectbox("Select Shop Type", [
+            "Grocery shop","Tiffin center","Tea shop & Snacks","Clothing store",
+            "Mobile shop","Salon","Medical store","Bakery","Fruit shop",
+            "Bike repair","Tuition center","Real estate"
+        ])
+        customer_address = st.text_input("📍 Customer Address")
+        language = st.selectbox("Language", ["English", "Telugu"])
+        festival = st.selectbox("Festival", ["Special Offer","Ugadi","Diwali","Sankranti"])
+        submitted = st.form_submit_button("🚀 Generate AI Poster")
 
 # ---- GENERATE ----
 if submitted:
