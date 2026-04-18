@@ -236,6 +236,17 @@ with st.form("poster_form", clear_on_submit=False):
 
 # ---- GENERATE ----
 if submitted:
+    if logo is not None:
+        try:
+            logo.seek(0)
+            logo_bytes = logo.read()
+            if logo_bytes:
+                logo_base64 = base64.b64encode(logo_bytes).decode("utf-8")
+        except Exception as e:
+            st.warning(f"logo error: {e}")
+            logo_base64 = None
+    logo_base64 = st.session_state.get("logo_base64"),None)
+
     if not customer_phone.strip():
         st.warning("⚠️ Please enter Customer Phone first.")
         st.stop()
@@ -450,7 +461,7 @@ if submitted:
     st.image(png_file, use_container_width=True)
 
     with open(png_file, "rb") as f:
-        st.download_button(
+        downloaded = st.download_button(
             "Download Poster",
             f.read(),
             file_name="poster.png",
