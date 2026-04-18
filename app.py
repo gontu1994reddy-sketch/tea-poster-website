@@ -405,7 +405,7 @@ if submitted:
             logo_bytes = logo.read()
             if logo_bytes:
                 logo_base64 = base64.b64encode(logo_bytes).decode("utf-8")
-        except Exception:
+        except Exception as e:
             st.warning(f"logo error: {e}")
             logo_base64 = None
 
