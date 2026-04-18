@@ -14,7 +14,6 @@ from io import BytesIO
 from datetime import datetime, timedelta
 import gspread
 from google.oauth2.service_account import Credentials
-import random
 import time
 
 
@@ -177,12 +176,12 @@ FREE_LIMIT = 3
 remaining = FREE_LIMIT - st.session_state.poster_count
 
 if st.session_state.is_premium:
-    st.success("💎 Premium active: Unlimited posters")
+    st.success("💎 Premium active: posters")
 elif remaining > 0:
-    st.info(f"🎁 Free posters left: {remaining}")
-    st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
+    st.info(f"🎁 Posters left: {remaining}")
+    #st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
 else:
-    st.error("🚫 Free posters used up!")
+    st.error("🚫 Posters used up!")
     st.markdown(f"""
     <a href="{PAYMENT_LINK}" target="_blank">
         <button style="background:#25D366;color:white;padding:14px 28px;
@@ -301,23 +300,58 @@ if submitted:
     - Use random seed: {random.randint(1, 99999)}
     Return ONLY the caption text, nothing else.
     """
+    try:
+        response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+        )
+
+        result = response.text.strip().split("\n")[0]
+
+        
+    except Exception:
+        import random
+        if language == "Telugu":
+            fallbacks = [
+                f"{festival} స్పెషల్ ఆఫర్! {shop} వద్ద {offer} మాత్రమే. వెంటనే వచ్చి ఆఫర్ పొందండి!",
+                f"🌟 {shop} లో {festival} స్పెషల్! {offer} మాత్రమే. వెంటనే రండి, అవకాశం మిస్ చేసుకోకండి!",
+                f"💥 {shop} వద్ద అద్భుతమైన డీల్! {offer} — ఈరోజే వినియోగించుకోండి!",
+                f"🎉 {festival} సందర్భంగా {shop} లో {offer} ఆఫర్! మీ కుటుంబంతో రండి!",
+                f"⭐ {shop} లో నాణ్యమైన సేవలు! {festival} స్పెషల్ — {offer}. ఆలస్యం చేయకండి!",
+                f"🔥 {shop} వద్ద {festival} కి ప్రత్యేక ఆఫర్! {offer} మాత్రమే. వెంటనే వినియోగించుకోండి!",
+                f"✨ {festival} శుభాకాంక్షలు! {shop} లో {offer} స్పెషల్ ఆఫర్ పొందండి!",
+                f"🎊 {shop} లో {festival} సందర్భంగా గొప్ప ఆఫర్! {offer} — తొందరగా రండి!",
+                f"💫 {shop} వద్ద {offer} ఆఫర్! {festival} కి ప్రత్యేక తగ్గింపు. ఈరోజే రండి!",
+                f"🌈 {festival} సంతోషం మీకు అందించడానికి {shop} సిద్ధంగా ఉంది! {offer} పొందండి!",
+                f"🏆 {shop} — మీ నమ్మకమైన అంగడి! {festival} స్పెషల్ {offer}. అందరికీ స్వాగతం!",
+                f"🎯 {shop} లో {offer} — {festival} కి అద్భుతమైన బహుమతి! నేడే వినియోగించుకోండి!",
+                f"💎 {festival} కి {shop} నుండి ప్రత్యేక ఆఫర్! {offer} మాత్రమే. మిస్ చేసుకోకండి!",
+                f"🚀 {shop} వద్ద {festival} సూపర్ సేల్! {offer} — అందరికీ అద్భుతమైన అవకాశం!",
+                f"🌺 {festival} శుభాకాంక్షలతో {shop} అందిస్తున్న స్పెషల్ ఆఫర్ — {offer}!",
+                f"👑 {shop} లో {festival} కి రాజసమైన ఆఫర్! {offer} మాత్రమే. వెంటనే రండి!"
+            ]
+        else:
+            fallbacks = [
+                f"{festival} special offer at {shop}! Get {offer} today. Visit now!",
+                f"🌟 {festival} Special at {shop}! Get {offer} today only. Don't miss this amazing deal!",
+                f"💥 Exclusive {festival} offer at {shop}! {offer} — limited time only. Visit us now!",
+                f"🎉 Celebrate {festival} with {shop}! Special deal: {offer}. Come with your family!",
+                f"⭐ {shop} brings you the best {festival} offer! {offer} — quality you can trust!",
+                f"🔥 Hot {festival} deal at {shop}! {offer} available today. Grab yours before it's gone!",
+                f"✨ {shop} wishes you Happy {festival}! Celebrate with our special offer: {offer}!",
+                f"🎊 Big {festival} sale at {shop}! {offer} — best prices in town. Visit us today!",
+                f"💫 {shop} presents {festival} special: {offer}! Hurry, limited time offer!",
+                f"🌈 Make your {festival} special with {shop}! Amazing offer: {offer}. Come visit us!",
+                f"🏆 {shop} — your trusted store! {festival} special offer: {offer}. Everyone welcome!",
+                f"🎯 {festival} deal you can't miss at {shop}! {offer} — visit us today and save big!",
+                f"💎 Premium {festival} offer from {shop}! {offer} only. Don't let this pass you by!",
+                f"🚀 Super {festival} sale at {shop}! {offer} — incredible savings for everyone!",
+                f"🌺 {shop} celebrates {festival} with you! Special offer: {offer}. Come join us!",
+                f"👑 Royal {festival} deal at {shop}! {offer} — best offer of the season. Visit now!"
+            ] 
+        result = random.choice(fallbacks)       
+
     
-    response = client.models.generate_content(
-       model="gemini-2.5-flash",
-       contents=prompt
-    )
-
-    result = response.text.strip().split("\n")[0]
-
-    if not result or len(result) < 15:
-        raise ValueError("Too short")
-
-    #except Exception:
-     #   if language == "Telugu":
-      #      result = f"{festival} స్పెషల్ ఆఫర్! {shop} వద్ద {offer} మాత్రమే. వెంటనే వచ్చి ఆఫర్ పొందండి!"
-      #  else:
-      #      result = f"{festival} special offer at {shop}! Get {offer} today. Visit now!"
-
     # ---------------- ICON URLS ----------------
     themes = {
         "Grocery shop": "#DFF6DD",
