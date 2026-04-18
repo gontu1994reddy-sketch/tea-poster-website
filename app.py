@@ -194,7 +194,7 @@ else:
     """, unsafe_allow_html=True)
 
 # ---- PAYMENT ----
-if st.button("✅ I Have Paid"):
+#if st.button("✅ I Have Paid"):
     if not customer_phone.strip():
         st.error("Please enter phone number first.")
     else:
