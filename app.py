@@ -470,7 +470,7 @@ if submitted:
             file_name="poster.png",
             mime="image/png",
             key="download_btn"
-    ):
+        ):
         st.session_state.download_count = st.session_state.get("download_count",0) + 1
         st.rerun()
 
