@@ -486,7 +486,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="accent"></div>
         </div></body></html>"""  
 
-     elif design == 8:
+    elif design == 8:
         # DESIGN 4: VIBRANT GRADIENT GLASSMORPHISM
         # Logo: Hexagon clip with glow
         # Offer: Glass floating card with shop badge
@@ -542,7 +542,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="cinfo"><div class="clabel">Visit Us</div><div class="ctext">{customer_address}</div></div></div>
         </div><img class="wm" src="{shop_icon}"></div></body></html>"""                
 
-     elif design == 9:
+    elif design == 9:
         # DESIGN 5: RETRO VINTAGE
         # Logo: Diamond shape rotated square
         # Offer: Retro starburst badge
@@ -598,7 +598,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="top-stripe"></div>
         </div></body></html>"""
 
-     elif design == 10:
+    elif design == 10:
         # DESIGN 7: PASTEL SOFT ELEGANT
         # Logo: Soft circle with pastel shadow
         # Offer: Large pastel colored pill
@@ -717,7 +717,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="top-band"></div>
         </div></body></html>""" 
 
-     else:
+    else:
         # DESIGN 6: NEON DARK CYBERPUNK
         # Logo: Neon bordered square with glow
         # Offer: Neon green text with scanline effect
