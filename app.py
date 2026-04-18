@@ -20,76 +20,76 @@ import random
 
 
 
-def read_sheet_direct():
-    g = st.secrets["connections"]["gsheets"]
-    creds_dict = {
-        "type" : "service_account",
-        "project_id" : g["project_id"],
-        "private_key_id" : g["private_key_id"],
-        "private_key" : g["private_key"].replace("\\n","\\n"),
-        "client_email" : g["client_email"],
-        "client_id" : g["client_id"],
-        "auth_uri" : "https://accounts.google.com/o/oauth2/auth",
-        "token_uri" : "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/{gs['client_email']}",
-        }
+#def read_sheet_direct():
+#    g = st.secrets["connections"]["gsheets"]
+#    creds_dict = {
+#        "type" : "service_account",
+#        "project_id" : g["project_id"],
+#        "private_key_id" : g["private_key_id"],
+#        "private_key" : g["private_key"].replace("\\n","\\n"),
+#        "client_email" : g["client_email"],
+#        "client_id" : g["client_id"],
+#        "auth_uri" : "https://accounts.google.com/o/oauth2/auth",
+#        "token_uri" : "https://oauth2.googleapis.com/token",
+#        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+#        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/{gs['client_email']}",
+#        }
             
     
-    scopes = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive"
-        ]
-    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-    gc = gspread.authorize(creds)
+#    scopes = [
+#        "https://www.googleapis.com/auth/spreadsheets",
+#        "https://www.googleapis.com/auth/drive"
+#        ]
+#    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+#    gc = gspread.authorize(creds)
 
-    for attempt in range(3):
-        try:
+#    for attempt in range(3):
+#        try:
             
-            sh = gc.open_by_url(str(g["spreadsheet"]))
-            records = sh.sheet1.get_all_records()  # always returns list of dicts
-            return pd.DataFrame(records)
-        except Exception as e:
-            if attempt < 2:
-                time.sleep(2)
-                continue
-            else:
-                raise e    
-def write_sheet_direct(df):
-    g = st.secrets["connections"]["gsheets"]
-    creds_dict = {
-        "type": "service_account",
-        "project_id": g["project_id"],
-        "private_key_id": g["private_key_id"],
-        "private_key": g["private_key"].replace("\\n", "\n"),
-        "client_email": g["client_email"],
-        "client_id": g["client_id"],
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": f"https://www.googleapis.com/robot/v1/metadata/x509/{g['client_email']}"
-    }
-    scopes = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive"
-    ]
-    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-    gc = gspread.authorize(creds)
-    for attempt in range(3):
-        try:
-            sh = gc.open_by_url(str(g["spreadsheet"]))
-            worksheet = sh.sheet1
-            worksheet.clear()
-            worksheet.update(
-                [df.columns.tolist()] + df.fillna("").astype(str).values.tolist()
-            )
-            return  # success
-        except Exception as e:
-            if attempt < 2:
-                time.sleep(2)
-                continue
-            else:
-                raise e
+#            sh = gc.open_by_url(str(g["spreadsheet"]))
+#            records = sh.sheet1.get_all_records()  # always returns list of dicts
+#            return pd.DataFrame(records)
+#        except Exception as e:
+#            if attempt < 2:
+#                time.sleep(2)
+#                continue
+#            else:
+#                raise e    
+#def write_sheet_direct(df):
+#    g = st.secrets["connections"]["gsheets"]
+#    creds_dict = {
+#        "type": "service_account",
+#        "project_id": g["project_id"],
+#        "private_key_id": g["private_key_id"],
+#        "private_key": g["private_key"].replace("\\n", "\n"),
+#        "client_email": g["client_email"],
+#        "client_id": g["client_id"],
+#        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+#        "token_uri": "https://oauth2.googleapis.com/token",
+#        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+#        "client_x509_cert_url": f"https://www.googleapis.com/robot/v1/metadata/x509/{g['client_email']}"
+#    }
+#    scopes = [
+#        "https://www.googleapis.com/auth/spreadsheets",
+#        "https://www.googleapis.com/auth/drive"
+#    ]
+#    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+#    gc = gspread.authorize(creds)
+#    for attempt in range(3):
+#        try:
+#            sh = gc.open_by_url(str(g["spreadsheet"]))
+#            worksheet = sh.sheet1
+#            worksheet.clear()
+#            worksheet.update(
+#                [df.columns.tolist()] + df.fillna("").astype(str).values.tolist()
+#            )
+#            return  # success
+#        except Exception as e:
+#            if attempt < 2:
+#                time.sleep(2)
+#                continue
+#            else:
+#                raise e
     
     
 
@@ -103,10 +103,10 @@ st.set_page_config(page_title="AI Poster Generator", layout="centered")
 st.title("🎨 AI Poster Generator")
 
 # ---------------- PREMIUM PAYMENT ----------------
-PAYMENT_LINK = "https://rzp.io"   # your real UPI
-PLAN_PRICE = 299
+#PAYMENT_LINK = "https://rzp.io"   # your real UPI
+#PLAN_PRICE = 299
 
-today = datetime.now().strftime("%Y-%m-%d")
+#today = datetime.now().strftime("%Y-%m-%d")
 
 if "poster_generated" not in st.session_state:
     st.session_state.poster_generated = False
@@ -129,49 +129,49 @@ with st.form("poster_form", clear_on_submit=False):
     submitted = st.form_submit_button("🚀 Generate AI Poster")
 
 
-sheet_data = pd.DataFrame()
-user_row = pd.DataFrame()
+#sheet_data = pd.DataFrame()
+#user_row = pd.DataFrame()
 
-if "last_phone" not in st.session_state:
-    st.session_state.last_phone = ""
+#if "last_phone" not in st.session_state:
+#    st.session_state.last_phone = ""
 
-if customer_phone.strip() and customer_phone != st.session_state.last_phone:
+#if customer_phone.strip() and customer_phone != st.session_state.last_phone:
    
-    try:
-        sheet_data = read_sheet_direct()
-        st.session_state.sheet_data = sheet_data
-        st.session_state.last_phone = customer_phone
-    except Exception as e:
-        st.error(f"Google sheet error: {e}")
-        st.stop()
+#    try:
+#        sheet_data = read_sheet_direct()
+#        st.session_state.sheet_data = sheet_data
+#        st.session_state.last_phone = customer_phone
+#    except Exception as e:
+#        st.error(f"Google sheet error: {e}")
+#        st.stop()
 
-if "sheet_data" in st.session_state:
-    sheet_data = st.session_state.sheet_data
-    if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty and "Phone" in sheet_data.columns:
-        sheet_data["Phone"] = sheet_data["Phone"].astype(str)
-        user_row = sheet_data[sheet_data["Phone"] == str(customer_phone)]
+#if "sheet_data" in st.session_state:
+#    sheet_data = st.session_state.sheet_data
+#    if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty and "Phone" in sheet_data.columns:
+#        sheet_data["Phone"] = sheet_data["Phone"].astype(str)
+#        user_row = sheet_data[sheet_data["Phone"] == str(customer_phone)]
 
 # ---- USER STATUS ----
-if not user_row.empty:
-    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
-    st.session_state.is_premium = str(user_row.iloc[0]["Premium"]).upper() == "TRUE"
-    expiry_col = str(user_row.iloc[0]["ExpiryDate"]) if "ExpiryDate" in user_row.columns else ""
-    if st.session_state.is_premium and expiry_col:
-        try:
-            expiry = datetime.strptime(expiry_col.strip(), "%Y-%m-%d")
-            if datetime.now() > expiry:
-                st.session_state.is_premium = False
-                st.warning("⚠️ Premium expired. Please renew ₹299.")
-            else:
-                days_left = (expiry - datetime.now()).days
-                st.success(f"💎 Premium active | {days_left} days left")
-        except:
-            pass
-else:
-    if "poster_count" not in st.session_state:
-        st.session_state.poster_count = 0
-    if "is_premium" not in st.session_state:
-        st.session_state.is_premium = False
+#if not user_row.empty:
+#    st.session_state.poster_count = int(user_row.iloc[0]["PosterCount"]) if user_row.iloc[0]["PosterCount"] else 0
+#    st.session_state.is_premium = str(user_row.iloc[0]["Premium"]).upper() == "TRUE"
+#    expiry_col = str(user_row.iloc[0]["ExpiryDate"]) if "ExpiryDate" in user_row.columns else ""
+#    if st.session_state.is_premium and expiry_col:
+#        try:
+#            expiry = datetime.strptime(expiry_col.strip(), "%Y-%m-%d")
+#            if datetime.now() > expiry:
+#                st.session_state.is_premium = False
+#                st.warning("⚠️ Premium expired. Please renew ₹299.")
+#            else:
+#                days_left = (expiry - datetime.now()).days
+#                st.success(f"💎 Premium active | {days_left} days left")
+#        except:
+#            pass
+#else:
+#    if "poster_count" not in st.session_state:
+#        st.session_state.poster_count = 0
+#    if "is_premium" not in st.session_state:
+#        st.session_state.is_premium = False
 
 # ---- STATUS DISPLAY ----
 #FREE_LIMIT = 30
@@ -247,9 +247,9 @@ if submitted:
     # fresh check
     #fresh_check = read_sheet_direct()
     #if not fresh_check.empty and "Phone" in fresh_check.columns:
-     #   fresh_check["Phone"] = fresh_check["Phone"].astype(str)
-    #    fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
-     #   if not fresh_user.empty:
+        #fresh_check["Phone"] = fresh_check["Phone"].astype(str)
+        #fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
+        #if not fresh_user.empty:
             #total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
     #        last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
      #   else:
@@ -474,46 +474,4 @@ if submitted:
 
     # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
     # ---- SAVE AFTER POSTER GENERATED ----
-    st.session_state.poster_count += 1
-    st.session_state.poster_generated = True
-
-    try:
-        latest_sheet = read_sheet_direct()
-        phone_str = str(customer_phone).strip()
-
-        if not latest_sheet.empty and "Phone" in latest_sheet.columns:
-            # Clean all phone numbers first
-            latest_sheet["Phone"] = latest_sheet["Phone"].astype(str).str.strip()
-            
-            # Remove ALL existing rows with this phone number
-            latest_sheet = latest_sheet[latest_sheet["Phone"] != phone_str].copy()
-            
-            # Get current count from fresh check
-            current_count = total_posts + 1
-
-        else:
-            current_count = 1
-            latest_sheet = pd.DataFrame(columns=[
-                "Phone","PremiumCode","Status",
-                "PosterCount","Premium","ExpiryDate","LastPostDate"
-            ])
-
-        # Add ONE clean updated row
-        new_row = pd.DataFrame([{
-            "Phone": phone_str,
-            "PremiumCode": str(fresh_user.iloc[0]["PremiumCode"]) if not fresh_user.empty and "PremiumCode" in fresh_user.columns else "",
-            "Status": str(fresh_user.iloc[0]["Status"]) if not fresh_user.empty else "Free",
-            "PosterCount": str(current_count),
-            "Premium": str(fresh_user.iloc[0]["Premium"]) if not fresh_user.empty else "FALSE",
-            "ExpiryDate": str(fresh_user.iloc[0]["ExpiryDate"]) if not fresh_user.empty else "",
-            "LastPostDate": str(today)
-        }])
-
-        latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
-        write_sheet_direct(latest_sheet)
-        st.success("✅ Poster generated successfully!")
-
-    except Exception as e:
-        st.error(f"Save error: {e}")
-        import traceback
-        st.code(traceback.format_exc()) 
+    
