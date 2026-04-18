@@ -75,7 +75,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="logo-wrap">{logo_html}</div>
         <div><div class="shop-name">{shop}</div><div class="shop-tag">{shop_type}</div></div>
         </div>
-        <div class="festival-pill"><img src="{festival_icon}"><span>{festival} Special</span></div>
+        <div class="festival-pill"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="offer-box">
         <div class="offer-eyebrow">★ Exclusive Offer ★</div>
         <div class="offer-value">{offer}</div>
@@ -147,7 +147,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="shop-info"><div class="shop-name">{shop}</div><div class="shop-tag">{shop_type}</div></div>
         <div class="logo-wrap">{logo_html}</div>
         </div>
-        <div class="festival-pill"><img src="{festival_icon}"><span>{festival} Special</span></div>
+        <div class="festival-pill"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="offer-section">
         <div class="offer-eyebrow">Exclusive Offer</div>
         <div class="offer-value">{offer}</div>
@@ -217,9 +217,9 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="logo-wrap">{logo_html}</div>
         <div><div class="shop-name">{shop}</div><div class="shop-tag">{shop_type}</div></div>
         </div>
-        <div class="festival-pill"><img src="{festival_icon}"><span>{festival} Special</span></div>
+        <div class="festival-pill"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="offer-ribbon">
-        <div class="offer-top">🔥 Exclusive Offer</div>
+        <div class="offer-top">✦ Exclusive Offer ✦</div>
         <div class="offer-value">{offer}</div>
         <div class="offer-sub"><img src="{shop_icon}"><span>{shop_type}</span></div>
         </div>
@@ -283,7 +283,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="logo-wrap">{logo_html}</div>
         <div><div class="shop-name">{shop}</div><div class="shop-tag">{shop_type}</div></div>
         </div>
-        <div class="festival-pill"><img src="{festival_icon}"><span>{festival} Special</span></div>
+        <div class="festival-pill"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="offer-box">
         <div class="offer-label">✦ Exclusive Offer ✦</div>
         <div class="offer-row">
@@ -292,7 +292,7 @@ def get_poster_html(design, shop, offer, festival, result,
         </div>
         </div>
         <div class="caption-box">
-        <div class="caption-avatar">💬</div>
+        <div class="caption-avatar"><img src="https://cdn-icons-png.flaticon.com/512/597/597177.png" style="width:20px;height:20px;filter:brightness(10);"></div>
         <div class="caption-text">{result}</div>
         </div>
         <div class="divider"></div>
@@ -407,9 +407,9 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="card">
         <div class="header"><div class="logo-wrap">{logo_html}</div>
         <div><div class="shop-name">{shop}</div><div class="shop-tag">{shop_type}</div></div></div>
-        <div class="fest"><img src="{festival_icon}"><span>{festival} Special</span></div>
+        <div class="fest"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="ribbon">
-        <div class="rtop">🔥 Exclusive Offer</div>
+        <div class="rtop">✦ Exclusive Offer ✦</div>
         <div class="offer-val">{offer}</div>
         <div class="rsub"><img src="{shop_icon}"><span>{shop_type}</span></div>
         </div>
@@ -464,7 +464,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div><div class="shop-name">{shop}</div><div class="shop-tag">{shop_type}</div></div>
         <div class="logo-wrap">{logo_html}</div>
         </div>
-        <div class="fest"><img src="{festival_icon}"><span>{festival} Special</span></div>
+        <div class="fest"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="offer-sec">
         <div class="offer-eye">Exclusive Offer</div>
         <div class="offer-val">{offer}</div>
@@ -527,14 +527,14 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="poster"><div class="inner">
         <div class="header"><div class="logo-wrap">{logo_html}</div>
         <div><div class="shop-name">{shop}</div><div class="shop-tag">{shop_type}</div></div></div>
-        <div class="fest"><img src="{festival_icon}"><span>{festival} Special</span></div>
+        <div class="fest"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="offer-box">
         <div class="offer-label">✦ Exclusive Offer ✦</div>
         <div class="offer-row">
         <div class="offer-val">{offer}</div>
         <div class="offer-badge"><img src="{shop_icon}"><span>{shop_type}</span></div>
         </div></div>
-        <div class="caption-box"><div class="cap-av">💬</div><div class="caption-text">{result}</div></div>
+        <div class="caption-box"><div class="cap-av"><img src="https://cdn-icons-png.flaticon.com/512/597/597177.png" style="width:20px;height:20px;filter:brightness(10);"></div><div class="caption-text">{result}</div></div>
         <div class="divider"></div>
         <div class="cneon"><div class="cglow"><img src="https://cdn-icons-png.flaticon.com/512/597/597177.png"></div>
         <div class="cinfo"><div class="clabel">Call Us</div><div class="ctext">{customer_phone}</div></div></div>
@@ -586,7 +586,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="header">
         <div class="logo-wrap"><div class="logo-inner">{logo_html}</div></div>
         <div><div class="shop-name">{shop}</div><div class="shop-tag">{shop_type}</div></div></div>
-        <div class="fest"><img src="{festival_icon}"><span>{festival} Special</span></div>
+        <div class="fest"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="offer-box"><div class="offer-val">{offer}</div></div>
         <div class="caption-box"><div class="caption-text">{result}</div></div>
         <div class="divider">— ✦ — ✦ — ✦ —</div>
@@ -701,7 +701,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="right-content">
         <div class="shop-name">{shop}</div>
         <div class="shop-tag">{shop_type}</div>
-        <div class="fest"><img src="{festival_icon}"><span>{festival} Special</span></div>
+        <div class="fest"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="offer-block">
         <div class="offer-eye">Exclusive Offer</div>
         <div class="offer-val">{offer}</div>
@@ -759,7 +759,7 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="content">
         <div class="header"><div class="logo-wrap">{logo_html}</div>
         <div><div class="shop-name">{shop}</div><div class="shop-tag">{shop_type}</div></div></div>
-        <div class="fest"><img src="{festival_icon}"><span>{festival}_SPECIAL</span></div>
+        <div class="fest"><img src="{festival_icon}"><span>{festival}</span></div>
         <div class="offer-box"><div class="offer-val">{offer}</div></div>
         <div class="caption-box"><div class="caption-text">{result}</div></div>
         <div class="divider"></div>
