@@ -109,6 +109,8 @@ st.title("🎨 AI Poster Generator")
 #PLAN_PRICE = 299
 
 #today = datetime.now().strftime("%Y-%m-%d")
+if "download_count" not in st.session_state:
+    st.session_state.download_count = 0
 
 if "poster_generated" not in st.session_state:
     st.session_state.poster_generated = False
@@ -471,7 +473,7 @@ if submitted:
     if downloaded:
         st.session_state.download_count +=1
 
-    st.info(f" Total number of downloads: {st.session_state.download_count}")         
+    st.info(f" Total number of downloads: {st.session_state.get('download_count')}")         
 
     # ---------------- WHATSAPP SHARE ----------------
     share_text = urllib.parse.quote(
@@ -498,6 +500,9 @@ if submitted:
     # ---- SAVE AFTER POSTER GENERATED ----
     st.session_state.poster_count += 1
     st.session_state.poster_generated = True
+
+    #st.info(f"Total number of posters genrated")
+
 
     st.success("☑️ Poster generated successfully!")
     
