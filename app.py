@@ -195,38 +195,38 @@ else:
 
 # ---- PAYMENT ----
 #if st.button("✅ I Have Paid"):
-    if not customer_phone.strip():
-        st.error("Please enter phone number first.")
-    else:
-        expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-        premium_code = f"RAMA{customer_phone[-4:]}"
-        latest = read_sheet_direct()
-        latest["Phone"] = latest["Phone"].astype(str) if "Phone" in latest.columns else latest["Phone"]
-        idx = latest[latest["Phone"] == str(customer_phone)].index if "Phone" in latest.columns else []
-        if len(idx) > 0:
-            latest.loc[idx[0], "Premium"] = True
-            latest.loc[idx[0], "Status"] = "Active"
-            latest.loc[idx[0], "ExpiryDate"] = expiry_date
-            latest.loc[idx[0], "PremiumCode"] = premium_code
-            latest.loc[idx[0], "PosterCount"] = 0
-            latest.loc[idx[0], "LastPostDate"] = ""
-        else:
-            new_row = pd.DataFrame([{
-                "Phone": customer_phone,
-                "PremiumCode": premium_code,
-                "Status": "Active",
-                "PosterCount": 0,
-                "Premium": True,
-                "ExpiryDate": expiry_date,
-                "LastPostDate": ""
-            }])
-            latest = pd.concat([latest, new_row], ignore_index=True)
-        write_sheet_direct(latest)
-        st.session_state.is_premium = True
-        st.session_state.poster_count = 0
-        st.session_state.last_phone = ""  # force refresh
-        st.success(f"🎉 Premium activated till {expiry_date}!")
-        st.rerun()
+    #if not customer_phone.strip():
+   #     st.error("Please enter phone number first.")
+    #else:
+    #    expiry_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
+    #    premium_code = f"RAMA{customer_phone[-4:]}"
+    #    latest = read_sheet_direct()
+    #    latest["Phone"] = latest["Phone"].astype(str) if "Phone" in latest.columns else latest["Phone"]
+    #    idx = latest[latest["Phone"] == str(customer_phone)].index if "Phone" in latest.columns else []
+    #    if len(idx) > 0:
+    #        latest.loc[idx[0], "Premium"] = True
+    #        latest.loc[idx[0], "Status"] = "Active"
+    #        latest.loc[idx[0], "ExpiryDate"] = expiry_date
+    #        latest.loc[idx[0], "PremiumCode"] = premium_code
+    #        latest.loc[idx[0], "PosterCount"] = 0
+    #        latest.loc[idx[0], "LastPostDate"] = ""
+    #    else:
+     #       new_row = pd.DataFrame([{
+    #            "Phone": customer_phone,
+    #            "PremiumCode": premium_code,
+    #            "Status": "Active",
+    #            "PosterCount": 0,
+    #            "Premium": True,
+    #            "ExpiryDate": expiry_date,
+    #            "LastPostDate": ""
+    #        }])
+    #        latest = pd.concat([latest, new_row], ignore_index=True)
+    #    write_sheet_direct(latest)
+    #    st.session_state.is_premium = True
+    #    st.session_state.poster_count = 0
+    #    st.session_state.last_phone = ""  # force refresh
+    #    st.success(f"🎉 Premium activated till {expiry_date}!")
+    #    st.rerun()
 
     # ---- FORM ----
 
@@ -492,6 +492,8 @@ if submitted:
             # New user — add row
             new_row = pd.DataFrame([{
                 "Phone": customer_phone,
+                "ShopName": shop,
+                "ShopAddress":customer_address,
                 "PremiumCode": "",
                 "Status": "Free",
                 "PosterCount": 1,
@@ -504,6 +506,8 @@ if submitted:
     else:        
         new_sheet = pd.DataFrame([{
             "Phone": customer_phone,
+            "ShopName": shop,
+            "ShopAddress":customer_address,
             "PremiumCode": "",
             "Status": "Free",
             "PosterCount": 1,
