@@ -245,7 +245,7 @@ if submitted:
         except Exception as e:
             st.warning(f"logo error: {e}")
             logo_base64 = None
-    logo_base64 = st.session_state.get("logo_base64"),None)
+    logo_base64 = st.session_state.get("logo_base64"),None
 
     if not customer_phone.strip():
         st.warning("⚠️ Please enter Customer Phone first.")
