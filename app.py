@@ -1,4 +1,5 @@
 import streamlit as st
+import base64
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 from google import genai
@@ -6,7 +7,7 @@ import urllib.parse
 import asyncio
 from playwright.async_api import async_playwright
 import tempfile
-import base64
+
 import os
 import subprocess
 import qrcode
@@ -400,6 +401,11 @@ if submitted:
         try:
             logo_bytes = logo.read()
             logo_base64 = base64.b64encode(logo_bytes).decode()
+            logo_html = f"""
+            <img src="data:image/png;base64,{logo_base64}"
+             style="width:150px;height:150px;border-radius:80px;
+             object-fit:cover;margin-bottom:20px;">
+            """
         except Exception:
             logo_base64 = None  
 
