@@ -245,19 +245,19 @@ if submitted:
         #st.stop()
 
     # fresh check
-    fresh_check = read_sheet_direct()
-    if not fresh_check.empty and "Phone" in fresh_check.columns:
-        fresh_check["Phone"] = fresh_check["Phone"].astype(str)
-        fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
-        if not fresh_user.empty:
+    #fresh_check = read_sheet_direct()
+    #if not fresh_check.empty and "Phone" in fresh_check.columns:
+     #   fresh_check["Phone"] = fresh_check["Phone"].astype(str)
+    #    fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
+     #   if not fresh_user.empty:
             total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
-            last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
-        else:
-            total_posts = 0
-            last_post_date = ""
-    else:
-        total_posts = 0
-        last_post_date = ""
+    #        last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
+     #   else:
+     #       total_posts = 0
+    #        last_post_date = ""
+    #else:
+    #    total_posts = 0
+    #    last_post_date = ""
 
    # if last_post_date == today:
         #st.warning("🚫 You already generated a poster today. Come back tomorrow!")
@@ -475,48 +475,55 @@ if submitted:
     """, unsafe_allow_html=True)
 
     # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
+    # ---- SAVE AFTER POSTER GENERATED ----
     st.session_state.poster_count += 1
     st.session_state.poster_generated = True
 
-    # Save to sheet for ALL users after poster generated
-    latest_sheet = read_sheet_direct()
-    if not latest_sheet.empty and "Phone" in latest_sheet.columns:
-        latest_sheet["Phone"] = latest_sheet["Phone"].astype(str)
-        idx = latest_sheet[latest_sheet["Phone"] == str(customer_phone)].index
+    try:
+        latest_sheet = read_sheet_direct()
 
-        if len(idx) > 0:
-            latest_sheet.loc[idx[0], "PosterCount"] = total_posts + 1
-            latest_sheet.loc[idx[0], "LastPostDate"] = today
-            write_sheet_direct(latest_sheet)
+        if not latest_sheet.empty and "Phone" in latest_sheet.columns:
+            latest_sheet["Phone"] = latest_sheet["Phone"].astype(str).str.strip()
+            phone_str = str(customer_phone).strip()
+            idx = latest_sheet[latest_sheet["Phone"] == phone_str].index
+
+            if len(idx) > 0:
+                # ✅ Phone exists — only update count and date
+                current_count = int(latest_sheet.loc[idx[0], "PosterCount"]) if str(latest_sheet.loc[idx[0], "PosterCount"]).isdigit() else 0
+                latest_sheet.loc[idx[0], "PosterCount"] = str(current_count + 1)
+                latest_sheet.loc[idx[0], "LastPostDate"] = str(today)
+            else:
+                # ✅ New phone — add ONE new row only
+                new_row = pd.DataFrame([{
+                    "Phone": phone_str,
+                    "PremiumCode": "",
+                    "Status": "Free",
+                    "PosterCount": "1",
+                    "Premium": "FALSE",
+                    "ExpiryDate": "",
+                    "LastPostDate": str(today)
+                }])
+                latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
         else:
-            # New user — add row
-            new_row = pd.DataFrame([{
-                "Phone": customer_phone,
-                "ShopName": shop,
-                "ShopAddress":customer_address,
+            # ✅ Sheet empty — create first row
+            latest_sheet = pd.DataFrame([{
+                "Phone": str(customer_phone).strip(),
                 "PremiumCode": "",
                 "Status": "Free",
-                "PosterCount": 1,
-                "Premium": False,
+                "PosterCount": "1",
+                "Premium": "FALSE",
                 "ExpiryDate": "",
-                "LastPostDate": today
+                "LastPostDate": str(today)
             }])
-            latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
-            write_sheet_direct(latest_sheet)
-    else:        
-        new_sheet = pd.DataFrame([{
-            "Phone": customer_phone,
-            "ShopName": shop,
-            "ShopAddress":customer_address,
-            "PremiumCode": "",
-            "Status": "Free",
-            "PosterCount": 1,
-            "Premium": False,
-            "ExpiryDate": "",
-            "LastPostDate": today
-        }])
-        write_sheet_direct(new_sheet)    
-    
-    # Save count to sheet only if user exists (paid users)
-    
-    st.success("✅ Poster generated successfully!")
+
+        # Remove duplicate phone rows before saving
+        latest_sheet["Phone"] = latest_sheet["Phone"].astype(str).str.strip()
+        latest_sheet = latest_sheet.drop_duplicates(subset=["Phone"], keep="last")
+
+        write_sheet_direct(latest_sheet)
+        st.success("✅ Poster generated successfully!")
+
+    except Exception as e:
+        st.error(f"Save error: {e}")
+        import traceback
+        st.code(traceback.format_exc())
