@@ -174,7 +174,7 @@ else:
         st.session_state.is_premium = False
 
 # ---- STATUS DISPLAY ----
-FREE_LIMIT = 3
+FREE_LIMIT = 30
 remaining = FREE_LIMIT - st.session_state.poster_count
 
 if st.session_state.is_premium:
