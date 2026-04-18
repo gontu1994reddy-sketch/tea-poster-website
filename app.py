@@ -473,7 +473,7 @@ if submitted:
     if downloaded:
         st.session_state.download_count +=1
 
-    st.info(f" Total number of downloads: {st.session_state.get('download_count')}")         
+    st.info(f" Total number of downloads: {st.session_state.get('download_count', 0)}")         
 
     # ---------------- WHATSAPP SHARE ----------------
     share_text = urllib.parse.quote(
@@ -498,8 +498,8 @@ if submitted:
 
     # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
     # ---- SAVE AFTER POSTER GENERATED ----
-    st.session_state.poster_count += 1
-    st.session_state.poster_generated = True
+    #st.session_state.poster_count += 1
+    #st.session_state.poster_generated = True
 
     #st.info(f"Total number of posters genrated")
 
