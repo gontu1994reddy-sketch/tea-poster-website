@@ -174,24 +174,24 @@ else:
         st.session_state.is_premium = False
 
 # ---- STATUS DISPLAY ----
-FREE_LIMIT = 30
-remaining = FREE_LIMIT - st.session_state.poster_count
+#FREE_LIMIT = 30
+#remaining = FREE_LIMIT - st.session_state.poster_count
 
-if st.session_state.is_premium:
-    st.success("💎 Premium active: posters")
-elif remaining > 0:
+#if st.session_state.is_premium:
+    #st.success("💎 Premium active: posters")
+#elif remaining > 0:
     st.info(f"🎁 Posters left: {remaining}")
     #st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
-else:
-    st.error("🚫 Posters used up!")
-    st.markdown(f"""
-    <a href="{PAYMENT_LINK}" target="_blank">
-        <button style="background:#25D366;color:white;padding:14px 28px;
-        border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
-        💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
-        </button>
-    </a>
-    """, unsafe_allow_html=True)
+#else:
+    #st.error("🚫 Posters used up!")
+    #st.markdown(f"""
+   # <a href="{PAYMENT_LINK}" target="_blank">
+       # <button style="background:#25D366;color:white;padding:14px 28px;
+       # border:none;border-radius:10px;font-size:18px;width:100%;cursor:pointer;">
+       # 💎 Pay ₹{PLAN_PRICE} — Get 30 Posters / Month
+       # </button>
+   # </a>
+    #""", unsafe_allow_html=True)
 
 # ---- PAYMENT ----
 #if st.button("✅ I Have Paid"):
@@ -240,9 +240,9 @@ if submitted:
     if not shop.strip() or not offer.strip() or not customer_address.strip():
         st.warning("⚠️ Please fill all fields.")
         st.stop()
-    if st.session_state.poster_generated:
-        st.warning("🚫 Already generated today. Come back tomorrow!")
-        st.stop()
+    #if st.session_state.poster_generated:
+        #st.warning("🚫 Already generated today. Come back tomorrow!")
+        #st.stop()
 
     # fresh check
     fresh_check = read_sheet_direct()
@@ -259,18 +259,18 @@ if submitted:
         total_posts = 0
         last_post_date = ""
 
-    if last_post_date == today:
-        st.warning("🚫 You already generated a poster today. Come back tomorrow!")
-        st.stop()
+   # if last_post_date == today:
+        #st.warning("🚫 You already generated a poster today. Come back tomorrow!")
+        #st.stop()
 
-    if not st.session_state.is_premium:
-        if st.session_state.poster_count >= FREE_LIMIT:
-            st.warning("💎 Your 3 free posters are used. Please pay ₹299.")
-            st.stop()
-    else:
-        if total_posts >= 30:
-            st.warning("🚫 You have used all 30 posts. Please renew ₹299.")
-            st.stop()
+    #if not st.session_state.is_premium:
+        #if st.session_state.poster_count >= FREE_LIMIT:
+            #st.warning("💎 Your 3 free posters are used. Please pay ₹299.")
+           # st.stop()
+    #else:
+       # if total_posts >= 30:
+            #st.warning("🚫 You have used all 30 posts. Please renew ₹299.")
+            #st.stop()
 
 
     
