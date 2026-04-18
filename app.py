@@ -397,16 +397,14 @@ if submitted:
     shop_icon = shop_icons.get(shop_type, "https://cdn-icons-png.flaticon.com/512/590/590836.png")
 
     # ---------------- LOGO ----------------
-    logo_html = ""
-    logo_base64=None
+    
+    logo_base64 = None
     if logo:
-        logo_bytes = logo.read()
-        logo_base64 = base64.b64encode(logo_bytes).decode()
-        logo_html = f"""
-        <img src="data:image/png;base64,{logo_base64}"
-             style="width:150px;height:150px;border-radius:80px;
-             object-fit:cover;margin-bottom:20px;">
-        """
+        try:
+            logo_bytes = logo.read()
+            logo_base64 = base64.b64encode(logo_bytes).decode()
+        except Exception:
+            logo_base64 = None
 
     # ---------------- POSTER HTML ----------------
    
