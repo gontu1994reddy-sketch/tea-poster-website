@@ -4,7 +4,7 @@ def get_poster_html(design, shop, offer, festival, result,
                     logo=None, logo_base64=None):
 
     logo_html = (
-        f"<img src="data:image/png;base64,{logo_base64}" style='width:100%;height:100%;object-fit:cover;'>"
+        f"<img src='data:image/png;base64,{logo_base64}' style='width:100%;height:100%;object-fit:cover;'>"
         if logo_base64 is not None and logo_base64 != ""
         else f"<img src='{shop_icon}' style='width:70px;height:70px;object-fit:contain;'>"
     )
