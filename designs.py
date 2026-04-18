@@ -202,7 +202,7 @@ def get_poster_html(design, shop, offer, festival, result,
         .offer-sub img {{ width:30px; height:30px; filter:brightness(10); opacity:0.6; }}
         .offer-sub span {{ font-size:16px; color:rgba(255,255,255,0.7); font-weight:600; }}
         .caption-box {{ background:#FFFDE7; border:2px solid #FFD93D; border-radius:4px 16px 16px 16px; padding:24px 30px; margin:25px 0; box-shadow:4px 4px 0px #FFD93D; position:relative; }}
-        .caption-box::before {{ content:'📢'; position:absolute; top:-18px; left:20px; font-size:28px; }}
+        .caption-box::before {{ content:''; position:absolute; top:-18px; left:20px; font-size:28px; }}
         .caption-text {{ font-size:27px; line-height:1.75; color:#333; font-family:'Noto Sans Telugu','Hind',sans-serif; }}
         .divider {{ height:3px; background:linear-gradient(90deg,#FF6B35,#FFD93D,#FF6B35); margin:25px 0; border-radius:2px; }}
         .contact-pill {{ display:flex; align-items:center; gap:16px; background:linear-gradient(135deg,#FF6B3515,#FFD93D15); border:2px solid #FF6B3544; border-radius:50px; padding:14px 28px; margin-bottom:14px; }}
@@ -394,7 +394,7 @@ def get_poster_html(design, shop, offer, festival, result,
         .rsub img{{width:30px;height:30px;filter:brightness(10);opacity:.6}}
         .rsub span{{font-size:16px;color:rgba(255,255,255,.7);font-weight:600}}
         .caption-box{{background:#FFFDE7;border:2px solid #FFD93D;border-radius:4px 16px 16px 16px;padding:24px 30px;margin:25px 0;box-shadow:4px 4px 0 #FFD93D;position:relative}}
-        .caption-box::before{{content:'📢';position:absolute;top:-18px;left:20px;font-size:28px}}
+        .caption-box::before{{content:'';position:absolute;top:-18px;left:20px;font-size:28px}}
         .caption-text{{font-size:27px;line-height:1.75;color:#333;font-family:'Noto Sans Telugu','Hind',sans-serif}}
         .divider{{height:3px;background:linear-gradient(90deg,#FF6B35,#FFD93D,#FF6B35);margin:25px 0;border-radius:2px}}
         .cpill{{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#FF6B3515,#FFD93D15);border:2px solid #FF6B3544;border-radius:50px;padding:14px 28px;margin-bottom:14px}}
@@ -710,8 +710,8 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="caption-box"><div class="caption-text">{result}</div></div>
         <div class="divider"></div>
         <div class="contact-grid">
-        <div class="cgrid"><div class="clabel">📞 Phone</div><div class="ctext">{customer_phone}</div></div>
-        <div class="cgrid"><div class="clabel">📍 Address</div><div class="ctext">{customer_address}</div></div>
+        <div class="cgrid"><div class="clabel"><img src="https://cdn-icons-png.flaticon.com/512/597/597177.png"> Phone</div><div class="ctext">{customer_phone}</div></div>
+        <div class="cgrid"><div class="clabel"><img src="https://cdn-icons-png.flaticon.com/512/684/684908.png"> Address</div><div class="ctext">{customer_address}</div></div>
         </div>
         </div></div>
         <div class="top-band"></div>
