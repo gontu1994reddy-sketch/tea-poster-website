@@ -250,7 +250,7 @@ if submitted:
      #   fresh_check["Phone"] = fresh_check["Phone"].astype(str)
     #    fresh_user = fresh_check[fresh_check["Phone"] == str(customer_phone)]
      #   if not fresh_user.empty:
-            total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
+            #total_posts = int(fresh_user.iloc[0]["PosterCount"]) if fresh_user.iloc[0]["PosterCount"] else 0
     #        last_post_date = str(fresh_user.iloc[0]["LastPostDate"]).strip()[:10] if "LastPostDate" in fresh_user.columns else ""
      #   else:
      #       total_posts = 0
