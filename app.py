@@ -463,15 +463,16 @@ if submitted:
     st.image(png_file, use_container_width=True)
 
     with open(png_file, "rb") as f:
-        downloaded = st.download_button(
+        png_data = f.read()
+    if st.download_button(
             "Download Poster",
-            f.read(),
+            png_data,
             file_name="poster.png",
-            mime="image/png"
-        )
-
-    if downloaded:
-        st.session_state.download_count +=1
+            mime="image/png",
+            key="download_btn"
+    ):
+        st.session_state.download_count = st.session_state.get("download_count",0) + 1
+        st.rerun()
 
     st.info(f" Total number of downloads: {st.session_state.get('download_count', 0)}")         
 
