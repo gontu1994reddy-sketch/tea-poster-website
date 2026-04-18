@@ -398,6 +398,7 @@ if submitted:
 
     # ---------------- LOGO ----------------
     logo_html = ""
+    logo_base64=None
     if logo:
         logo_bytes = logo.read()
         logo_base64 = base64.b64encode(logo_bytes).decode()
