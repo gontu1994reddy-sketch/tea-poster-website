@@ -119,7 +119,7 @@ with st.form("poster_form", clear_on_submit=False):
     customer_phone = st.text_input("📞 Customer Phone")
     shop = st.text_input("🏪 Shop Name")
     offer = st.text_input("🔥 Offer")
-    logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"])
+    logo = st.file_uploader("📷 Upload Shop Logo", type=["png","jpg","jpeg"],key="logo_upload")
     shop_type = st.selectbox("Select Shop Type", [
         "Grocery shop","Tiffin center","Tea shop & Snacks","Clothing store",
         "Mobile shop","Salon","Medical store","Bakery","Fruit shop",
@@ -399,11 +399,14 @@ if submitted:
     # ---------------- LOGO ----------------
     
     logo_base64 = None
-    if logo:
+    if logo is not None:
         try:
+            log.seek(0)
             logo_bytes = logo.read()
-            logo_base64 = base64.b64encode(logo_bytes).decode()
+            if logo_bytes:
+                logo_base64 = base64.b64encode(logo_bytes).decode()
         except Exception:
+            st.warning(f"logo error: {e}")
             logo_base64 = None
 
     # ---------------- POSTER HTML ----------------
