@@ -496,4 +496,8 @@ if submitted:
 
     # ---------------- SAVE POSTER COUNT (free users only tracked in session) ----------------
     # ---- SAVE AFTER POSTER GENERATED ----
+    st.session_state.poster_count += 1
+    st.session_state.poster_generated = True
+
+    st.success("☑️ Poster generated successfully!")
     
