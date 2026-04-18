@@ -236,7 +236,7 @@ def get_poster_html(design, shop, offer, festival, result,
             </div>
             </div></div></body></html>""" 
 
-     else:
+    else:
         # ---- DESIGN 4: VIBRANT GRADIENT SOCIAL MEDIA ----
         # Logo: Hexagon clip with glow
         # Offer: Glass floating card with shop badge
