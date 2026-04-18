@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+from designs import get_poster_html
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 from google import genai
@@ -16,7 +17,7 @@ from datetime import datetime, timedelta
 import gspread
 from google.oauth2.service_account import Credentials
 import time
-from designs import get_poster_html
+
 import random
 
 
