@@ -425,7 +425,7 @@ if submitted:
     # ---------------- POSTER HTML ----------------
    
     # Inside your generate button block:
-    design = random.randint(1, 4)
+    design = random.randint(1, 12)
 
     poster_html = get_poster_html(
         design=design,
