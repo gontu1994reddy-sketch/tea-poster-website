@@ -457,6 +457,11 @@ if submitted:
             mime="image/png"
         )
 
+    if downloaded:
+        st.session_state.download_count +=1
+
+    st.info(f" Total number of downloads: {st.session_state.download_count}")         
+
     # ---------------- WHATSAPP SHARE ----------------
     share_text = urllib.parse.quote(
         f"{shop}\n{offer}\n{result}\nPhone: {customer_phone}"
