@@ -479,51 +479,41 @@ if submitted:
 
     try:
         latest_sheet = read_sheet_direct()
+        phone_str = str(customer_phone).strip()
 
         if not latest_sheet.empty and "Phone" in latest_sheet.columns:
+            # Clean all phone numbers first
             latest_sheet["Phone"] = latest_sheet["Phone"].astype(str).str.strip()
-            phone_str = str(customer_phone).strip()
-            idx = latest_sheet[latest_sheet["Phone"] == phone_str].index
+            
+            # Remove ALL existing rows with this phone number
+            latest_sheet = latest_sheet[latest_sheet["Phone"] != phone_str].copy()
+            
+            # Get current count from fresh check
+            current_count = total_posts + 1
 
-            if len(idx) > 0:
-                # ✅ Phone exists — only update count and date
-                current_count = int(latest_sheet.loc[idx[0], "PosterCount"]) if str(latest_sheet.loc[idx[0], "PosterCount"]).isdigit() else 0
-                latest_sheet.loc[idx[0], "PosterCount"] = str(current_count + 1)
-                latest_sheet.loc[idx[0], "LastPostDate"] = str(today)
-            else:
-                # ✅ New phone — add ONE new row only
-                new_row = pd.DataFrame([{
-                    "Phone": phone_str,
-                    "ShopName": shop,
-                    "ShopAddress": customer_address,
-                    "PremiumCode": "",
-                    "Status": "Free",
-                    "PosterCount": "1",
-                    "Premium": "FALSE",
-                    "ExpiryDate": "",
-                    "LastPostDate": str(today)
-                }])
-                latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
         else:
-            # ✅ Sheet empty — create first row
-            latest_sheet = pd.DataFrame([{
-                "Phone": str(customer_phone).strip(),
-                "PremiumCode": "",
-                "Status": "Free",
-                "PosterCount": "1",
-                "Premium": "FALSE",
-                "ExpiryDate": "",
-                "LastPostDate": str(today)
-            }])
+            current_count = 1
+            latest_sheet = pd.DataFrame(columns=[
+                "Phone","PremiumCode","Status",
+                "PosterCount","Premium","ExpiryDate","LastPostDate"
+            ])
 
-        # Remove duplicate phone rows before saving
-        latest_sheet["Phone"] = latest_sheet["Phone"].astype(str).str.strip()
-        latest_sheet = latest_sheet.drop_duplicates(subset=["Phone"], keep="last")
+        # Add ONE clean updated row
+        new_row = pd.DataFrame([{
+            "Phone": phone_str,
+            "PremiumCode": str(fresh_user.iloc[0]["PremiumCode"]) if not fresh_user.empty and "PremiumCode" in fresh_user.columns else "",
+            "Status": str(fresh_user.iloc[0]["Status"]) if not fresh_user.empty else "Free",
+            "PosterCount": str(current_count),
+            "Premium": str(fresh_user.iloc[0]["Premium"]) if not fresh_user.empty else "FALSE",
+            "ExpiryDate": str(fresh_user.iloc[0]["ExpiryDate"]) if not fresh_user.empty else "",
+            "LastPostDate": str(today)
+        }])
 
+        latest_sheet = pd.concat([latest_sheet, new_row], ignore_index=True)
         write_sheet_direct(latest_sheet)
         st.success("✅ Poster generated successfully!")
 
     except Exception as e:
         st.error(f"Save error: {e}")
         import traceback
-        st.code(traceback.format_exc())
+        st.code(traceback.format_exc()) 
