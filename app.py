@@ -180,7 +180,7 @@ else:
 #if st.session_state.is_premium:
     #st.success("💎 Premium active: posters")
 #elif remaining > 0:
-    st.info(f"🎁 Posters left: {remaining}")
+    #st.info(f"🎁 Posters left: {remaining}")
     #st.markdown(f"Want unlimited? [💎 Upgrade to Premium ₹{PLAN_PRICE}]({PAYMENT_LINK})")
 #else:
     #st.error("🚫 Posters used up!")
