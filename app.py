@@ -112,6 +112,9 @@ st.title("🎨 AI Poster Generator")
 if "download_count" not in st.session_state:
     st.session_state.download_count = 0
 
+if "show_download" not in st.session_state:
+    st.session_state.show_download = False    
+
 if "poster_generated" not in st.session_state:
     st.session_state.poster_generated = False
 
@@ -461,22 +464,26 @@ if submitted:
     png_file = asyncio.run(render_html_to_png(poster_html))
 
     st.image(png_file, use_container_width=True)
-
-    with open(png_file, "rb") as f:
-        png_data = f.read()
-    if st.download_button(
-            "Download Poster",
-            png_data,
-            file_name="poster.png",
-            mime="image/png",
-            key="download_btn"
-        ):
-        st.session_state.download_count = st.session_state.get("download_count",0) + 1
+    
+    if st.button("⬇️ Download Poster"):
+        st.session_state.download_count += 1
+        st.session_state.show_download = True
         st.rerun()
 
-    st.info(f" Total number of downloads: {st.session_state.get('download_count', 0)}")         
+    if st.session_state.show_download:
+        with open(png_file, "rb") as f:
+            st.download_button(
+                "📥 Click here to save",
+                f.read(),
+                file_name="poster.png",
+                mime="image/png",
+                key="actual_download"
+            )
 
-    # ---------------- WHATSAPP SHARE ----------------
+    st.info(f"📥 Total downloads: {st.session_state.download_count}")
+        
+
+        # ---------------- WHATSAPP SHARE ----------------
     share_text = urllib.parse.quote(
         f"{shop}\n{offer}\n{result}\nPhone: {customer_phone}"
     )
