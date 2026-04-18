@@ -401,7 +401,7 @@ if submitted:
     logo_base64 = None
     if logo is not None:
         try:
-            log0.seek(0)
+            logo.seek(0)
             logo_bytes = logo.read()
             if logo_bytes:
                 logo_base64 = base64.b64encode(logo_bytes).decode("utf-8")
