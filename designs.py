@@ -710,8 +710,8 @@ def get_poster_html(design, shop, offer, festival, result,
         <div class="caption-box"><div class="caption-text">{result}</div></div>
         <div class="divider"></div>
         <div class="contact-grid">
-        <div class="cgrid"><div class="clabel"><img src="https://cdn-icons-png.flaticon.com/512/597/597177.png"> Phone</div><div class="ctext">{customer_phone}</div></div>
-        <div class="cgrid"><div class="clabel"><img src="https://cdn-icons-png.flaticon.com/512/684/684908.png"> Address</div><div class="ctext">{customer_address}</div></div>
+        <div class="cgrid"><div class="clabel">📞 Phone</div><div class="ctext">{customer_phone}</div></div>
+        <div class="cgrid"><div class="clabel">📍 Address</div><div class="ctext">{customer_address}</div></div>
         </div>
         </div></div>
         <div class="top-band"></div>
